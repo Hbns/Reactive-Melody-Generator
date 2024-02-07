@@ -1,0 +1,37 @@
+----------Compiled Haai reactor-----------------------------
+// %R prefix voor reactor en naam van de reactor
+((%R plus-time-one 
+  // deployment-time instructies: (wordt uitgevoerd voor de uitvoering van de eerste reactie van een deployment.)
+  // (in dit geval twee keer een deployment van de + reactor)
+  ((I-ALLOCMONO +) (I-ALLOCMONO +)) 
+  // reaction-time instructies:
+  ((I-LOOKUP time) 
+  // Eerste argument is waar je “lokaal” een waarde gaat terugvinden die je gaat supply’n, 
+  // tweede is lokaal een adres waar je een deployment-adres in kan terugvinden,
+  // derde is om welke source het gaat.
+  (I-SUPPLY (%RREF 1) (%DREF 1) 1) 
+  (I-SUPPLY (%SRC 1) (%DREF 1) 2) 
+  (I-REACT (%DREF 1)) 
+  (I-CONSUME (%DREF 1) 1) 
+  (I-SUPPLY (%RREF 5) (%DREF 2) 1) 
+  // instructie=I-SUPPLY, 
+  (I-SUPPLY 1 (%DREF 2) 2) 
+  (I-REACT (%DREF 2)) 
+  (I-CONSUME (%DREF 2) 1) 
+  (I-SINK (%RREF 9) 1))
+  ))
+
+-----------Same code on one line------------------------------
+
+((%R plus-time-one ((I-ALLOCMONO +) (I-ALLOCMONO +)) ((I-LOOKUP time) (I-SUPPLY (%RREF 1) (%DREF 1) 1) (I-SUPPLY (%SRC 1) (%DREF 1) 2) (I-REACT (%DREF 1)) (I-CONSUME (%DREF 1) 1) (I-SUPPLY (%RREF 5) (%DREF 2) 1) (I-SUPPLY 1 (%DREF 2) 2) (I-REACT (%DREF 2)) (I-CONSUME (%DREF 2) 1) (I-SINK (%RREF 9) 1))))
+
+-----------Haai (Same) code before compile---------
+
+(displayln (parse-build-compile*
+              `(
+                 
+                (defr (plus-time-one a)
+                  (def x (+ time a))
+                  (out (+ x 1)))
+
+                ))
