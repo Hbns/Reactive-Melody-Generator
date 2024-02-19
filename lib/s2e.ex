@@ -15,4 +15,10 @@ defmodule S2e do
   def hello do
     :world
   end
+
+  def add_and_increment(input) do
+    current_time = System.os_time()
+    result = current_time + input
+    result + 1
+  end
 end

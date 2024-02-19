@@ -35,3 +35,77 @@
                   (out (+ x 1)))
 
                 ))
+                
+
+---TryParsing---
+iex(6)> stin(I-LOOKUP time) (I-SUPPLY (%RREF 1) (%DREF 1) 1) (I-SUPPLY (%SRC 1) (%DREF 1) 2) (I-REACT (%DREF 1)) (I-CONSUME (%DREF 1) 1) (I-SUPPLY (%RREF 5) (%DREF 2) 1) (I-SUPPLY 1 (%DREF 2) 2) (I-REACT (%DREF 2)) (I-CONSUME (%DREF 2) 1) (I-SINK (%RREF 9) 1))))'
+'((%R plus-time-one ((I-ALLOCMONO +) (I-ALLOCMONO +)) (
+iex(7)> {:ok, tokens, _} = :haai_lexer.string(stin)                                                                            
+{:ok,                                                                                                                          
+ [                                                                
+   {:"(", 1},
+   {:"(", 1},
+   {:reaktor, 1},
+   {:atom, 1, 'plus-time-one'},
+   {:"(", 1},
+   {:"(", 1},
+   {:instruction, 1, 'I-ALLOCMONO'},
+   {:op, 1, '+'},
+   {:")", 1},
+   {:"(", 1},
+   {:instruction, 1, 'I-ALLOCMONO'},
+   {:op, 1, '+'},
+   {:")", 1},
+   {:")", 1},
+   {:"(", 1},
+   {:"(", 1},
+   {:instruction, 1, 'I-LOOKUP'},
+   {:atom, 1, 'time'},
+   {:")", 1},
+   {:"(", 1},
+   {:instruction, 1, 'I-SUPPLY'},
+   {:"(", 1},
+   {:rref, 1},
+   {:int, 1, 1},
+   {:")", 1},
+   {:"(", 1},
+   {:dref, 1},
+   {:int, 1, 1},
+   {:")", 1},
+   {:int, 1, 1},
+   {:")", 1},
+   {:"(", 1},
+   {:instruction, 1, 'I-SUPPLY'},
+   {:"(", 1},
+   {:src, 1},
+   {:int, 1, 1},
+   {:")", 1},
+   {:"(", 1},
+   {:dref, 1},
+   {:int, 1, 1},
+   {:")", 1},
+   {:int, 1, 2},
+   {:")", 1},
+   {:"(", 1},
+   {:instruction, 1, 'I-REACT'},
+   {:"(", 1},
+   {:dref, ...},
+   {...},
+   ...
+ ], 1}
+--- gives ---
+(not correctly)
+iex(9)> :haai_parser.parse(tokens)
+{:error,
+ {1, :haai_parser,
+  [
+    'syntax error before: ',
+    [[123, ['atom', 44, '1', 44, '"plus-time-one"'], 125]]
+  ]}}
+
+  ---------Elixir function-------
+  def add_and_increment(input) do
+    current_time = System.os_time()
+    result = current_time + input
+    result + 1
+  end
