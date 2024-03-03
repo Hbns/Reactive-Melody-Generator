@@ -26,10 +26,10 @@
 ((%R plus-time-one ((I-ALLOCMONO +) (I-ALLOCMONO +)) ((I-LOOKUP time) (I-SUPPLY (%RREF 1) (%DREF 1) 1) (I-SUPPLY (%SRC 1) (%DREF 1) 2) (I-REACT (%DREF 1)) (I-CONSUME (%DREF 1) 1) (I-SUPPLY (%RREF 5) (%DREF 2) 1) (I-SUPPLY 1 (%DREF 2) 2) (I-REACT (%DREF 2)) (I-CONSUME (%DREF 2) 1) (I-SINK (%RREF 9) 1))))
 
 -----------Texttual conversion to Elixir lits------
-[ plus-time-one,
+[ :plus-time-one,
   [
-    [I-ALLOCMONO, +],
-    [I-ALLOCMONO, +]
+    ["I-ALLOCMONO", +],
+    ["I-ALLOCMONO", +]
   ] 
   [
     ["I-LOOKUP", "time"],
@@ -44,6 +44,10 @@
     ["I-SINK", ["%RREF", 9],1]
   ]  
 ]
+
+--on one line--
+[:plus-time-one,[["I-ALLOCMONO", :plus],["I-ALLOCMONO", :plus]],[["I-LOOKUP", "time"],["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1], ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2], ["I-REACT", ["%DREF, 1]], ["I-CONSUME", ["%DREF, 1], 1], ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1], ["I-SUPPLY", 1, ["%DREF", 2], 2],["I-REACT", ["%DREF", 2]], ["I-CONSUME", ["%DREF", 2],1], ["I-SINK", ["%RREF", 9],1]]]
+
 -----------Haai (Same) code before compile---------
 
 (displayln (parse-build-compile*
@@ -122,9 +126,49 @@ iex(9)> :haai_parser.parse(tokens)
     [[123, ['atom', 44, '1', 44, '"plus-time-one"'], 125]]
   ]}}
 
-  ---------Elixir function-------
+  ----Compare with Elixir function-------
+  
   def add_and_increment(input) do
     current_time = System.os_time()
     result = current_time + input
     result + 1
   end
+
+  (displayln (parse-build-compile*
+              `(
+                 
+                (defr (plus-time-one a)
+                  (def x (+ time a))
+                  (out (+ x 1)))
+
+                ))
+
+                
+
+
+--
+Interpreter(vm) maakt main functie om de reaktor te starten met path of nested list
+call .start starts everything, the argument is the reaktor, in first go, deployment instructions are run
+then reaction instruction ar run in a loop, in between loops state kan be updated.
+main has to know  where to find nested rreactors.
+Reactor is a tuple {:reaktor, [_,_], [_,_]} met [_,_] dref rref etc loops 4 ever (= reaktor)
+
+DO not parse, convert in compiler from sstring to nested elixir list.
+
+reactor table, deployment table and stack are main components in the vm(interpreter)
+
+distributie:
+verschillende reaktoren op een cluster = een vm per reaktor.
+Elke reaktor start als een vm die weet wat te doen adhv de I- operaties
+
+--stack-->
+ALLOCATE gaat een blok geheugen moeten aanmaken voor een deployment in bij te houden (deploymentgeheugen = {naam-reactor, sources, deployment-time values, reaction-time values, sinks}), dat doet die voor zowel de + als de user-defined (byte-code) reactoren. Voor het alloceren moet die weten hoeveel sources en sinks er zijn, en hoeveel deployment-time en reaction-time instructies er zijn.
+Als het om een native reactor gaat: ergens een tabel/opzoeken hoeveel sources en sinks dat er dan zijn (e.g., voor + en andere binaire operatoren zijn dit steeds 2 sources en 1 sink). Natives hebben geen deployment/reaction-time instructies dus dat zijn dan lege lijsten.
+Als het om een user-defined reactor gaat: gelijkaardig, maar nu zijn er wel deployment/reaction-time instructies dus daar moet je ook een waarde voor genereren.
+Het idee van het alloceren is dat, conceptueel, na de allocatie er geen nieuw geheugen meer moet aangemaakt worden voor een deployment. Althans, dat zou zo zijn in een procedurele/imperatieve implementatie (i.e. niet-functioneel). Met Elixir heb je functies die een geupdate datastructuur teruggeven (= nieuwe allocaties in het geheugen Elixir), maar conceptueel groeit de size niet van de datastructuur die de toestand van de VM voorstelt (i.e., reactor table, deployment table, stack en de signal table).
+Het is de I-REACT die dan zo’n blok geheugen (deployment) vastneemt. Deze verwijst naar het adres van een ALLOCATE-instructie: daar moet dan het adres/identifier/… in staan van de deployment die moet reageren. Die kan opgezocht worden in de deployment table. Vervolgens zijn er twee opties…
+Als het een deployment van een native reactor is: kan de native rechtstreeks toepast worden op de waarden die in de sources zitten (e.g., optellen voor de +) en het resultaat in de sink(s) op te slaan. Met andere woorden, het toepassen van add(x,y) gebeurt bij de REACT, niet bij de ALLOCATE.
+Als het een deployment van een user-defined reactor is: de call stack uitbreiden met daar dan het eerste adres van de geneste reactor.
+
+
+
