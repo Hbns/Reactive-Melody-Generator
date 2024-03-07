@@ -7,8 +7,12 @@ defmodule Memory do
     GenServer.start_link(__MODULE__, {dtm, rtm}, name: :memory)
   end
 
-  def supply(from, from_index, to, to_index, to_source) do
+  def supply_from_location(from, from_index, to, to_index, to_source) do
     GenServer.cast(:memory, {:supply, from, from_index, to, to_index, to_source})
+  end
+
+  def supply_constant(constant, to, to_index, to_source) do
+    GenServer.cast(:memory, {:supply_constant, constant, to, to_index, to_source})
   end
 
   def pop(pid) do
@@ -33,7 +37,17 @@ defmodule Memory do
   end
 
   @impl true
-  def handle_cast({:supply, from, from_index, to, to_index, to_source}, {dtm, rtm}) do
+  def handle_cast({:supply_constant, constant, to, to_index, to_source}, {dtm, rtm}) do
+    case Enum.fetch(dtm, to_index) do
+      {:ok, tuple} -> case tuple do
+        {_native, sources, _dti, _rti, sinks} when is_list(sources) ->
+        updated_sources = List.insert_at(sources, to_source, constant)
+        updated_tuple = List.replace_at(tuple, to_index, updated_sources)
+        ## also need to update dtm
+        {:ok, updated_tuple}
+      end
+    end
+
     {:noreply, {dtm, List.insert_at(rtm, -1, value)}}
   end
 

@@ -75,12 +75,14 @@ defmodule Haai do
 
   defp hrr(["I-SUPPLY", [from, value], [to, destination], index])
        when is_integer(value) and is_integer(destination) and is_integer(index) do
-    IO.puts("supply1")
+        Memory.supply_from_location(from, value, to, destination, index)
+    IO.puts("supply_from_location")
   end
 
   defp hrr(["I-SUPPLY", value, [to, destination], index])
   when is_integer(value) and is_integer(destination) and is_integer(index) do
-    IO.puts("supply2")
+    Memory.supply_constant(value, to, destination, index)
+    IO.puts("supply_constant")
   end
 
   defp hrr(["I-REACT", [from, value]])
