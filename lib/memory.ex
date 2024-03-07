@@ -39,16 +39,21 @@ defmodule Memory do
   @impl true
   def handle_cast({:supply_constant, constant, to, to_index, to_source}, {dtm, rtm}) do
     case Enum.fetch(dtm, to_index) do
-      {:ok, tuple} -> case tuple do
-        {_native, sources, _dti, _rti, sinks} when is_list(sources) ->
-        updated_sources = List.insert_at(sources, to_source, constant)
-        updated_tuple = List.replace_at(tuple, to_index, updated_sources)
-        ## also need to update dtm
-        {:ok, updated_tuple}
-      end
-    end
+      {:ok, dtm_block} ->
+        case dtm_block do
+          {_native, sources, _dti, _rti, sinks} when is_list(sources) ->
+            updated_sources = List.insert_at(sources, to_source, constant)
+            updated_dtm_block = List.replace_at(dtm_block, 1, updated_sources)
+            updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
+            {:noreply, {updated_dtm, rtm}}
 
-    {:noreply, {dtm, List.insert_at(rtm, -1, value)}}
+          _ ->
+            {:error, "dtm_block at position #{to_index} does not match the expected format"}
+        end
+
+      :error ->
+        {:error, "dtm_block not found at position #{to_index}"}
+    end
   end
 
   @impl true
