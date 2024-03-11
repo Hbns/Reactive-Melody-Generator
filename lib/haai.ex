@@ -6,6 +6,7 @@ defmodule Haai do
   @source_and_sink_native_reactor_table %{plus: {2, 1}, minus: {2, 1}}
   # @signal_table %{time: fn -> Time.utc_now() end}
   @signal_table %{time: 33}
+  @sources %{1 => 0, 2 => 0}
 
   def start(reactor_byte_code) do
     [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
