@@ -61,7 +61,7 @@ defmodule Haai do
 
   # Run the reaktor
   defp run_reaktor(dtm, rtm, rti) do
-    Memory.start_link(dtm, rtm)
+    Memory.start_link(dtm, rtm, [])
     # execute each rti
     Enum.each(rti, fn instruction -> hrr(instruction) end)
   end

@@ -7,6 +7,10 @@ defmodule Memory do
     GenServer.start_link(__MODULE__, {dtm, rtm, src}, name: :memory)
   end
 
+  def save_lookup(at, value) do
+    GenServer.cast(:memory, {:save_lookup, at, value})
+  end
+
   def supply_from_location(from, from_index, to, to_index, to_source) do
     GenServer.cast(:memory, {:supply, from, from_index, to, to_index, to_source})
   end
@@ -19,8 +23,8 @@ defmodule Memory do
     GenServer.cast(:memory, {:react, at, at_index})
   end
 
-  def pop(pid) do
-    GenServer.call(pid, :pop)
+  def consume(from, from_index, sink_index) do
+    GenServer.cast(:memory, {:consume, from, from_index, sink_index})
   end
 
   # Server (callbacks)
@@ -36,8 +40,8 @@ defmodule Memory do
   end
 
   @impl true
-  def handle_call({:remove_from_dtm, position}, _from, {dtm, rtm, src}) do
-    {:reply, :ok, {List.delete_at(dtm, position), rtm, src}}
+  def handle_cast({:save_lookup, at, value}, {dtm, rtm, src}) do
+    {:noreply, {dtm, List.insert_at(rtm, at, value), src}}
   end
 
   # i am not using to, dtm is 'hardcoded'
@@ -147,7 +151,23 @@ defmodule Memory do
   end
 
   @impl true
-  def handle_cast({:remove_from_rtm, position}, {dtm, rtm}) do
-    {:noreply, {dtm, List.delete_at(rtm, position)}}
+  def handle_cast({:consume, from, from_index, sink_index}, {dtm, rtm, src}) do
+    case Enum.fetch(dtm, from_index) do
+      {:ok, dtm_block} ->
+        case dtm_block do
+          {_block_name, _sources, _dti, _rti, sink} ->
+            Enum.at(sink, from_index + 1)
+
+            {:noreply, {dtm, rtm, src}}
+
+          _ ->
+            {:error, "dtm_block at position #{from_index} does not match the expected format"}
+        end
+
+      :error ->
+        {:error, "dtm_block not found at position #{from_index}"}
+    end
   end
+
+
 end
