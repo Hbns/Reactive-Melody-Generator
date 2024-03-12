@@ -7,6 +7,10 @@ defmodule Memory do
     GenServer.start_link(__MODULE__, {dtm, rtm, src}, name: :memory)
   end
 
+  def show_state do
+    GenServer.cast(:memory, :show_state)
+  end
+
   def save_lookup(at, value) do
     GenServer.cast(:memory, {:save_lookup, at, value})
   end
@@ -35,13 +39,21 @@ defmodule Memory do
   end
 
   @impl true
-  def handle_call({:add_to_dtm, value}, _from, {dtm, rtm, src}) do
-    {:reply, :ok, {List.insert_at(dtm, -1, value), rtm, src}}
+  def handle_cast(:show_state, {dtm, rtm, src}) do
+    IO.inspect(dtm, label: "DTM")
+    IO.inspect(rtm, label: "RTM")
+    IO.inspect(src, label: "SRC")
+    {:noreply, {dtm, rtm, src}}
   end
 
   @impl true
   def handle_cast({:save_lookup, at, value}, {dtm, rtm, src}) do
-    {:noreply, {dtm, List.insert_at(rtm, at, value), src}}
+    updated_rtm = List.insert_at(rtm, at, value)
+    # Print the contents of the lists for verification
+    # IO.inspect(dtm, label: "DTM")
+    # IO.inspect(updated_rtm, label: "RTM")
+    # IO.inspect(src, label: "SRC")
+    {:noreply, {dtm, updated_rtm, src}}
   end
 
   # i am not using to, dtm is 'hardcoded'
@@ -54,11 +66,11 @@ defmodule Memory do
         case Enum.fetch(dtm, to_index) do
           {:ok, dtm_block} ->
             case dtm_block do
-              {_native, sources, _dti, _rti, sinks} when is_list(sources) ->
+              {native, sources, dti, rti, sinks} when is_list(sources) ->
                 updated_sources = List.insert_at(sources, to_source, source_value)
-                updated_dtm_block = List.replace_at(dtm_block, 1, updated_sources)
+                updated_dtm_block = {native, updated_sources, dti, rti, sinks}
                 updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
-                {:noreply, {updated_dtm, rtm}}
+                {:noreply, {updated_dtm, rtm, src}}
 
               _ ->
                 {:error, "dtm_block at position #{to_index} does not match the expected format"}
@@ -74,11 +86,11 @@ defmodule Memory do
         case Enum.fetch(dtm, to_index) do
           {:ok, dtm_block} ->
             case dtm_block do
-              {_native, sources, _dti, _rti, sinks} when is_list(sources) ->
+              {native, sources, dti, rti, sinks} when is_list(sources) ->
                 updated_sources = List.insert_at(sources, to_source, rtm_value)
-                updated_dtm_block = List.replace_at(dtm_block, 1, updated_sources)
+                updated_dtm_block = {native, updated_sources, dti, rti, sinks}
                 updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
-                {:noreply, {updated_dtm, rtm}}
+                {:noreply, {updated_dtm, rtm, src}}
 
               _ ->
                 {:error, "dtm_block at position #{to_index} does not match the expected format"}
@@ -98,10 +110,11 @@ defmodule Memory do
     case Enum.fetch(dtm, to_index) do
       {:ok, dtm_block} ->
         case dtm_block do
-          {_native, sources, _dti, _rti, sinks} when is_list(sources) ->
+          {native, sources, dti, rti, sinks} when is_list(sources) ->
             updated_sources = List.insert_at(sources, to_source, constant)
-            updated_dtm_block = List.replace_at(dtm_block, 1, updated_sources)
+            updated_dtm_block = {native, updated_sources, dti, rti, sinks}
             updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
+            IO.inspect(updated_dtm, label: "udtm")
             {:noreply, {updated_dtm, rtm, src}}
 
           _ ->
@@ -118,13 +131,15 @@ defmodule Memory do
     case Enum.fetch(dtm, at_index) do
       {:ok, dtm_block} ->
         case dtm_block do
-          {native, sources, _dti, _rti, sink} ->
+          {native, sources, dti, rti, sink} ->
             # apply the native function
-            [src1 | src2] = sources
+            src1 = Enum.at(src, 0)
+            src2 = Enum.at(src, 1)
             result = apply_native_operation(native, src1, src2)
+            IO.inspect(result, label: "res")
             # save result to sink
-            updated_sink = [result | sink]
-            updated_dtm_block = List.replace_at(dtm_block, 4, updated_sink)
+            updated_sink = List.insert_at(sink, 0, result)
+            updated_dtm_block = {native, sources, dti, rti, updated_sink}
             updated_dtm = List.replace_at(dtm, at_index, updated_dtm_block)
             {:noreply, {updated_dtm, rtm, src}}
 
@@ -138,10 +153,10 @@ defmodule Memory do
   end
 
   # table with native operations, default forth argument in apply_native_operation:
-  native_operations = %{plus: &Kernel.+/2, minus: &Kernel.-/2}
+  @native_operations %{plus: &Kernel.+/2, minus: &Kernel.-/2}
 
-  def apply_native_operation(operation, src1, src2, native_operations \\ %{}) do
-    case Map.fetch(native_operations, operation) do
+  def apply_native_operation(operation, src1, src2) do
+    case Map.fetch(@native_operations, operation) do
       {:ok, func} ->
         func.(src1, src2)
 
@@ -168,6 +183,4 @@ defmodule Memory do
         {:error, "dtm_block not found at position #{from_index}"}
     end
   end
-
-
 end
