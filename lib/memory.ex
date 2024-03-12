@@ -27,8 +27,12 @@ defmodule Memory do
     GenServer.cast(:memory, {:react, at, at_index})
   end
 
-  def consume(from, from_index, sink_index) do
-    GenServer.cast(:memory, {:consume, from, from_index, sink_index})
+  def consume(from, from_index, sink_index, rti_index) do
+    GenServer.cast(:memory, {:consume, from, from_index, sink_index, rti_index})
+  end
+
+  def sink(from, from_index, sink_index, rti_index) do
+    GenServer.cast(:memory, {:sink, from, from_index, sink_index, rti_index})
   end
 
   # Server (callbacks)
@@ -133,10 +137,9 @@ defmodule Memory do
         case dtm_block do
           {native, sources, dti, rti, sink} ->
             # apply the native function
-            src1 = Enum.at(src, 0)
-            src2 = Enum.at(src, 1)
+            src1 = Enum.at(sources, 1)
+            src2 = Enum.at(sources, 2)
             result = apply_native_operation(native, src1, src2)
-            IO.inspect(result, label: "res")
             # save result to sink
             updated_sink = List.insert_at(sink, 0, result)
             updated_dtm_block = {native, sources, dti, rti, updated_sink}
@@ -152,28 +155,26 @@ defmodule Memory do
     end
   end
 
-  # table with native operations, default forth argument in apply_native_operation:
-  @native_operations %{plus: &Kernel.+/2, minus: &Kernel.-/2}
+  ## Native operations ##
+  def apply_native_operation(:plus, src1, src2) do
+    res = src1 + src2
+    res
+  end
 
-  def apply_native_operation(operation, src1, src2) do
-    case Map.fetch(@native_operations, operation) do
-      {:ok, func} ->
-        func.(src1, src2)
-
-      :error ->
-        raise ArgumentError, "Invalid operation: #{operation}"
-    end
+  def apply_native_operation(:minus, src1, src2) do
+    res = src1 - src2
+    res
   end
 
   @impl true
-  def handle_cast({:consume, from, from_index, sink_index}, {dtm, rtm, src}) do
+  def handle_cast({:consume, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
     case Enum.fetch(dtm, from_index) do
       {:ok, dtm_block} ->
         case dtm_block do
           {_block_name, _sources, _dti, _rti, sink} ->
-            Enum.at(sink, from_index + 1)
-
-            {:noreply, {dtm, rtm, src}}
+            consume = Enum.at(sink, from_index - 1)
+            # place at index, position of this instruction in rti (starts at 1 in haai)
+            {:noreply, {dtm, List.insert_at(rtm, rti_index + 1, consume) , src}}
 
           _ ->
             {:error, "dtm_block at position #{from_index} does not match the expected format"}
@@ -182,5 +183,16 @@ defmodule Memory do
       :error ->
         {:error, "dtm_block not found at position #{from_index}"}
     end
+  end
+
+  @impl true
+  def handle_cast({:sink, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
+
+            sink_value = Enum.at(rtm, rti_index + 1)
+            # place at index, position of this instruction in rti (starts at 1 in haai)
+
+            IO.puts("returning sink_value: #{sink_value}")
+            {:noreply, {dtm, rtm , src}}
+
   end
 end

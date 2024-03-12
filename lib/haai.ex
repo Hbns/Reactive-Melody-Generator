@@ -14,7 +14,7 @@ defmodule Haai do
     # asumes dti are only allocmono for native reactors!
     nb = make_native_dtm_blocks(dti)
     # arguments are (dtm,rtm,rti)
-    run_reaktor([rb | nb], [1, 2, 3, 4, 5, 6, 7, 8], rti)
+    run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
   end
 
   def run_start do
@@ -32,12 +32,12 @@ defmodule Haai do
         ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
         ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
         ["I-REACT", ["%DREF", 1]],
-        #["I-CONSUME", ["%DREF", 1], 1],
-        #["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
-        #["I-SUPPLY", 1, ["%DREF", 2], 2],
-        #["I-REACT", ["%DREF", 2]],
-        #["I-CONSUME", ["%DREF", 2], 1],
-        #["I-SINK", ["%RREF", 9], 1]
+        ["I-CONSUME", ["%DREF", 1], 1],
+        ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
+        ["I-SUPPLY", 1, ["%DREF", 2], 2],
+        ["I-REACT", ["%DREF", 2]],
+        ["I-CONSUME", ["%DREF", 2], 1],
+        ["I-SINK", ["%RREF", 9], 1]
       ]
     ]
 
@@ -51,7 +51,7 @@ defmodule Haai do
 
   defp make_native_dtm_blocks([["I-ALLOCMONO", native] | rest], acc) do
     {sources, sinks} = Map.get(@source_and_sink_native_reactor_table, native)
-    block = {native, [], [], [], []}
+    block = {native, [0], [], [], [0]}
     make_native_dtm_blocks(rest, [block | acc])
   end
 
@@ -72,54 +72,56 @@ defmodule Haai do
         IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully.")
     end
 
-    Memory.start_link(dtm, rtm, [1, 2, 3, 4])
+    Memory.start_link(dtm, rtm, [0,9])
     Memory.show_state()
     Process.sleep(1000)
     # execute each rti
-    Enum.each(rti, fn instruction ->
-      hrr(instruction)
+    Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
+      hrr(instruction, rti_index)
       Memory.show_state()
-      Process.sleep(1000)
+      Process.sleep(100)
 
     end)
   end
 
   # Help running the reactor = hrr
 
-  defp hrr(["I-LOOKUP", signal]) do
+  defp hrr(["I-LOOKUP", signal], rti_index) do
     value = Map.get(@signal_table, signal)
-    t = System.os_time()
+    #t = System.os_time()
     # idex 1 hardcoded.
-    Memory.save_lookup(1, t)
-    IO.puts("lookup")
+    Memory.save_lookup(1, value)
+    IO.puts("lookup, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-SUPPLY", [from, value], [to, destination], index])
+  defp hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index)
        when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_from_location(from, value, to, destination, index)
-    IO.puts("supply_from_location")
+    IO.puts("supply_from_location, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-SUPPLY", value, [to, destination], index])
+  defp hrr(["I-SUPPLY", value, [to, destination], index], rti_index)
        when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_constant(value, to, destination, index)
-    IO.puts("supply_constant")
+    IO.puts("supply_constant, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-REACT", [at, at_index]])
+  defp hrr(["I-REACT", [at, at_index]], rti_index)
        when is_integer(at_index) do
         Memory.react(at, at_index)
-    IO.puts("react")
+    IO.puts("react, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-CONSUME", [from, value], index])
-       when is_integer(value) and is_integer(index) do
-    IO.puts("consume")
+  defp hrr(["I-CONSUME", [from, from_index], sink_index], rti_index)
+       when is_integer(from_index) and is_integer(sink_index) do
+        Memory.consume(from, from_index, sink_index, rti_index)
+    IO.puts("consume, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-SINK", [from, value], index])
-       when is_integer(value) and is_integer(index) do
-    IO.puts("sink")
+  defp hrr(["I-SINK", [from, from_index], sink_index], rti_index)
+       when is_integer(from_index) and is_integer(sink_index) do
+        Memory.sink(from, from_index, sink_index, rti_index)
+    IO.puts("sink, rti_index: #{rti_index}")
   end
 
   # We need to know how many source, sinks, dti and rti the reaktor has to prepare memory:
