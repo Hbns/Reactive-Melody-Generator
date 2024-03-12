@@ -172,7 +172,7 @@ defmodule Memory do
       {:ok, dtm_block} ->
         case dtm_block do
           {_block_name, _sources, _dti, _rti, sink} ->
-            consume = Enum.at(sink, from_index - 1)
+            consume = Enum.at(sink, sink_index - 1)
             # place at index, position of this instruction in rti (starts at 1 in haai)
             {:noreply, {dtm, List.insert_at(rtm, rti_index + 1, consume) , src}}
 
@@ -188,7 +188,7 @@ defmodule Memory do
   @impl true
   def handle_cast({:sink, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
 
-            sink_value = Enum.at(rtm, rti_index + 1)
+            sink_value = Enum.at(rtm, rti_index)
             # place at index, position of this instruction in rti (starts at 1 in haai)
 
             IO.puts("returning sink_value: #{sink_value}")
