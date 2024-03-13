@@ -1,0 +1,49 @@
+---
+marp: true
+---
+
+# Higher-Order reactive Programs
+
+Haai -> Bytecode -> Haai Vm in Elixir
+
+
+
+
+---
+
+# A Cluster Programming Environment
+
+- BEAM (Bogdan’s Erlang Abstract Machine)
+- Haai virtual machine, programmed in Elixir
+- Pizilla, Raspberry Pi cluster
+
+---
+
+# Haai, a pure reactive programming language
+
+- This is not a Embedded Domain Specific Language, eg: no lifting.
+- Push-based, Haai updates signals in a glitch-free manner.
+- Always loop, get new data in sources, cascade of signal updates to reach the sinks.
+
+---
+
+# Edge computing scenario
+
+- Sensors producing a stream of data.
+- Haai reaktors to handle those streams.
+- Distrbute the reaktors over a cluster.
+
+---
+
+# A cluster of Haai virtual machines
+
+- One manager node to manage all others.
+- each node runs the Haai vm and is ready to receive a reaktor.
+- Reaktors run independent from each other.
+
+---
+
+
+
+
+
