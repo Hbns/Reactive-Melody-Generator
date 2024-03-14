@@ -37,11 +37,13 @@ defmodule Memory do
 
   # Server (callbacks)
 
+  # Initialize memory (Genserver)
   @impl true
   def init({dtm, rtm, src}) do
     {:ok, {dtm, rtm, src}}
   end
 
+  # Show the state of the vm
   @impl true
   def handle_cast(:show_state, {dtm, rtm, src}) do
     IO.inspect(dtm, label: "DTM")
@@ -50,16 +52,14 @@ defmodule Memory do
     {:noreply, {dtm, rtm, src}}
   end
 
+  # Save a lookup
   @impl true
   def handle_cast({:save_lookup, at, value}, {dtm, rtm, src}) do
     updated_rtm = List.insert_at(rtm, at, value)
-    # Print the contents of the lists for verification
-    # IO.inspect(dtm, label: "DTM")
-    # IO.inspect(updated_rtm, label: "RTM")
-    # IO.inspect(src, label: "SRC")
     {:noreply, {dtm, updated_rtm, src}}
   end
 
+  # Supply value from location
   # i am not using to, dtm is 'hardcoded'
   @impl true
   def handle_cast({:supply, from, from_index, to, to_index, to_source}, {dtm, rtm, src}) do
@@ -109,6 +109,7 @@ defmodule Memory do
     end
   end
 
+  # Supply constant
   @impl true
   def handle_cast({:supply_constant, constant, to, to_index, to_source}, {dtm, rtm, src}) do
     case Enum.fetch(dtm, to_index) do
@@ -130,6 +131,7 @@ defmodule Memory do
     end
   end
 
+  # React
   @impl true
   def handle_cast({:react, at, at_index}, {dtm, rtm, src}) do
     case Enum.fetch(dtm, at_index) do
@@ -166,6 +168,7 @@ defmodule Memory do
     res
   end
 
+  # Consume
   @impl true
   def handle_cast({:consume, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
     case Enum.fetch(dtm, from_index) do
@@ -185,6 +188,7 @@ defmodule Memory do
     end
   end
 
+  # Sink
   @impl true
   def handle_cast({:sink, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
 

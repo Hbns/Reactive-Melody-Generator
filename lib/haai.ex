@@ -8,6 +8,7 @@ defmodule Haai do
   @signal_table %{time: 33}
   @sources %{1 => 0, 2 => 0}
 
+  # Start the reaktor orm byte code
   def start(reactor_byte_code) do
     [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
     rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
@@ -17,6 +18,7 @@ defmodule Haai do
     run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
   end
 
+  # Help to run start
   def run_start do
     # test reactor:
     pto = [
@@ -56,7 +58,7 @@ defmodule Haai do
   end
 
   defp make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks) do
-   # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
+    # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
     {name, [], dti, rti, []}
   end
 
@@ -72,23 +74,24 @@ defmodule Haai do
         IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully.")
     end
 
-    Memory.start_link(dtm, rtm, [0,9])
+    Memory.start_link(dtm, rtm, [0, 9])
     Memory.show_state()
+    # I use sleeps to print nicely in console..
     Process.sleep(1000)
     # execute each rti
     Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
       hrr(instruction, rti_index)
       Memory.show_state()
       Process.sleep(100)
-
     end)
   end
 
   # Help running the reactor = hrr
+  # recognize the instruction and call appropriate function in Memory module
 
   defp hrr(["I-LOOKUP", signal], rti_index) do
     value = Map.get(@signal_table, signal)
-    #t = System.os_time()
+    # t = System.os_time()
     # idex 1 hardcoded.
     Memory.save_lookup(1, value)
     IO.puts("lookup, rti_index: #{rti_index}")
@@ -108,35 +111,20 @@ defmodule Haai do
 
   defp hrr(["I-REACT", [at, at_index]], rti_index)
        when is_integer(at_index) do
-        Memory.react(at, at_index)
+    Memory.react(at, at_index)
     IO.puts("react, rti_index: #{rti_index}")
   end
 
   defp hrr(["I-CONSUME", [from, from_index], sink_index], rti_index)
        when is_integer(from_index) and is_integer(sink_index) do
-        Memory.consume(from, from_index, sink_index, rti_index)
+    Memory.consume(from, from_index, sink_index, rti_index)
     IO.puts("consume, rti_index: #{rti_index}")
   end
 
   defp hrr(["I-SINK", [from, from_index], sink_index], rti_index)
        when is_integer(from_index) and is_integer(sink_index) do
-        Memory.sink(from, from_index, sink_index, rti_index)
+    Memory.sink(from, from_index, sink_index, rti_index)
     IO.puts("sink, rti_index: #{rti_index}")
   end
 
-  # We need to know how many source, sinks, dti and rti the reaktor has to prepare memory:
-  # eg: one dtmblock = {naam-reactor, sources, deployment-time values, reaction-time values, sinks}
-  # where dtv and rtv are empty for native reaktors.
-
-  # ALLOCATE = make dtm block for the native reacotr
-  # LOOKUP = find signal in signal_table
-
-  # SUPPLY = supply arg1 to arg2 on index arg3 =>
-  # arg1 can be constant value OR value of reaction instruction to be found in (RREF 1)
-  # arg2 is deployment instruction to be found in DREF = deployement memory.
-  # arg3 is the source number for that deployment instruction (which input of the reaktor should get this value)
-
-  # REACT = apply the reaktor, store result in reaktor sink =>
-  # for native reaktor = apply reactor on sources and stor result in sink.
-  # for user defined reactor = expand call stack with the addres of nested reactor.
 end
