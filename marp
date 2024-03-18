@@ -9,45 +9,118 @@ Haai -> Bytecode -> Haai Vm in Elixir
 
 ---
 
-# A Cluster Programming Environment
+# Haai, a pure reactive programming language
+<!-- paginate: true -->
+- This is not an Embedded Domain Specific Language, eg: no lifting.
 
-- BEAM (Bogdan’s Erlang Abstract Machine)
-- Haai virtual machine, programmed in Elixir
-- Pizilla, Raspberry Pi cluster
 
 ---
 
 # Haai, a pure reactive programming language
 
-- This is not an Embedded Domain Specific Language, eg: no lifting.
 - Push-based, Haai updates signals in a glitch-free manner.
-- Always loop, get new data in sources, cascade of signal updates to reach the sinks.
+
 
 ---
 
-# Musical reactors
+# Haai, a pure reactive programming language
 
-- Sensors producing a stream of data.
-- Haai reaktors to handle those streams.
-- Distrbute the reaktors over a cluster.
+- A reactor loops, pushing the sources altered by the reactor to the sinks.
 
----
-
-# A cluster of Haai virtual machines
-
-- One manager node to manage all others.
-- Each node runs the Haai vm and is ready to receive a reaktor.
-- Reaktors run independent from each other.
+    
+    ![Loop](loophaai.png)
 
 ---
 
+# Cluster environments
+-  make reactive programming with Haai available to cluster environments
+
+---
+
+# Cluster environments
+-  Many Haai interpreters
+
+    ![Pzilla h:420](pzilla.png)
+
+---
+
+# Use case, musical reactors
+
+- Microtonal melody generator (eg: 31-EDO, 24-EDO, pure intonation)
+
+    ![Sequence h:200](seq.png)
+    Figure: Standard 12 tone equal temperament, 12 tet
+
+---
+
+# Master thesis, Timeline
+![Timeline](timeline.png)
+
+---
+
+# Haai virtual machine
+- Haai compiles to bytecode (S-expression) to [elixir [nested lists]].
+
+---
+
+# Haai code, reactor
+![opacity:.4 bg 50%](haai.png)
+- (defr (plus-time-one a)
+                  (def x (+ time a))                
+                  (out (+ x 1)))
+
+---
+
+# Deployment time memory (elixir)
+![opacity:.5 bg 50%](elixir_logo.png)
+DTM: [{:plus_time_one, [], 
+[["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
+   [
+     ["I-LOOKUP", :time],["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+     ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2], ["I-REACT", ["%DREF", 1]],
+     ["I-CONSUME", ["%DREF", 1], 1], ["I-SINK", ["%RREF", 9], 1]
+   ], []},
+  {:plus, [0, 33, 9], [], [], [42, 0]},
+  {:plus, [0, 42, 1], [], [], [43, 0]}
+]
+
+---
 # Interpreting Haai
 
 - Haai compiles to bytecode (S-expression) to [elixir [nested lists]].
-- GenServer to maintain state.
+- GenServer to maintain state. (eg: dtm, rtm, src)
 - Sources in, Sinks out.
 
+---
 
 
+
+ # Virtual machine
+ ```
+  defp run_reaktor(dtm, rtm, rti) do
+    # reset the genserver (state) when starting
+    case GenServer.whereis(:memory) do
+      nil ->
+        IO.puts("GenServer :memory is not running.")
+      pid ->
+        GenServer.stop(:memory)
+        IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully.")
+    end
+    Memory.start_link(dtm, rtm, [0, 9])
+    # execute each rti
+    Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
+      hrr(instruction, rti_index)
+      Memory.show_state()
+     end)
+  end
+```
+
+---
+
+# Higher-Order reactive Programs
+- Haai -> Bytecode -> Haai Vm in Elixir.
+- Robust BEAM VM running the HAAI VM distributed.
+- Capturing coordination problems.
+- Usecase, musical reactors
 
 

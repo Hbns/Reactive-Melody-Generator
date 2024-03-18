@@ -143,6 +143,15 @@ iex(9)> :haai_parser.parse(tokens)
 
                 ))
 
+
+ note length to miliseconds, 1 minute is 60000ms. nl is 0.5 for 1/8 since qn (1/4) times 0.5 gives 1/8
+
+  (defr (notel-to-ms nl bpm)
+    
+    (def qn (/ 60000 bpm))
+    (out (* qn nl))
+  ))
+
                 
 
 
