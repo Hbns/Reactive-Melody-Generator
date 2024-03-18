@@ -4,26 +4,32 @@ marp: true
 
 # Higher-Order reactive Programs
 
-Haai -> Bytecode -> Haai Vm in Elixir
+Haai -> Bytecode -> Haai Vm in Elixir -> Distribute Haai Vm
 
 
 ---
 
 # Haai, a pure reactive programming language
 <!-- paginate: true -->
+![opacity:.1 bg 50%](haai.png)
 - This is not an Embedded Domain Specific Language, eg: no lifting.
 
+<!-- EDSL is mostly build on top of existing non rp languages using a technique called lifting, but lifting has disadvantages like the mismatch between the host and rp language can lead to faulty behavior-->
 
 ---
 
 # Haai, a pure reactive programming language
+![opacity:.25 bg 50%](haai.png)
 
 - Push-based, Haai updates signals in a glitch-free manner.
 
+<!-- glitch free implementation will update the signal only when all dependencies are current, renewed before reproducing an output -->
+
 
 ---
 
 # Haai, a pure reactive programming language
+
 
 - A reactor loops, pushing the sources altered by the reactor to the sinks.
 
@@ -33,23 +39,26 @@ Haai -> Bytecode -> Haai Vm in Elixir
 ---
 
 # Cluster environments
--  make reactive programming with Haai available to cluster environments
+- Make reactive programming with Haai available to cluster environments.
+- Discover coordination problems.
+
 
 ---
 
 # Cluster environments
--  Many Haai interpreters
+-  Many Haai interpreters.
 
-    ![Pzilla h:420](pzilla.png)
+    ![Pzilla h:450](pzilla.png)
 
 ---
 
 # Use case, musical reactors
 
-- Microtonal melody generator (eg: 31-EDO, 24-EDO, pure intonation)
+- Microtonal melody generator. (eg: 31-EDO, 24-EDO, pure intonation)
 
     ![Sequence h:200](seq.png)
     Figure: Standard 12 tone equal temperament, 12 tet
+- Open sound control (OSC) communication with Supercollider server.
 
 ---
 
@@ -63,31 +72,18 @@ Haai -> Bytecode -> Haai Vm in Elixir
 
 ---
 
-# Haai code, reactor
+# Haai code, reactor 'plus time one'
 ![opacity:.4 bg 50%](haai.png)
-- (defr (plus-time-one a)
-                  (def x (+ time a))                
-                  (out (+ x 1)))
+```
+(defr (plus-time-one a)
+    (def x (+ time a))                
+    (out (+ x 1)))
+```
 
 ---
+# Virtual machine
 
-# Deployment time memory (elixir)
-![opacity:.5 bg 50%](elixir_logo.png)
-DTM: [{:plus_time_one, [], 
-[["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
-   [
-     ["I-LOOKUP", :time],["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
-     ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2], ["I-REACT", ["%DREF", 1]],
-     ["I-CONSUME", ["%DREF", 1], 1], ["I-SINK", ["%RREF", 9], 1]
-   ], []},
-  {:plus, [0, 33, 9], [], [], [42, 0]},
-  {:plus, [0, 42, 1], [], [], [43, 0]}
-]
-
----
-# Interpreting Haai
-
-- Haai compiles to bytecode (S-expression) to [elixir [nested lists]].
+- {name, sources, dtm, rtm, sinks}.
 - GenServer to maintain state. (eg: dtm, rtm, src)
 - Sources in, Sinks out.
 
@@ -118,9 +114,9 @@ DTM: [{:plus_time_one, [],
 ---
 
 # Higher-Order reactive Programs
-- Haai -> Bytecode -> Haai Vm in Elixir.
-- Robust BEAM VM running the HAAI VM distributed.
-- Capturing coordination problems.
-- Usecase, musical reactors
+- Haai -> Bytecode -> Haai Vm in Elixir -> Distribute Haai Vm
+- BEAM VM runs the HAAI VM in a distributed setting.
+- Researching issues that arise from distributing Haai reactors.
+- Usecase, musical reactors.
 
 
