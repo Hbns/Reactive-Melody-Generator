@@ -1,0 +1,4 @@
+%{
+  "oscx": {:hex, :oscx, "0.1.1", "0574efd722100f9faf58c35bda90b83aa30c3234a5a629642851966d85c91e9c", [:mix], [], "hexpm", "9da138ebd8f542f324b9ffa33156b96270975dfba9844bc0f74181c5107d4ab4"},
+  "supercollider": {:hex, :supercollider, "0.1.5", "2477dda8b2588ddfa553f0650882cd0a53810ce2d68ada7e5fd30eb25a25a4c7", [:mix], [{:oscx, "~> 0.1.0", [hex: :oscx, repo: "hexpm", optional: false]}], "hexpm", "bcfc58778197d378abf3ea2a5ff322f312a2f0eb058abc7e0c2a4ceca60dba98"},
+}
