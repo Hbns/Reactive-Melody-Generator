@@ -10,11 +10,11 @@ defmodule Hvm do
 
   # Start the reaktor orm byte code
   def start(reactor_byte_code) do
-   {:ok, reactors} = match_reactors(reactor_byte_code)
-   {:ok, rti_catalog} = catalog_rti(reactor_byte_code)
+    {:ok, rti_catalog} = catalog_rti(reactor_byte_code)
+    {:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
 
-   IO.inspect(rti_catalog)
-   IO.inspect(reactors)
+    IO.inspect(rti_catalog)
+    IO.inspect(reactors)
 
     IO.puts("done")
 
@@ -118,13 +118,12 @@ defmodule Hvm do
   end
 
   # Match the reactors in the given program (list of reactors)
-  def match_reactors([], reactors \\ []), do: {:ok, reactors}
+  def match_reactors([],rti_catalog ,reactors \\ []), do: {:ok, reactors}
 
-
-  def match_reactors([[name, num_src, num_snk, dti, rti] | tail], reactors) do
+  def match_reactors([[name, num_src, num_snk, dti, rti] | tail],rti_catalog, reactors) do
     # Process the matched element here
     dtm_blocks = make_dtm_blocks(dti)
-    #IO.inspect(dtm_blocks)
+    # IO.inspect(dtm_blocks)
 
     updated_reactors = [{name, dtm_blocks, [], rti} | reactors]
 
@@ -139,12 +138,11 @@ defmodule Hvm do
   def catalog_rti([[name, num_src, num_snk, dti, rti] | tail], rti_catalog) do
     # Process the matched element here
     updated_rti_catalog = Map.put(rti_catalog, name, rti)
-    #IO.inspect(updated_rti_catalog)
+    # IO.inspect(updated_rti_catalog)
 
     # Recursively match the remaining elements in the list
     catalog_rti(tail, updated_rti_catalog)
   end
-
 
   # make memory blocks
   defp make_dtm_blocks([], acc \\ []) do
@@ -152,15 +150,15 @@ defmodule Hvm do
   end
 
   defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], acc) do
-    #{sources, sinks} = Map.get(@source_and_sink_native_reactor_table, native)
+    # {sources, sinks} = Map.get(@source_and_sink_native_reactor_table, native)
     block = {name, [0], [], [], [0]}
     make_dtm_blocks(rest, [block | acc])
   end
 
- # defp make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks) do
- #   # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
- #   {name, [], dti, rti, []}
- # end
+  # defp make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks) do
+  #   # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
+  #   {name, [], dti, rti, []}
+  # end
 
   # Run the reaktor
   defp run_reaktor(dtm, rtm, rti) do
