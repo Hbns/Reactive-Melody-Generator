@@ -10,13 +10,20 @@ defmodule Hvm do
 
   # Start the reaktor orm byte code
   def start(reactor_byte_code) do
-    match_reactors(reactor_byte_code)
-    #[name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
-    #rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
+   {:ok, reactors} = match_reactors(reactor_byte_code)
+   {:ok, rti_catalog} = catalog_rti(reactor_byte_code)
+
+   IO.inspect(rti_catalog)
+   IO.inspect(reactors)
+
+    IO.puts("done")
+
+    # [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
+    # rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
     # asumes dti are only allocmono for native reactors!
-    #nb = make_native_dtm_blocks(dti)
+    # nb = make_native_dtm_blocks(dti)
     # arguments are (dtm,rtm,rti)
-    #run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
+    # run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
   end
 
   # Help to run start
@@ -45,54 +52,115 @@ defmodule Hvm do
     ]
 
     mt = [
-      [:plus_time_one, 1, 1,
-      [["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
-      [["I-LOOKUP", :time], ["I-SUPPLY" ,["%RREF", 1], ["%DREF", 1], 1], ["I-SUPPLY", ["%SRC", 1] ,["%DREF" ,1], 2] ,["I-REACT", ["%DREF", 1]] ,
-      ["I-CONSUME", ["%DREF" ,1], 1] ,["I-SUPPLY", ["%RREF", 5] ,["%DREF" ,2] ,1], ["I-SUPPLY", 1 ,["%DREF" ,2] ,2] ,["I-REACT" ,["%DREF" ,2]] ,
-      ["I-CONSUME" ,["%DREF" ,2], 1] ,["I-SINK", ["%RREF", 9], 1]]],
-      [:plus_time_five, 1, 1,
-      [["I-ALLOCMONO", :plus] ,["I-ALLOCMONO", :plus]],
-      [["I-LOOKUP", :time], ["I-SUPPLY", ["%RREF", 1] ,["%DREF", 1] ,1], ["I-SUPPLY" ,["%SRC", 1],["%DREF" ,1] ,2],["I-REACT" ,["%DREF" ,1]],
-      ["I-CONSUME", ["%DREF" ,1] ,1], ["I-SUPPLY" ,["%RREF", 5] ,["%DREF", 2], 1], ["I-SUPPLY", 5, ["%DREF" ,2], 2] ,["I-REACT", ["%DREF" ,2]],
-      ["I-CONSUME", ["%DREF" ,2], 1] ,["I-SINK", ["%RREF", 9] ,1]]],
-      [:min_time, 2, 1,
-      [["I-ALLOCMONO", :plus_time_one], ["I-ALLOCMONO", :plus_time_five],["I-ALLOCMONO", :minus]],
-      [["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1], ["I-REACT", ["%DREF", 1]] ,["I-SUPPLY", ["%SRC", 2], ["%DREF", 2], 1],
-      ["I-REACT", ["%DREF", 2]] ,["I-CONSUME", ["%DREF", 2] ,1] ,["I-SUPPLY", ["%RREF", 5] ,["%DREF", 3], 1] ,["I-CONSUME", ["%DREF", 1] ,1] ,
-      ["I-SUPPLY", ["%RREF" ,7] ,["%DREF", 3] ,2], ["I-REACT", ["%DREF", 3]], ["I-CONSUME", ["%DREF", 3], 1], ["I-SINK", ["%RREF", 10], 1]]]
+      [
+        :plus_time_one,
+        1,
+        1,
+        [["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
+        [
+          ["I-LOOKUP", :time],
+          ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
+          ["I-SUPPLY", 1, ["%DREF", 2], 2],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 9], 1]
+        ]
+      ],
+      [
+        :plus_time_five,
+        1,
+        1,
+        [["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
+        [
+          ["I-LOOKUP", :time],
+          ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
+          ["I-SUPPLY", 5, ["%DREF", 2], 2],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 9], 1]
+        ]
+      ],
+      [
+        :min_time,
+        2,
+        1,
+        [
+          ["I-ALLOCMONO", :plus_time_one],
+          ["I-ALLOCMONO", :plus_time_five],
+          ["I-ALLOCMONO", :minus]
+        ],
+        [
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-SUPPLY", ["%SRC", 2], ["%DREF", 2], 1],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 3], 1],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 7], ["%DREF", 3], 2],
+          ["I-REACT", ["%DREF", 3]],
+          ["I-CONSUME", ["%DREF", 3], 1],
+          ["I-SINK", ["%RREF", 10], 1]
+        ]
       ]
+    ]
 
+    # reverse the bytecode list to start with the 'main' reactor
     start(mt)
   end
 
   # Match the reactors in the given program (list of reactors)
-  def match_reactors([]), do: :no_match
+  def match_reactors([], reactors \\ []), do: {:ok, reactors}
 
-  def match_reactors([ [name, num_src, num_snk, dti, rti] | tail ]) do
+
+  def match_reactors([[name, num_src, num_snk, dti, rti] | tail], reactors) do
     # Process the matched element here
-    IO.puts("seen")
+    dtm_blocks = make_dtm_blocks(dti)
+    #IO.inspect(dtm_blocks)
+
+    updated_reactors = [{name, dtm_blocks, [], rti} | reactors]
 
     # Recursively match the remaining elements in the list
-    match_reactors(tail)
+    match_reactors(tail, updated_reactors)
   end
 
+  # Make key value library key: reactor name, value: rti
+
+  def catalog_rti([], rti_catalog \\ %{}), do: {:ok, rti_catalog}
+
+  def catalog_rti([[name, num_src, num_snk, dti, rti] | tail], rti_catalog) do
+    # Process the matched element here
+    updated_rti_catalog = Map.put(rti_catalog, name, rti)
+    #IO.inspect(updated_rti_catalog)
+
+    # Recursively match the remaining elements in the list
+    catalog_rti(tail, updated_rti_catalog)
+  end
 
 
   # make memory blocks
-  defp make_native_dtm_blocks([], acc \\ []) do
+  defp make_dtm_blocks([], acc \\ []) do
     Enum.reverse(acc)
   end
 
-  defp make_native_dtm_blocks([["I-ALLOCMONO", native] | rest], acc) do
-    {sources, sinks} = Map.get(@source_and_sink_native_reactor_table, native)
-    block = {native, [0], [], [], [0]}
-    make_native_dtm_blocks(rest, [block | acc])
+  defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], acc) do
+    #{sources, sinks} = Map.get(@source_and_sink_native_reactor_table, native)
+    block = {name, [0], [], [], [0]}
+    make_dtm_blocks(rest, [block | acc])
   end
 
-  defp make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks) do
-    # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
-    {name, [], dti, rti, []}
-  end
+ # defp make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks) do
+ #   # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
+ #   {name, [], dti, rti, []}
+ # end
 
   # Run the reaktor
   defp run_reaktor(dtm, rtm, rti) do
@@ -158,5 +226,4 @@ defmodule Hvm do
     Memory.sink(from, from_index, sink_index, rti_index)
     IO.puts("sink, rti_index: #{rti_index}")
   end
-
 end
