@@ -1,4 +1,4 @@
-defmodule Haai do
+defmodule Hvm do
   # definitions
 
   # module attributes, can only be static.
@@ -10,12 +10,13 @@ defmodule Haai do
 
   # Start the reaktor orm byte code
   def start(reactor_byte_code) do
-    [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
-    rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
+    match_reactors(reactor_byte_code)
+    #[name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
+    #rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
     # asumes dti are only allocmono for native reactors!
-    nb = make_native_dtm_blocks(dti)
+    #nb = make_native_dtm_blocks(dti)
     # arguments are (dtm,rtm,rti)
-    run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
+    #run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
   end
 
   # Help to run start
@@ -46,17 +47,36 @@ defmodule Haai do
     mt = [
       [:plus_time_one, 1, 1,
       [["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
-      [["I-LOOKUP", :time], ["I-SUPPLY" ,["%RREF", 1], ["%DREF", 1], 1] ["I-SUPPLY", ["%SRC", 1] ,["%DREF" ,1], 2] ,["I-REACT", ["%DREF", 1]] ["I-CONSUME", ["%DREF" ,1], 1] ["I-SUPPLY", ["%RREF", 5] ,["%DREF" ,2] ,1] ["I-SUPPLY", 1 ,["%DREF" ,2] ,2] ,["I-REACT" ,["%DREF" ,2]] ,["I-CONSUME" ,["%DREF" ,2], 1] ,["I-SINK", ["%RREF", 9], 1]]]
+      [["I-LOOKUP", :time], ["I-SUPPLY" ,["%RREF", 1], ["%DREF", 1], 1], ["I-SUPPLY", ["%SRC", 1] ,["%DREF" ,1], 2] ,["I-REACT", ["%DREF", 1]] ,
+      ["I-CONSUME", ["%DREF" ,1], 1] ,["I-SUPPLY", ["%RREF", 5] ,["%DREF" ,2] ,1], ["I-SUPPLY", 1 ,["%DREF" ,2] ,2] ,["I-REACT" ,["%DREF" ,2]] ,
+      ["I-CONSUME" ,["%DREF" ,2], 1] ,["I-SINK", ["%RREF", 9], 1]]],
       [:plus_time_five, 1, 1,
-      [["I-ALLOCMONO" :plus] ["I-ALLOCMONO" :plus]],
-      [["I-LOOKUP", :time], ["I-SUPPLY", ["%RREF", 1] ,["%DREF", 1] 1] ["I-SUPPLY" ,["%SRC", 1],["%DREF" ,1] 2] ["I-REACT" ,["%DREF" ,1]],["I-CONSUME", ["%DREF" ,1] 1], ["I-SUPPLY" ,["%RREF", 5] ,["%DREF", 2] 1], ["I-SUPPLY", 5, ["%DREF" ,2] 2] ,["I-REACT", ["%DREF" ,2]], ["I-CONSUME", ["%DREF" ,2] 1] ,["I-SINK", ["%RREF", 9] ,1]]]
+      [["I-ALLOCMONO", :plus] ,["I-ALLOCMONO", :plus]],
+      [["I-LOOKUP", :time], ["I-SUPPLY", ["%RREF", 1] ,["%DREF", 1] ,1], ["I-SUPPLY" ,["%SRC", 1],["%DREF" ,1] ,2],["I-REACT" ,["%DREF" ,1]],
+      ["I-CONSUME", ["%DREF" ,1] ,1], ["I-SUPPLY" ,["%RREF", 5] ,["%DREF", 2], 1], ["I-SUPPLY", 5, ["%DREF" ,2], 2] ,["I-REACT", ["%DREF" ,2]],
+      ["I-CONSUME", ["%DREF" ,2], 1] ,["I-SINK", ["%RREF", 9] ,1]]],
       [:min_time, 2, 1,
-      [["I-ALLOCMONO", :plus_time_one] ["I-ALLOCMONO", :plus_time_five]],
-      [["I-ALLOCMONO", :minus]] [["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1], ["I-REACT", ["%DREF", 1]] ,["I-SUPPLY", ["%SRC", 2], ["%DREF", 2], 1] ["I-REACT", ["%DREF", 2]] ,["I-CONSUME", ["%DREF", 2] ,1] ,["I-SUPPLY", ["%RREF", 5] ,["%DREF", 3], 1] ,["I-CONSUME," ["%DREF", 1] ,1] ,["I-SUPPLY" ["%RREF" ,7] ,["%DREF", 3] ,2], ["I-REACT", ["%DREF", 3]], ["I-CONSUME", ["%DREF", 3], 1] ["I-SINK", ["%RREF", 10], 1]]]
+      [["I-ALLOCMONO", :plus_time_one], ["I-ALLOCMONO", :plus_time_five],["I-ALLOCMONO", :minus]],
+      [["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1], ["I-REACT", ["%DREF", 1]] ,["I-SUPPLY", ["%SRC", 2], ["%DREF", 2], 1],
+      ["I-REACT", ["%DREF", 2]] ,["I-CONSUME", ["%DREF", 2] ,1] ,["I-SUPPLY", ["%RREF", 5] ,["%DREF", 3], 1] ,["I-CONSUME", ["%DREF", 1] ,1] ,
+      ["I-SUPPLY", ["%RREF" ,7] ,["%DREF", 3] ,2], ["I-REACT", ["%DREF", 3]], ["I-CONSUME", ["%DREF", 3], 1], ["I-SINK", ["%RREF", 10], 1]]]
       ]
 
-    start(pto)
+    start(mt)
   end
+
+  # Match the reactors in the given program (list of reactors)
+  def match_reactors([]), do: :no_match
+
+  def match_reactors([ [name, num_src, num_snk, dti, rti] | tail ]) do
+    # Process the matched element here
+    IO.puts("seen")
+
+    # Recursively match the remaining elements in the list
+    match_reactors(tail)
+  end
+
+
 
   # make memory blocks
   defp make_native_dtm_blocks([], acc \\ []) do
