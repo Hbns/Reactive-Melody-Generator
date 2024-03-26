@@ -10,20 +10,21 @@ defmodule Hvm do
 
   # Start the reaktor orm byte code
   def start(reactor_byte_code) do
+    # rti_catalog of reactor_name and reactor_reaction time instructions.
     {:ok, rti_catalog} = catalog_rti(reactor_byte_code)
+    # contains all reactors, starting with main,
+    # only need the main since it has rti for all other reactors in dtm??
     {:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
+    [{_name, dtm_blocks, [], rti} | _tail] = reactors
 
-    IO.inspect(rti_catalog)
-    IO.inspect(reactors)
-
-    IO.puts("done")
+    #IO.inspect(rti_catalog)
 
     # [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
     # rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
     # asumes dti are only allocmono for native reactors!
     # nb = make_native_dtm_blocks(dti)
     # arguments are (dtm,rtm,rti)
-    # run_reaktor([rb | nb], List.duplicate(0, length(rti)), rti)
+    run_reaktor(dtm_blocks, List.duplicate(0, length(rti)), rti)
   end
 
   # Help to run start
@@ -114,51 +115,46 @@ defmodule Hvm do
     ]
 
     # reverse the bytecode list to start with the 'main' reactor
+    # We assume the program is written with the main reactor as last and the first reactor as first!!
     start(mt)
   end
 
   # Match the reactors in the given program (list of reactors)
-  def match_reactors([],rti_catalog ,reactors \\ []), do: {:ok, reactors}
+  def match_reactors([], _rti_catalog ,reactors \\ []), do: {:ok, reactors}
 
-  def match_reactors([[name, num_src, num_snk, dti, rti] | tail],rti_catalog, reactors) do
-    # Process the matched element here
-    dtm_blocks = make_dtm_blocks(dti)
-    # IO.inspect(dtm_blocks)
+  def match_reactors([[name, _num_src, _num_snk, dti, rti] | tail], rti_catalog, reactors) do
+    # make deployment time memory (dtm) blocks for the reactor.
+    dtm_blocks = make_dtm_blocks(dti, rti_catalog)
 
+    # store the dtm blocks in dtm memory.
     updated_reactors = [{name, dtm_blocks, [], rti} | reactors]
 
-    # Recursively match the remaining elements in the list
-    match_reactors(tail, updated_reactors)
+    # recurse and accumulate...
+    match_reactors(tail, rti_catalog, updated_reactors)
   end
 
-  # Make key value library key: reactor name, value: rti
-
+  # Make key value map, key: reactor name, value: reaction time instructions(rti)
   def catalog_rti([], rti_catalog \\ %{}), do: {:ok, rti_catalog}
 
   def catalog_rti([[name, num_src, num_snk, dti, rti] | tail], rti_catalog) do
-    # Process the matched element here
+    # add rti to the map.
     updated_rti_catalog = Map.put(rti_catalog, name, rti)
-    # IO.inspect(updated_rti_catalog)
 
-    # Recursively match the remaining elements in the list
+    # recurse and accumulate...
     catalog_rti(tail, updated_rti_catalog)
   end
 
-  # make memory blocks
-  defp make_dtm_blocks([], acc \\ []) do
-    Enum.reverse(acc)
-  end
+  # make deployment time memory (dtm) blocks
+  defp make_dtm_blocks([], _rti_catalog, acc \\ []), do:  Enum.reverse(acc)
 
-  defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], acc) do
-    # {sources, sinks} = Map.get(@source_and_sink_native_reactor_table, native)
-    block = {name, [0], [], [], [0]}
-    make_dtm_blocks(rest, [block | acc])
+  defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], rti_catalog, acc) do
+    # load rti into dtm block, if rti not found, state :native to show this is a native reactor.
+    rti = Map.get(rti_catalog, name, :native)
+    # make the dtm block
+    block = {name, [0], [], rti, [0]}
+    # recurse for each dtm block to be allocated
+    make_dtm_blocks(rest, rti_catalog, [block | acc])
   end
-
-  # defp make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks) do
-  #   # {name, [List.duplicate(0, number_of_sources)], dti, rti, List.duplicate(0, number_of_sinks)}
-  #   {name, [], dti, rti, []}
-  # end
 
   # Run the reaktor
   defp run_reaktor(dtm, rtm, rti) do
