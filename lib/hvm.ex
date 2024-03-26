@@ -171,8 +171,9 @@ defmodule Hvm do
     Memory.start_link(dtm, rtm, [1, 2, 3, 4])
     Memory.show_state()
     # I use sleeps to print nicely in console..
-    Process.sleep(1000)
+    #Process.sleep(1000)
     # execute each rti
+
     Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
       hrr(instruction, rti_index)
       Memory.show_state()

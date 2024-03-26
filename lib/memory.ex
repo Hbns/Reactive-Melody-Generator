@@ -153,10 +153,10 @@ defmodule Memory do
           {name, sources, dti, rti, sink} ->
             # IO.inspect(rti)
             Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
-              IO.puts("reacting index: #{rti_index}")
+              IO.puts("#{name}, RFD_idx: #{rti_index}")
               Hvm.hrr(instruction, rti_index)
-              Memory.show_state()
-              Process.sleep(100)
+              #Memory.show_state()
+              #
             end)
 
             {:noreply, {dtm, rtm, src}}
@@ -190,7 +190,9 @@ defmodule Memory do
           {_block_name, _sources, _dti, _rti, sink} ->
             consume = Enum.at(sink, sink_index - 1)
             # place at index, position of this instruction in rti (starts at 1 in haai)
-            {:noreply, {dtm, List.insert_at(rtm, rti_index + 1, consume), src}}
+            updated_rtm = List.insert_at(rtm, rti_index + 1, consume)
+            IO.puts("updated rtm now")
+            {:noreply, {dtm, updated_rtm, src}}
 
           _ ->
             {:error, "dtm_block at position #{from_index} does not match the expected format"}
