@@ -161,14 +161,14 @@ defmodule Hvm do
     # reset the genserver (state) when starting
     case GenServer.whereis(:memory) do
       nil ->
-        IO.puts("GenServer :memory is not running.")
+        IO.puts("GenServer :memory is not running, starting now...")
 
       pid ->
         GenServer.stop(:memory)
-        IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully.")
+        IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully, restarting now...")
     end
 
-    Memory.start_link(dtm, rtm, [0, 9])
+    Memory.start_link(dtm, rtm, [1, 2, 3, 4])
     Memory.show_state()
     # I use sleeps to print nicely in console..
     Process.sleep(1000)
@@ -183,7 +183,7 @@ defmodule Hvm do
   # Help running the reactor = hrr
   # recognize the instruction and call appropriate function in Memory module
 
-  defp hrr(["I-LOOKUP", signal], rti_index) do
+  def hrr(["I-LOOKUP", signal], rti_index) do
     value = Map.get(@signal_table, signal)
     # t = System.os_time()
     # idex 1 hardcoded.
@@ -191,31 +191,31 @@ defmodule Hvm do
     IO.puts("lookup, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index)
+  def hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index)
        when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_from_location(from, value, to, destination, index)
     IO.puts("supply_from_location, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-SUPPLY", value, [to, destination], index], rti_index)
+  def hrr(["I-SUPPLY", value, [to, destination], index], rti_index)
        when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_constant(value, to, destination, index)
     IO.puts("supply_constant, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-REACT", [at, at_index]], rti_index)
+  def hrr(["I-REACT", [at, at_index]], rti_index)
        when is_integer(at_index) do
     Memory.react(at, at_index)
     IO.puts("react, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-CONSUME", [from, from_index], sink_index], rti_index)
+  def hrr(["I-CONSUME", [from, from_index], sink_index], rti_index)
        when is_integer(from_index) and is_integer(sink_index) do
     Memory.consume(from, from_index, sink_index, rti_index)
     IO.puts("consume, rti_index: #{rti_index}")
   end
 
-  defp hrr(["I-SINK", [from, from_index], sink_index], rti_index)
+  def hrr(["I-SINK", [from, from_index], sink_index], rti_index)
        when is_integer(from_index) and is_integer(sink_index) do
     Memory.sink(from, from_index, sink_index, rti_index)
     IO.puts("sink, rti_index: #{rti_index}")

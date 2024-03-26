@@ -67,13 +67,13 @@ defmodule Memory do
       "%SRC" ->
         source_value = Enum.at(src, from_index)
 
-        case Enum.fetch(dtm, to_index) do
+        case Enum.fetch(dtm, to_index - 1) do
           {:ok, dtm_block} ->
             case dtm_block do
               {native, sources, dti, rti, sinks} when is_list(sources) ->
                 updated_sources = List.insert_at(sources, to_source, source_value)
                 updated_dtm_block = {native, updated_sources, dti, rti, sinks}
-                updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
+                updated_dtm = List.replace_at(dtm, to_index - 1, updated_dtm_block)
                 {:noreply, {updated_dtm, rtm, src}}
 
               _ ->
@@ -134,26 +134,39 @@ defmodule Memory do
   # React
   @impl true
   def handle_cast({:react, at, at_index}, {dtm, rtm, src}) do
-    case Enum.fetch(dtm, at_index) do
+    case Enum.fetch(dtm, at_index - 1) do
       {:ok, dtm_block} ->
         case dtm_block do
-          {native, sources, dti, rti, sink} ->
+          # dtm block witouth rti (native reactor)
+          {native, sources, dti, :native, sink} ->
             # apply the native function
             src1 = Enum.at(sources, 1)
             src2 = Enum.at(sources, 2)
             result = apply_native_operation(native, src1, src2)
             # save result to sink
             updated_sink = List.insert_at(sink, 0, result)
-            updated_dtm_block = {native, sources, dti, rti, updated_sink}
-            updated_dtm = List.replace_at(dtm, at_index, updated_dtm_block)
+            updated_dtm_block = {native, sources, dti, :native, updated_sink}
+            updated_dtm = List.replace_at(dtm, at_index - 1, updated_dtm_block)
             {:noreply, {updated_dtm, rtm, src}}
 
+          # dtm block with rti
+          {name, sources, dti, rti, sink} ->
+            # IO.inspect(rti)
+            Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
+              IO.puts("reacting index: #{rti_index}")
+              Hvm.hrr(instruction, rti_index)
+              Memory.show_state()
+              Process.sleep(100)
+            end)
+
+            {:noreply, {dtm, rtm, src}}
+
           _ ->
-            {:error, "dtm_block at position #{at_index} does not match the expected format"}
+            {:error, "dtm_block at position #{at_index - 1} does not match the expected format"}
         end
 
       :error ->
-        {:error, "dtm_block not found at position #{at_index}"}
+        {:error, "dtm_block not found at position #{at_index - 1}"}
     end
   end
 
@@ -177,7 +190,7 @@ defmodule Memory do
           {_block_name, _sources, _dti, _rti, sink} ->
             consume = Enum.at(sink, sink_index - 1)
             # place at index, position of this instruction in rti (starts at 1 in haai)
-            {:noreply, {dtm, List.insert_at(rtm, rti_index + 1, consume) , src}}
+            {:noreply, {dtm, List.insert_at(rtm, rti_index + 1, consume), src}}
 
           _ ->
             {:error, "dtm_block at position #{from_index} does not match the expected format"}
@@ -191,12 +204,10 @@ defmodule Memory do
   # Sink
   @impl true
   def handle_cast({:sink, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
+    sink_value = Enum.at(rtm, rti_index)
+    # place at index, position of this instruction in rti (starts at 1 in haai)
 
-            sink_value = Enum.at(rtm, rti_index)
-            # place at index, position of this instruction in rti (starts at 1 in haai)
-
-            IO.puts("returning sink_value: #{sink_value}")
-            {:noreply, {dtm, rtm , src}}
-
+    IO.puts("returning sink_value: #{sink_value}")
+    {:noreply, {dtm, rtm, src}}
   end
 end
