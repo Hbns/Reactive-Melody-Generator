@@ -30,7 +30,7 @@ defmodule Hvm do
   # Help to run start
   def run_start do
     # test reactor:
-    pto = [
+    pto = [[
       :plus_time_one,
       1,
       1,
@@ -50,7 +50,7 @@ defmodule Hvm do
         ["I-CONSUME", ["%DREF", 2], 1],
         ["I-SINK", ["%RREF", 9], 1]
       ]
-    ]
+    ]]
 
     mt = [
       [
@@ -116,7 +116,7 @@ defmodule Hvm do
 
     # reverse the bytecode list to start with the 'main' reactor
     # We assume the program is written with the main reactor as last and the first reactor as first!!
-    start(mt)
+    start(pto)
   end
 
   # Match the reactors in the given program (list of reactors)

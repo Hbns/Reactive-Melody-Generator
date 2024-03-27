@@ -151,13 +151,14 @@ defmodule Memory do
 
           # dtm block with rti
           {name, sources, dti, rti, sink} ->
-            # IO.inspect(rti)
-            Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
-              IO.puts("#{name}, RFD_idx: #{rti_index}")
-              Hvm.hrr(instruction, rti_index)
+            IO.puts("react the block")
+           # Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
+            #  IO.puts("#{name}, RFD_idx: #{rti_index}")
+             # Hvm.hrr(instruction, rti_index)
               #Memory.show_state()
               #
-            end)
+
+            #end)
 
             {:noreply, {dtm, rtm, src}}
 
@@ -207,7 +208,7 @@ defmodule Memory do
   @impl true
   def handle_cast({:sink, from, from_index, sink_index, rti_index}, {dtm, rtm, src}) do
     sink_value = Enum.at(rtm, rti_index)
-    # place at index, position of this instruction in rti (starts at 1 in haai)
+    # put sink_value in sink reaktor...
 
     IO.puts("returning sink_value: #{sink_value}")
     {:noreply, {dtm, rtm, src}}
