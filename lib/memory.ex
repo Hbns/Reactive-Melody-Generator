@@ -24,7 +24,7 @@ defmodule Memory do
   end
 
   def react(at, at_index) do
-    GenServer.cast(:memory, {:react, at, at_index})
+    GenServer.call(:memory, {:react, at, at_index})
   end
 
   def consume(from, from_index, sink_index, rti_index) do
@@ -136,7 +136,7 @@ defmodule Memory do
 
   # React
   @impl true
-  def handle_cast({:react, at, at_index}, {dtm, rtm, src, snk}) do
+  def handle_call({:react, at, at_index}, from, {dtm, rtm, src, snk}) do
     case Enum.fetch(dtm, at_index - 1) do
       {:ok, dtm_block} ->
         case dtm_block do
@@ -150,11 +150,11 @@ defmodule Memory do
             updated_sink = List.insert_at(sink, 0, result)
             updated_dtm_block = {native, sources, dti, :native, updated_sink}
             updated_dtm = List.replace_at(dtm, at_index - 1, updated_dtm_block)
-            {:noreply, {updated_dtm, rtm, src, snk}}
+            {:reply, :ok, {updated_dtm, rtm, src, snk}}
 
           # dtm block with rti
           {name, sources, dti, rti, sink} ->
-            IO.puts("react the block")
+            IO.puts("react on user defined reactor")
            # Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
             #  IO.puts("#{name}, RFD_idx: #{rti_index}")
              # Hvm.hrr(instruction, rti_index)
@@ -163,7 +163,7 @@ defmodule Memory do
 
             #end)
 
-            {:noreply, {dtm, rtm, src, snk}}
+            {:reply, :ok,{dtm, rtm, src, snk}}
 
           _ ->
             {:error, "dtm_block at position #{at_index - 1} does not match the expected format"}
@@ -195,7 +195,6 @@ defmodule Memory do
             consume = Enum.at(sink, sink_index - 1)
             # place at index, position of this instruction in rti (starts at 1 in haai)
             updated_rtm = List.insert_at(rtm, rti_index + 1, consume)
-            IO.puts("updated rtm now")
             {:noreply, {dtm, updated_rtm, src, snk}}
 
           _ ->

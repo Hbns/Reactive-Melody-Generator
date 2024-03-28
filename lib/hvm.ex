@@ -17,7 +17,7 @@ defmodule Hvm do
     {:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
     [{_name, dtm_blocks, [], rti} | _tail] = reactors
 
-    #IO.inspect(rti_catalog)
+    # IO.inspect(rti_catalog)
 
     # [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
     # rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
@@ -30,27 +30,29 @@ defmodule Hvm do
   # Help to run start
   def run_start do
     # test reactor:
-    pto = [[
-      :plus_time_one,
-      1,
-      1,
+    pto = [
       [
-        ["I-ALLOCMONO", :plus],
-        ["I-ALLOCMONO", :plus]
-      ],
-      [
-        ["I-LOOKUP", :time],
-        ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
-        ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
-        ["I-REACT", ["%DREF", 1]],
-        ["I-CONSUME", ["%DREF", 1], 1],
-        ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
-        ["I-SUPPLY", 1, ["%DREF", 2], 2],
-        ["I-REACT", ["%DREF", 2]],
-        ["I-CONSUME", ["%DREF", 2], 1],
-        ["I-SINK", ["%RREF", 9], 1]
+        :plus_time_one,
+        1,
+        1,
+        [
+          ["I-ALLOCMONO", :plus],
+          ["I-ALLOCMONO", :plus]
+        ],
+        [
+          ["I-LOOKUP", :time],
+          ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
+          ["I-SUPPLY", 1, ["%DREF", 2], 2],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 9], 1]
+        ]
       ]
-    ]]
+    ]
 
     mt = [
       [
@@ -120,7 +122,7 @@ defmodule Hvm do
   end
 
   # Match the reactors in the given program (list of reactors)
-  def match_reactors([], _rti_catalog ,reactors \\ []), do: {:ok, reactors}
+  def match_reactors([], _rti_catalog, reactors \\ []), do: {:ok, reactors}
 
   def match_reactors([[name, _num_src, _num_snk, dti, rti] | tail], rti_catalog, reactors) do
     # make deployment time memory (dtm) blocks for the reactor.
@@ -145,7 +147,7 @@ defmodule Hvm do
   end
 
   # make deployment time memory (dtm) blocks
-  defp make_dtm_blocks([], _rti_catalog, acc \\ []), do:  Enum.reverse(acc)
+  defp make_dtm_blocks([], _rti_catalog, acc \\ []), do: Enum.reverse(acc)
 
   defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], rti_catalog, acc) do
     # load rti into dtm block, if rti not found, state :native to show this is a native reactor.
@@ -165,13 +167,16 @@ defmodule Hvm do
 
       pid ->
         GenServer.stop(:memory)
-        IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully, restarting now...")
+
+        IO.puts(
+          "GenServer :memory (PID: #{inspect(pid)}) stopped successfully, restarting now..."
+        )
     end
 
-    Memory.start_link(dtm, rtm, [1, 2, 3, 4],[0])
+    Memory.start_link(dtm, rtm, [1, 2, 3, 4], [0])
     Memory.show_state()
     # I use sleeps to print nicely in console..
-    #Process.sleep(1000)
+    # Process.sleep(1000)
     # execute each rti
 
     Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
@@ -193,31 +198,36 @@ defmodule Hvm do
   end
 
   def hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index)
-       when is_integer(value) and is_integer(destination) and is_integer(index) do
+      when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_from_location(from, value, to, destination, index)
     IO.puts("supply_from_location, rti_index: #{rti_index}")
   end
 
   def hrr(["I-SUPPLY", value, [to, destination], index], rti_index)
-       when is_integer(value) and is_integer(destination) and is_integer(index) do
+      when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_constant(value, to, destination, index)
     IO.puts("supply_constant, rti_index: #{rti_index}")
   end
 
-  def hrr(["I-REACT", [at, at_index]], rti_index)
-       when is_integer(at_index) do
-    Memory.react(at, at_index)
-    IO.puts("react, rti_index: #{rti_index}")
+  # this is a call into genserver (not cast)
+  def hrr(["I-REACT", [at, at_index]], rti_index) when is_integer(at_index) do
+    case Memory.react(at, at_index) do
+      :ok ->
+        IO.puts("react succeeded, rti_index: #{rti_index}")
+
+      _ ->
+        IO.puts("react failed")
+    end
   end
 
   def hrr(["I-CONSUME", [from, from_index], sink_index], rti_index)
-       when is_integer(from_index) and is_integer(sink_index) do
+      when is_integer(from_index) and is_integer(sink_index) do
     Memory.consume(from, from_index, sink_index, rti_index)
     IO.puts("consume, rti_index: #{rti_index}")
   end
 
   def hrr(["I-SINK", [from, from_index], sink_index], rti_index)
-       when is_integer(from_index) and is_integer(sink_index) do
+      when is_integer(from_index) and is_integer(sink_index) do
     Memory.sink(from, from_index, sink_index, rti_index)
     IO.puts("sink, rti_index: #{rti_index}")
   end
