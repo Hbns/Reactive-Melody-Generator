@@ -168,7 +168,7 @@ defmodule Hvm do
         IO.puts("GenServer :memory (PID: #{inspect(pid)}) stopped successfully, restarting now...")
     end
 
-    Memory.start_link(dtm, rtm, [1, 2, 3, 4])
+    Memory.start_link(dtm, rtm, [1, 2, 3, 4],[0])
     Memory.show_state()
     # I use sleeps to print nicely in console..
     #Process.sleep(1000)
