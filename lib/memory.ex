@@ -10,6 +10,9 @@ defmodule Memory do
   def show_state do
     GenServer.cast(:memory, :show_state)
   end
+  def show_state_blue do
+    GenServer.cast(:memory, :show_state_blue)
+  end
 
   def save_lookup(at, value) do
     GenServer.cast(:memory, {:save_lookup, at, value})
@@ -53,6 +56,19 @@ defmodule Memory do
     {:noreply, {dtm, rtm, src, snk}}
   end
 
+  @impl true
+  def handle_cast(:show_state_blue, {dtm, rtm, src, snk}) do
+    blue = IO.ANSI.blue
+    reset = IO.ANSI.reset
+
+    IO.inspect(dtm, label: blue <> "DTM" <> reset)
+    IO.inspect(rtm, label: blue <> "RTM" <> reset)
+    IO.inspect(src, label: blue <> "SRC" <> reset)
+    IO.inspect(snk, label: blue <> "SNK" <> reset)
+
+    {:noreply, {dtm, rtm, src, snk}}
+  end
+
   # Save a lookup
   @impl true
   def handle_cast({:save_lookup, at, value}, {dtm, rtm, src, snk}) do
@@ -65,6 +81,7 @@ defmodule Memory do
   @impl true
   def handle_cast({:supply, from, from_index, to, into_index, to_source}, {dtm, rtm, src, snk}) do
     to_index = into_index - 1
+
     case from do
       "%SRC" ->
         source_value = Enum.at(src, from_index)
@@ -115,6 +132,7 @@ defmodule Memory do
   @impl true
   def handle_cast({:supply_constant, constant, to, into_index, to_source}, {dtm, rtm, src, snk}) do
     to_index = into_index - 1
+
     case Enum.fetch(dtm, to_index) do
       {:ok, dtm_block} ->
         case dtm_block do
@@ -155,15 +173,14 @@ defmodule Memory do
           # dtm block with rti
           {name, sources, dti, rti, sink} ->
             IO.puts("react on user defined reactor")
-           # Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
-            #  IO.puts("#{name}, RFD_idx: #{rti_index}")
-             # Hvm.hrr(instruction, rti_index)
-              #Memory.show_state()
-              #
 
+            #Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
+            #  Hvm.hrr(instruction, rti_index)
+            #  Memory.show_state_blue()
+            #  Process.sleep(100)
             #end)
 
-            {:reply, :ok,{dtm, rtm, src, snk}}
+            {:reply, :ok, {dtm, rtm, src, snk}}
 
           _ ->
             {:error, "dtm_block at position #{at_index - 1} does not match the expected format"}

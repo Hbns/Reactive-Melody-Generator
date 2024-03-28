@@ -118,7 +118,7 @@ defmodule Hvm do
 
     # reverse the bytecode list to start with the 'main' reactor
     # We assume the program is written with the main reactor as last and the first reactor as first!!
-    start(pto)
+    start(mt)
   end
 
   # Match the reactors in the given program (list of reactors)
