@@ -8,6 +8,10 @@ defmodule Hvm do
   @signal_table %{time: 33}
   @sources %{1 => 0, 2 => 0}
 
+  # Need one gen server per deployment
+  # vm needs to know about the reactors and there deployments.
+  # on reactor can be deployed many times, like class and object
+
   # Start the reaktor orm byte code
   def start(reactor_byte_code) do
     # rti_catalog of reactor_name and reactor_reaction time instructions.
