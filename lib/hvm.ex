@@ -14,21 +14,27 @@ defmodule Hvm do
 
   # Start the reaktor orm byte code
   def start(reactor_byte_code) do
-    # rti_catalog of reactor_name and reactor_reaction time instructions.
-    {:ok, rti_catalog} = catalog_rti(reactor_byte_code)
+    # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
+    {:ok, reactors_catalog} = catalog_reactors(reactor_byte_code)
+    # read main reactor and make necessary reactor deployments
+    deployment_data = find_deployments(reactors_catalog)
+    #deployment_data is dti, make key value for the deployments
+    ##----How to go about deploying, eacht deployment might need to deploy more reactors?!
+    # or deploy all reactors in one 'deployment map'?
+
     # contains all reactors, starting with main,
     # only need the main since it has rti for all other reactors in dtm??
-    {:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
-    [{_name, dtm_blocks, [], rti} | _tail] = reactors
+    #{:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
+    #[{_name, dtm_blocks, [], rti} | _tail] = reactors
 
-    # IO.inspect(rti_catalog)
+    IO.inspect(main_reactor)
 
     # [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
     # rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
     # asumes dti are only allocmono for native reactors!
     # nb = make_native_dtm_blocks(dti)
     # arguments are (dtm,rtm,rti)
-    run_reaktor(dtm_blocks, List.duplicate(0, length(rti)), rti)
+    #run_reaktor(dtm_blocks, List.duplicate(0, length(rti)), rti)
   end
 
   # Help to run start
@@ -96,13 +102,13 @@ defmodule Hvm do
         ]
       ],
       [
-        :min_time,
+        :main,
         2,
         1,
         [
           ["I-ALLOCMONO", :plus_time_one],
           ["I-ALLOCMONO", :plus_time_five],
-          ["I-ALLOCMONO", :minus]
+          ["I-ALLOCMONO", :main]
         ],
         [
           ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1],
@@ -120,8 +126,6 @@ defmodule Hvm do
       ]
     ]
 
-    # reverse the bytecode list to start with the 'main' reactor
-    # We assume the program is written with the main reactor as last and the first reactor as first!!
     start(mt)
   end
 
@@ -139,16 +143,29 @@ defmodule Hvm do
     match_reactors(tail, rti_catalog, updated_reactors)
   end
 
-  # Make key value map, key: reactor name, value: reaction time instructions(rti)
-  def catalog_rti([], rti_catalog \\ %{}), do: {:ok, rti_catalog}
+  # Make key value map, key = reactor_name and value = reactor -> {nos_src, nos_snk, dti, rti}.
+  defp catalog_reactors([], reactors_catalog \\ %{}), do: {:ok, reactors_catalog}
 
-  def catalog_rti([[name, num_src, num_snk, dti, rti] | tail], rti_catalog) do
-    # add rti to the map.
-    updated_rti_catalog = Map.put(rti_catalog, name, rti)
+  defp catalog_reactors([[name, nos_src, nos_snk, dti, rti] | tail], reactors_catalog) do
+    # add reactor to the map.
+    updated_reactors_catalog = Map.put(reactors_catalog, name, {nos_src, nos_snk, dti, rti} )
 
     # recurse and accumulate...
-    catalog_rti(tail, updated_rti_catalog)
+    catalog_reactors(tail, updated_reactors_catalog)
   end
+
+  # returns the main reactor
+  defp find_deployments(reactors_catalog) do
+    {nos_src, nos_snk, dti, rti} = Map.get(reactors_catalog, :main)
+    dti
+  end
+
+  defp make_deployment_name(atom, number) when is_atom(atom) and is_integer(number) do
+      new_atom = "#{Atom.to_string(atom)}_#{number}"
+      String.to_atom(new_atom)
+    end
+  end
+
 
   # make deployment time memory (dtm) blocks
   defp make_dtm_blocks([], _rti_catalog, acc \\ []), do: Enum.reverse(acc)
