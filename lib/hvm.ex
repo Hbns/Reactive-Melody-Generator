@@ -34,25 +34,17 @@ defmodule Hvm do
 
     IO.inspect(deployment_pids)
 
+    Enum.each(deployment_pids, fn {reactor_name, deployment_pid} ->
+      Memory.load_pids(deployment_pid, deployment_pids)
+    end)
+
+    main_pid = Map.get(deployment_pids, :main)
+    run_rti(main_pid)
+
     # deployment_data = find_deployments(reactors_catalog)
     # deployment_data is dti, make key value for the deployments
     ## ----How to go about deploying, eacht deployment might need to deploy more reactors?!
     # or deploy all reactors in one 'deployment map'?
-
-    # contains all reactors, starting with main,
-    # only need the main since it has rti for all other reactors in dtm??
-    # {:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
-    # [{_name, dtm_blocks, [], rti} | _tail] = reactors
-
-    # IO.inspect(reactors_catalog)
-
-    # [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
-    # rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
-    # asumes dti are only allocmono for native reactors!
-    # nb = make_native_dtm_blocks(dti)
-    # arguments are (dtm,rtm,rti)
-
-    # Memory.show_state(pid)
   end
 
   # Help to run start
@@ -60,7 +52,7 @@ defmodule Hvm do
     # test reactor:
     pto = [
       [
-        :plus_time_one,
+        :main,
         1,
         1,
         [
@@ -147,20 +139,6 @@ defmodule Hvm do
     run_VM(mt)
   end
 
-  # Match the reactors in the given program (list of reactors)
-  def match_reactors([], _rti_catalog, reactors \\ []), do: {:ok, reactors}
-
-  def match_reactors([[name, _num_src, _num_snk, dti, rti] | tail], rti_catalog, reactors) do
-    # make deployment time memory (dtm) blocks for the reactor.
-    dtm_blocks = make_dtm_blocks(dti, rti_catalog)
-
-    # store the dtm blocks in dtm memory.
-    updated_reactors = [{name, dtm_blocks, [], rti} | reactors]
-
-    # recurse and accumulate...
-    match_reactors(tail, rti_catalog, updated_reactors)
-  end
-
   # Make key value map, key = reactor_name and value = reactor -> {nos_src, nos_snk, dti, rti}.
   defp catalog_reactors([], reactors_catalog \\ %{}), do: {:ok, reactors_catalog}
 
@@ -185,14 +163,14 @@ defmodule Hvm do
       end
 
     # make the dtm block
-    block = {name, [0], [], type, [0]}
+    block = {name, [nil], [], type, [nil]}
     # recurse for each dtm block to be allocated
     make_dtm_blocks(rest, reactors, [block | acc])
   end
 
   # Deploy the reaktor
   defp deploy_reaktor(dtm, rtm, rti) do
-    case Memory.start_link(dtm, rtm, [1, 2, 3, 4], [0]) do
+    case Memory.start_link(dtm, rtm, rti, %{}, [1, 2, 3, 4], [0]) do
       {:ok, pid} ->
         # Use the pid here
         IO.puts("GenServer started with PID: #{inspect(pid)}")
@@ -204,21 +182,24 @@ defmodule Hvm do
   end
 
   # Run reaction-time-instructions (rti)
-  defp run_rti(rti, pid) do
-    Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
-      hrr(instruction, rti_index, pid)
-    end)
+  def run_rti(pid) do
+    # retrieve the reaction time instrcutions
+    rti = Memory.get_rti(pid)
+
+    # execute rti once.
+    case rti do
+      {:ok, rti} ->
+        Enum.each(Enum.with_index(rti), fn
+          {instruction, rti_index} ->
+            hrr(instruction, rti_index, pid)
+            #Memory.show_state(pid)
+
+          {:error, reason} ->
+            IO.puts("Error: #{reason}")
+        end)
+        Memory.show_state(pid)
+    end
   end
-
-  # I use sleeps to print nicely in console..
-  # Process.sleep(1000)
-  # execute each rti
-
-  #   Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
-  #     hrr(instruction, rti_index)
-  #     Memory.show_state()
-  #     Process.sleep(100)
-  #   end)
 
   # Help running the reactor = hrr
   # recognize the instruction and call appropriate function in Memory module
@@ -227,7 +208,7 @@ defmodule Hvm do
     value = Map.get(@signal_table, signal)
     # t = System.os_time()
     # idex 1 hardcoded.
-    case Memory.save_lookup(1, value, pid) do
+    case Memory.save_lookup(rti_index, value, pid) do
       :ok -> IO.puts("lookup, rti_index: #{rti_index}")
       _ -> IO.puts("save_lookup failed")
     end
@@ -235,19 +216,23 @@ defmodule Hvm do
 
   def hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
-    Memory.supply_from_location(from, value, to, destination, index)
-    IO.puts("supply_from_location, rti_index: #{rti_index}")
+    case Memory.supply_from_location(from, value, to, destination, index, pid) do
+      :ok -> IO.puts("supply_from_location, rti_index: #{rti_index}")
+      _ -> IO.puts("supply_from_location failed")
+    end
   end
 
   def hrr(["I-SUPPLY", value, [to, destination], index], rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
-    Memory.supply_constant(value, to, destination, index)
-    IO.puts("supply_constant, rti_index: #{rti_index}")
+    case Memory.supply_constant(value, to, destination, index, pid) do
+      :ok -> IO.puts("supply_constant, rti_index: #{rti_index}")
+      _ -> IO.puts("supply_constant failed")
+    end
   end
 
   # this is a call into genserver (not cast)
   def hrr(["I-REACT", [at, at_index]], rti_index, pid) when is_integer(at_index) do
-    case Memory.react(at, at_index) do
+    case Memory.react(at, at_index, rti_index, pid) do
       :ok ->
         IO.puts("react succeeded, rti_index: #{rti_index}")
 
@@ -258,13 +243,17 @@ defmodule Hvm do
 
   def hrr(["I-CONSUME", [from, from_index], sink_index], rti_index, pid)
       when is_integer(from_index) and is_integer(sink_index) do
-    Memory.consume(from, from_index, sink_index, rti_index)
-    IO.puts("consume, rti_index: #{rti_index}")
+    case Memory.consume(from, from_index, sink_index, rti_index, pid) do
+      :ok -> IO.puts("consume, rti_index: #{rti_index}")
+      _ -> IO.puts("consume failed")
+    end
   end
 
   def hrr(["I-SINK", [from, from_index], sink_index], rti_index, pid)
       when is_integer(from_index) and is_integer(sink_index) do
-    Memory.sink(from, from_index, sink_index, rti_index)
-    IO.puts("sink, rti_index: #{rti_index}")
+    case Memory.sink(from, from_index, sink_index, rti_index, pid) do
+      :ok -> IO.puts("sink, rti_index: #{rti_index}")
+      _ -> IO.puts("sink failed")
+    end
   end
 end
