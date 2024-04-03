@@ -12,29 +12,47 @@ defmodule Hvm do
   # vm needs to know about the reactors and there deployments.
   # on reactor can be deployed many times, like class and object
 
-  # Start the reaktor orm byte code
-  def start(reactor_byte_code) do
+  # Start the VM for received byte code
+  def run_VM(reactor_byte_code) do
     # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
     {:ok, reactors_catalog} = catalog_reactors(reactor_byte_code)
-    # read main reactor and make necessary reactor deployments
-    deployment_data = find_deployments(reactors_catalog)
-    #deployment_data is dti, make key value for the deployments
-    ##----How to go about deploying, eacht deployment might need to deploy more reactors?!
+
+    # read all reactors dti, prepare dtm blocks, deploy and store key:reactor_name, value: deployment_pid.
+    deployment_pids =
+      Enum.reduce(reactors_catalog, %{}, fn {reactor_name, reactor}, deployment_pids ->
+        # pattern match reactor
+        {nos_src, nos_snk, dti, rti} = reactor
+        # transform deployment-time-instrcutions (dti) into deployment-time-memroy (dtm)
+        dtm_blocks = make_dtm_blocks(dti, reactors_catalog)
+        # deploy the reactor (start genserver for this reactor) and receive pid
+        deployment_pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
+        # update deployment_pids key:reactor_name value:deployment_pid
+        updated_deployment_pids = Map.put(deployment_pids, reactor_name, deployment_pid)
+
+        updated_deployment_pids
+      end)
+
+    IO.inspect(deployment_pids)
+
+    # deployment_data = find_deployments(reactors_catalog)
+    # deployment_data is dti, make key value for the deployments
+    ## ----How to go about deploying, eacht deployment might need to deploy more reactors?!
     # or deploy all reactors in one 'deployment map'?
 
     # contains all reactors, starting with main,
     # only need the main since it has rti for all other reactors in dtm??
-    #{:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
-    #[{_name, dtm_blocks, [], rti} | _tail] = reactors
+    # {:ok, reactors} = match_reactors(reactor_byte_code, rti_catalog)
+    # [{_name, dtm_blocks, [], rti} | _tail] = reactors
 
-    IO.inspect(deployment_data)
+    # IO.inspect(reactors_catalog)
 
     # [name, number_of_sources, number_of_sinks, dti, rti] = reactor_byte_code
     # rb = make_dtm_block(name, number_of_sources, dti, rti, number_of_sinks)
     # asumes dti are only allocmono for native reactors!
     # nb = make_native_dtm_blocks(dti)
     # arguments are (dtm,rtm,rti)
-    #run_reaktor(dtm_blocks, List.duplicate(0, length(rti)), rti)
+
+    # Memory.show_state(pid)
   end
 
   # Help to run start
@@ -64,25 +82,69 @@ defmodule Hvm do
       ]
     ]
 
-    mt = [[:plus_time_one,1,1,
-    [["I-ALLOCMONO",:plus],["I-ALLOCMONO",:plus]],
-    [["I-LOOKUP",:time],
-    ["I-SUPPLY",["%RREF",1],["%DREF",1],1],
-    ["I-SUPPLY",["%SRC",1],["%DREF",1],2],
-    ["I-REACT",["%DREF",1]],
-    ["I-CONSUME",["%DREF",1],1],
-    ["I-SUPPLY",["%RREF",5],["%DREF",2],1],
-    ["I-SUPPLY",1,["%DREF",2],2],
-    ["I-REACT",["%DREF",2]],
-    ["I-CONSUME",["%DREF",2],1],
-    ["I-SINK",["%RREF",9],1]]],
-    [:plus_time_five,1,1,
-    [["I-ALLOCMONO",:plus],["I-ALLOCMONO",:plus]],
-    [["I-LOOKUP",:time],["I-SUPPLY",["%RREF",1],["%DREF",1],1],["I-SUPPLY",["%SRC",1],["%DREF",1],2],["I-REACT",["%DREF",1]],["I-CONSUME",["%DREF",1],1],["I-SUPPLY",["%RREF",5],["%DREF",2],1],["I-SUPPLY",5,["%DREF",2],2],["I-REACT",["%DREF",2]],["I-CONSUME",["%DREF",2],1],["I-SINK",["%RREF",9],1]]],
-    [:main,2,1,
-    [["I-ALLOCMONO",:plus_time_one],["I-ALLOCMONO",:plus_time_five],["I-ALLOCMONO",:minus]],
-    [["I-SUPPLY",["%SRC",1],["%DREF",1],1],["I-REACT",["%DREF",1]],["I-SUPPLY",["%SRC",2],["%DREF",2],1],["I-REACT",["%DREF",2]],["I-CONSUME",["%DREF",2],1],["I-SUPPLY",["%RREF",5],["%DREF",3],1],["I-CONSUME",["%DREF",1],1],["I-SUPPLY",["%RREF",7],["%DREF",3],2],["I-REACT",["%DREF",3]],["I-CONSUME",["%DREF",3],1],["I-SINK",["%RREF",10],1]]]]
-    start(mt)
+    mt = [
+      [
+        :plus_time_one,
+        1,
+        1,
+        [["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
+        [
+          ["I-LOOKUP", :time],
+          ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
+          ["I-SUPPLY", 1, ["%DREF", 2], 2],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 9], 1]
+        ]
+      ],
+      [
+        :plus_time_five,
+        1,
+        1,
+        [["I-ALLOCMONO", :plus], ["I-ALLOCMONO", :plus]],
+        [
+          ["I-LOOKUP", :time],
+          ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 2], 1],
+          ["I-SUPPLY", 5, ["%DREF", 2], 2],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 9], 1]
+        ]
+      ],
+      [
+        :main,
+        2,
+        1,
+        [
+          ["I-ALLOCMONO", :plus_time_one],
+          ["I-ALLOCMONO", :plus_time_five],
+          ["I-ALLOCMONO", :minus]
+        ],
+        [
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-SUPPLY", ["%SRC", 2], ["%DREF", 2], 1],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SUPPLY", ["%RREF", 5], ["%DREF", 3], 1],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 7], ["%DREF", 3], 2],
+          ["I-REACT", ["%DREF", 3]],
+          ["I-CONSUME", ["%DREF", 3], 1],
+          ["I-SINK", ["%RREF", 10], 1]
+        ]
+      ]
+    ]
+
+    run_VM(mt)
   end
 
   # Match the reactors in the given program (list of reactors)
@@ -104,90 +166,87 @@ defmodule Hvm do
 
   defp catalog_reactors([[name, nos_src, nos_snk, dti, rti] | tail], reactors_catalog) do
     # add reactor to the map.
-    updated_reactors_catalog = Map.put(reactors_catalog, name, {nos_src, nos_snk, dti, rti} )
+    updated_reactors_catalog = Map.put(reactors_catalog, name, {nos_src, nos_snk, dti, rti})
 
     # recurse and accumulate...
     catalog_reactors(tail, updated_reactors_catalog)
   end
 
-  # returns the main reactor
-  defp find_deployments(reactors_catalog) do
-    {nos_src, nos_snk, dti, rti} = Map.get(reactors_catalog, :main)
-    dti
-  end
+  # make deployment time memory (dtm) blocks and define reactor type: user_defined or native
+  defp make_dtm_blocks([], _reactors, acc \\ []), do: Enum.reverse(acc)
 
-  defp make_deployment_name(atom, number) when is_atom(atom) and is_integer(number) do
-      new_atom = "#{Atom.to_string(atom)}_#{number}"
-      String.to_atom(new_atom)
-    end
-
-
-
-  # make deployment time memory (dtm) blocks
-  defp make_dtm_blocks([], _rti_catalog, acc \\ []), do: Enum.reverse(acc)
-
-  defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], rti_catalog, acc) do
+  defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], reactors, acc) do
     # load rti into dtm block, if rti not found, state :native to show this is a native reactor.
-    rti = Map.get(rti_catalog, name, :native)
+    type =
+      if Map.has_key?(reactors, name) do
+        :user_defined
+      else
+        :native
+      end
+
     # make the dtm block
-    block = {name, [0], [], rti, [0]}
+    block = {name, [0], [], type, [0]}
     # recurse for each dtm block to be allocated
-    make_dtm_blocks(rest, rti_catalog, [block | acc])
+    make_dtm_blocks(rest, reactors, [block | acc])
   end
 
-  # Run the reaktor
-  defp run_reaktor(dtm, rtm, rti) do
-    # reset the genserver (state) when starting
-    case GenServer.whereis(:memory) do
-      nil ->
-        IO.puts("GenServer :memory is not running, starting now...")
+  # Deploy the reaktor
+  defp deploy_reaktor(dtm, rtm, rti) do
+    case Memory.start_link(dtm, rtm, [1, 2, 3, 4], [0]) do
+      {:ok, pid} ->
+        # Use the pid here
+        IO.puts("GenServer started with PID: #{inspect(pid)}")
+        pid
 
-      pid ->
-        GenServer.stop(:memory)
-
-        IO.puts(
-          "GenServer :memory (PID: #{inspect(pid)}) stopped successfully, restarting now..."
-        )
+      {:error, reason} ->
+        IO.puts("Failed to start GenServer: #{reason}")
     end
+  end
 
-    Memory.start_link(dtm, rtm, [1, 2, 3, 4], [0])
-    Memory.show_state()
-    # I use sleeps to print nicely in console..
-    # Process.sleep(1000)
-    # execute each rti
-
+  # Run reaction-time-instructions (rti)
+  defp run_rti(rti, pid) do
     Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
-      hrr(instruction, rti_index)
-      Memory.show_state()
-      Process.sleep(100)
+      hrr(instruction, rti_index, pid)
     end)
   end
+
+  # I use sleeps to print nicely in console..
+  # Process.sleep(1000)
+  # execute each rti
+
+  #   Enum.each(Enum.with_index(rti), fn {instruction, rti_index} ->
+  #     hrr(instruction, rti_index)
+  #     Memory.show_state()
+  #     Process.sleep(100)
+  #   end)
 
   # Help running the reactor = hrr
   # recognize the instruction and call appropriate function in Memory module
 
-  def hrr(["I-LOOKUP", signal], rti_index) do
+  def hrr(["I-LOOKUP", signal], rti_index, pid) do
     value = Map.get(@signal_table, signal)
     # t = System.os_time()
     # idex 1 hardcoded.
-    Memory.save_lookup(1, value)
-    IO.puts("lookup, rti_index: #{rti_index}")
+    case Memory.save_lookup(1, value, pid) do
+      :ok -> IO.puts("lookup, rti_index: #{rti_index}")
+      _ -> IO.puts("save_lookup failed")
+    end
   end
 
-  def hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index)
+  def hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_from_location(from, value, to, destination, index)
     IO.puts("supply_from_location, rti_index: #{rti_index}")
   end
 
-  def hrr(["I-SUPPLY", value, [to, destination], index], rti_index)
+  def hrr(["I-SUPPLY", value, [to, destination], index], rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
     Memory.supply_constant(value, to, destination, index)
     IO.puts("supply_constant, rti_index: #{rti_index}")
   end
 
   # this is a call into genserver (not cast)
-  def hrr(["I-REACT", [at, at_index]], rti_index) when is_integer(at_index) do
+  def hrr(["I-REACT", [at, at_index]], rti_index, pid) when is_integer(at_index) do
     case Memory.react(at, at_index) do
       :ok ->
         IO.puts("react succeeded, rti_index: #{rti_index}")
@@ -197,13 +256,13 @@ defmodule Hvm do
     end
   end
 
-  def hrr(["I-CONSUME", [from, from_index], sink_index], rti_index)
+  def hrr(["I-CONSUME", [from, from_index], sink_index], rti_index, pid)
       when is_integer(from_index) and is_integer(sink_index) do
     Memory.consume(from, from_index, sink_index, rti_index)
     IO.puts("consume, rti_index: #{rti_index}")
   end
 
-  def hrr(["I-SINK", [from, from_index], sink_index], rti_index)
+  def hrr(["I-SINK", [from, from_index], sink_index], rti_index, pid)
       when is_integer(from_index) and is_integer(sink_index) do
     Memory.sink(from, from_index, sink_index, rti_index)
     IO.puts("sink, rti_index: #{rti_index}")

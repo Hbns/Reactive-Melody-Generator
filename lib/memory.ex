@@ -4,18 +4,18 @@ defmodule Memory do
   # Client
 
   def start_link(dtm, rtm, src, snk) do
-    GenServer.start_link(__MODULE__, {dtm, rtm, src, snk}, name: :memory)
+    GenServer.start_link(__MODULE__, {dtm, rtm, src, snk})
   end
 
-  def show_state do
-    GenServer.cast(:memory, :show_state)
+  def show_state(pid) do
+    GenServer.cast(pid, :show_state)
   end
-  def show_state_blue do
-    GenServer.cast(:memory, :show_state_blue)
+  def show_state_blue(pid) do
+    GenServer.cast(pid, :show_state_blue)
   end
 
-  def save_lookup(at, value) do
-    GenServer.cast(:memory, {:save_lookup, at, value})
+  def save_lookup(at, value, pid) do
+    GenServer.call(pid, {:save_lookup, at, value})
   end
 
   def supply_from_location(from, from_index, to, to_index, to_source) do
@@ -71,9 +71,9 @@ defmodule Memory do
 
   # Save a lookup
   @impl true
-  def handle_cast({:save_lookup, at, value}, {dtm, rtm, src, snk}) do
+  def handle_call({:save_lookup, at, value}, {dtm, rtm, src, snk}) do
     updated_rtm = List.insert_at(rtm, at, value)
-    {:noreply, {dtm, updated_rtm, src, snk}}
+    {:reply, :ok, {dtm, updated_rtm, src, snk}}
   end
 
   # Supply value from location
