@@ -12,7 +12,7 @@ defmodule Memory do
   end
 
   def show_state(pid) do
-    GenServer.cast(pid, :show_state)
+    GenServer.call(pid, :show_state)
   end
 
   def show_state_blue(pid) do
@@ -61,13 +61,13 @@ defmodule Memory do
 
   # Show the state of the vm
   @impl true
-  def handle_cast(:show_state, {dtm, rtm, rti, pids, src, snk}) do
+  def handle_call(:show_state, _from, {dtm, rtm, rti, pids, src, snk}) do
     IO.inspect(dtm, label: "DTM")
     IO.inspect(rtm, label: "RTM")
     IO.inspect(rti, label: "RTI")
     IO.inspect(src, label: "SRC")
     IO.inspect(snk, label: "SNK")
-    {:noreply, {dtm, rtm, rti, pids, src, snk}}
+    {:reply, :ok, {dtm, rtm, rti, pids, src, snk}}
   end
 
   @impl true
@@ -191,14 +191,14 @@ defmodule Memory do
       {:ok, dtm_block} ->
         case dtm_block do
           # dtm block witouth rti (native reactor)
-          {native, sources, dti, :native, sink} ->
+          {name, sources, dti, :native, sink} ->
             # apply the native function
             src1 = Enum.at(sources, 1)
             src2 = Enum.at(sources, 2)
-            result = apply_native_operation(native, src1, src2)
+            result = apply_native_operation(name, src1, src2)
             # save result to sink
             updated_sink = List.insert_at(sink, 0, result)
-            updated_dtm_block = {native, sources, dti, :native, updated_sink}
+            updated_dtm_block = {name, sources, dti, :native, updated_sink}
             updated_dtm = List.replace_at(dtm, at_index - 1, updated_dtm_block)
             {:reply, :ok, {updated_dtm, rtm, rti, pids, src, snk}}
 
@@ -208,13 +208,14 @@ defmodule Memory do
             pid = Map.get(pids, name)
             # IO.inspect(pid)
             Hvm.run_rti(pid)
+            # save the reacted result
 
-            #consume will get this sink, right?
-            #{:ok, sink} = get_sink(pid, 1)
-           # updated_rtm = List.insert_at(rtm, rti_index, sink )
-           # IO.inspect(updated_rtm, label: 'URTM')
+            {:ok, result} = get_sink(pid, 0)
+            updated_sink = List.insert_at(sink, 0, result)
+            updated_dtm_block = {name, sources, dti, rti, updated_sink}
+            updated_dtm = List.replace_at(dtm, at_index - 1, updated_dtm_block)
 
-            {:reply, :ok, {dtm, rtm, rti, pids, src, snk}}
+            {:reply, :ok, {updated_dtm, rtm, rti, pids, src, snk}}
 
           _ ->
             {:error, "dtm_block at position #{at_index - 1} does not match the expected format"}
@@ -248,6 +249,7 @@ defmodule Memory do
         case dtm_block do
           {_block_name, _sources, _dti, _rti, sink} ->
             consume = Enum.at(sink, sink_index - 1 )
+            IO.inspect(consume, label: 'consumed_value')
             # place at index, position of this instruction in rti (starts at 1 in haai)
             updated_rtm = List.insert_at(rtm, rti_index + 1, consume)
             # seems to go at the wrong index!?
@@ -279,7 +281,7 @@ defmodule Memory do
       ) do
     sink_value = Enum.at(rtm, rti_index)
     # put sink_value in sink reaktor...
-    updated_snk = List.insert_at(snk, sink_index, sink_value)
+    updated_snk = List.insert_at(snk, sink_index - 1, sink_value)
     {:reply, :ok, {dtm, rtm, rti, pids, src, updated_snk}}
   end
 end

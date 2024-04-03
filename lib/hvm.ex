@@ -40,6 +40,7 @@ defmodule Hvm do
 
     main_pid = Map.get(deployment_pids, :main)
     run_rti(main_pid)
+    IO.puts("vm stopped")
 
     # deployment_data = find_deployments(reactors_catalog)
     # deployment_data is dti, make key value for the deployments
@@ -192,12 +193,12 @@ defmodule Hvm do
         Enum.each(Enum.with_index(rti), fn
           {instruction, rti_index} ->
             hrr(instruction, rti_index, pid)
-            #Memory.show_state(pid)
+            Memory.show_state(pid)
 
           {:error, reason} ->
             IO.puts("Error: #{reason}")
         end)
-        Memory.show_state(pid)
+
     end
   end
 
