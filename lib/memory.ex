@@ -19,9 +19,14 @@ defmodule Memory do
     GenServer.cast(pid, :show_state_blue)
   end
 
+  def set_src(pid, new_src) do
+    GenServer.call(pid, {:set_src, new_src})
+  end
+
   def get_rti(pid) do
     GenServer.call(pid, :get_rti)
   end
+
 
   def save_lookup(at, value, pid) do
     GenServer.call(pid, {:save_lookup, at, value})
@@ -71,21 +76,13 @@ defmodule Memory do
   end
 
   @impl true
-  def handle_cast(:show_state_blue, {dtm, rtm, src, snk}) do
-    blue = IO.ANSI.blue()
-    reset = IO.ANSI.reset()
-
-    IO.inspect(dtm, label: blue <> "DTM" <> reset)
-    IO.inspect(rtm, label: blue <> "RTM" <> reset)
-    IO.inspect(src, label: blue <> "SRC" <> reset)
-    IO.inspect(snk, label: blue <> "SNK" <> reset)
-
-    {:noreply, {dtm, rtm, src, snk}}
+  def handle_call({:load_pids, deployment_pids}, _from, {dtm, rtm, rti, pids, src, snk}) do
+    {:reply, :ok, {dtm, rtm, rti, deployment_pids, src, snk}}
   end
 
   @impl true
-  def handle_call({:load_pids, deployment_pids}, _from, {dtm, rtm, rti, pids, src, snk}) do
-    {:reply, :ok, {dtm, rtm, rti, deployment_pids, src, snk}}
+  def handle_call({:set_src, new_src}, _from, {dtm, rtm, rti, pids, src, snk}) do
+    {:reply, :ok, {dtm, rtm, rti, pids, new_src, snk}}
   end
 
   @impl true

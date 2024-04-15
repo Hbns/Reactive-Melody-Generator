@@ -8,10 +8,6 @@ defmodule Hvm do
   @signal_table %{time: 33}
   @sources %{1 => 0, 2 => 0}
 
-  # Need one gen server per deployment
-  # vm needs to know about the reactors and there deployments.
-  # on reactor can be deployed many times, like class and object
-
   # Start the VM for received byte code
   def run_VM(reactor_byte_code) do
     # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
@@ -34,18 +30,19 @@ defmodule Hvm do
 
     IO.inspect(deployment_pids)
 
-    Enum.each(deployment_pids, fn {reactor_name, deployment_pid} ->
+    # Loads each deployment pid in all deployments, each deployment knows the pid of all other deployments.
+    Enum.each(deployment_pids, fn {_reactor_name, deployment_pid} ->
       Memory.load_pids(deployment_pid, deployment_pids)
     end)
 
     main_pid = Map.get(deployment_pids, :main)
+    # TODO: check for sources and push into deployment
+    Memory.set_src(main_pid, [0,1,2,3])
+    Memory.show_state(main_pid)
     run_rti(main_pid)
+    # TODO: read sink and push forward? before next itteration of run_rti
     IO.puts("vm stopped")
 
-    # deployment_data = find_deployments(reactors_catalog)
-    # deployment_data is dti, make key value for the deployments
-    ## ----How to go about deploying, eacht deployment might need to deploy more reactors?!
-    # or deploy all reactors in one 'deployment map'?
   end
 
   # Help to run start
@@ -171,7 +168,7 @@ defmodule Hvm do
 
   # Deploy the reaktor
   defp deploy_reaktor(dtm, rtm, rti) do
-    case Memory.start_link(dtm, rtm, rti, %{}, [1, 2, 3, 4], [0]) do
+    case Memory.start_link(dtm, rtm, rti, %{}, [0], [0]) do
       {:ok, pid} ->
         # Use the pid here
         IO.puts("GenServer started with PID: #{inspect(pid)}")
@@ -192,7 +189,7 @@ defmodule Hvm do
       {:ok, rti} ->
         Enum.each(Enum.with_index(rti), fn
           {instruction, rti_index} ->
-            hrr(instruction, rti_index, pid)
+            handle_instruction(instruction, rti_index, pid)
             Memory.show_state(pid)
 
           {:error, reason} ->
@@ -202,10 +199,10 @@ defmodule Hvm do
     end
   end
 
-  # Help running the reactor = hrr
+
   # recognize the instruction and call appropriate function in Memory module
 
-  def hrr(["I-LOOKUP", signal], rti_index, pid) do
+  def handle_instruction(["I-LOOKUP", signal], rti_index, pid) do
     value = Map.get(@signal_table, signal)
     # t = System.os_time()
     # idex 1 hardcoded.
@@ -215,7 +212,7 @@ defmodule Hvm do
     end
   end
 
-  def hrr(["I-SUPPLY", [from, value], [to, destination], index], rti_index, pid)
+  def handle_instruction(["I-SUPPLY", [from, value], [to, destination], index], rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
     case Memory.supply_from_location(from, value, to, destination, index, pid) do
       :ok -> IO.puts("supply_from_location, rti_index: #{rti_index}")
@@ -223,7 +220,7 @@ defmodule Hvm do
     end
   end
 
-  def hrr(["I-SUPPLY", value, [to, destination], index], rti_index, pid)
+  def handle_instruction(["I-SUPPLY", value, [to, destination], index], rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
     case Memory.supply_constant(value, to, destination, index, pid) do
       :ok -> IO.puts("supply_constant, rti_index: #{rti_index}")
@@ -231,18 +228,17 @@ defmodule Hvm do
     end
   end
 
-  # this is a call into genserver (not cast)
-  def hrr(["I-REACT", [at, at_index]], rti_index, pid) when is_integer(at_index) do
+  def handle_instruction(["I-REACT", [at, at_index]], rti_index, pid) when is_integer(at_index) do
     case Memory.react(at, at_index, rti_index, pid) do
       :ok ->
-        IO.puts("react succeeded, rti_index: #{rti_index}")
+        IO.puts("react, rti_index: #{rti_index}")
 
       _ ->
         IO.puts("react failed")
     end
   end
 
-  def hrr(["I-CONSUME", [from, from_index], sink_index], rti_index, pid)
+  def handle_instruction(["I-CONSUME", [from, from_index], sink_index], rti_index, pid)
       when is_integer(from_index) and is_integer(sink_index) do
     case Memory.consume(from, from_index, sink_index, rti_index, pid) do
       :ok -> IO.puts("consume, rti_index: #{rti_index}")
@@ -250,7 +246,7 @@ defmodule Hvm do
     end
   end
 
-  def hrr(["I-SINK", [from, from_index], sink_index], rti_index, pid)
+  def handle_instruction(["I-SINK", [from, from_index], sink_index], rti_index, pid)
       when is_integer(from_index) and is_integer(sink_index) do
     case Memory.sink(from, from_index, sink_index, rti_index, pid) do
       :ok -> IO.puts("sink, rti_index: #{rti_index}")
