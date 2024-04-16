@@ -27,7 +27,6 @@ defmodule Memory do
     GenServer.call(pid, :get_rti)
   end
 
-
   def save_lookup(at, value, pid) do
     GenServer.call(pid, {:save_lookup, at, value})
   end
@@ -90,6 +89,11 @@ defmodule Memory do
     {:reply, {:ok, rti}, {dtm, rtm, rti, pids, src, snk}}
   end
 
+  @impl true
+  def handle_call(:get_sink, _from, {dtm, rtm, rti, pids, src, snk}) do
+    {:reply, {:ok, snk}, {dtm, rtm, rti, pids, src, snk}}
+  end
+
   # Save a lookup
   @impl true
   def handle_call({:save_lookup, at, value}, _from, {dtm, rtm, rti, pids, src, snk}) do
@@ -111,13 +115,21 @@ defmodule Memory do
       "%SRC" ->
         source_value = Enum.at(src, from_index)
 
+        # We have the source value, put it in the dtm block, but should it not go into the src of that rd?
         case Enum.fetch(dtm, to_index) do
           {:ok, dtm_block} ->
             case dtm_block do
-              {native, sources, dti, rti, sinks} when is_list(sources) ->
+              {name, sources, dti, dtm_rti, sinks} when is_list(sources) ->
                 updated_sources = List.insert_at(sources, to_source, source_value)
-                updated_dtm_block = {native, updated_sources, dti, rti, sinks}
+                updated_dtm_block = {name, updated_sources, dti, dtm_rti, sinks}
                 updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
+                # get pid en set in src of (user_defined) reaktor deployment
+                rd_pid = Map.get(pids, name)
+
+                if dtm_rti != :native do
+                  Memory.set_src(rd_pid, [0, source_value])
+                end
+
                 {:reply, :ok, {updated_dtm, rtm, rti, pids, src, snk}}
 
               _ ->
@@ -134,9 +146,9 @@ defmodule Memory do
         case Enum.fetch(dtm, to_index) do
           {:ok, dtm_block} ->
             case dtm_block do
-              {native, sources, dti, rti, sinks} when is_list(sources) ->
+              {native, sources, dti, dtm_rti, sinks} when is_list(sources) ->
                 updated_sources = List.insert_at(sources, to_source, rtm_value)
-                updated_dtm_block = {native, updated_sources, dti, rti, sinks}
+                updated_dtm_block = {native, updated_sources, dti, dtm_rti, sinks}
                 updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
                 {:reply, :ok, {updated_dtm, rtm, rti, pids, src, snk}}
 
@@ -165,9 +177,9 @@ defmodule Memory do
     case Enum.fetch(dtm, to_index) do
       {:ok, dtm_block} ->
         case dtm_block do
-          {native, sources, dti, rti, sinks} when is_list(sources) ->
+          {native, sources, dti, dtm_rti, sinks} when is_list(sources) ->
             updated_sources = List.insert_at(sources, to_source, constant)
-            updated_dtm_block = {native, updated_sources, dti, rti, sinks}
+            updated_dtm_block = {native, updated_sources, dti, dtm_rti, sinks}
             updated_dtm = List.replace_at(dtm, to_index, updated_dtm_block)
             # IO.inspect(updated_dtm, label: "udtm")
             {:reply, :ok, {updated_dtm, rtm, rti, pids, src, snk}}
@@ -201,7 +213,7 @@ defmodule Memory do
 
           # dtm block with rti
 
-          {name, sources, dti, rti, sink} ->
+          {name, sources, dti, dtm_rti, sink} ->
             pid = Map.get(pids, name)
             # IO.inspect(pid)
             Hvm.run_rti(pid)
@@ -209,7 +221,7 @@ defmodule Memory do
 
             {:ok, result} = get_sink(pid, 0)
             updated_sink = List.insert_at(sink, 0, result)
-            updated_dtm_block = {name, sources, dti, rti, updated_sink}
+            updated_dtm_block = {name, sources, dti, dtm_rti, updated_sink}
             updated_dtm = List.replace_at(dtm, at_index - 1, updated_dtm_block)
 
             {:reply, :ok, {updated_dtm, rtm, rti, pids, src, snk}}
@@ -245,12 +257,12 @@ defmodule Memory do
       {:ok, dtm_block} ->
         case dtm_block do
           {_block_name, _sources, _dti, _rti, sink} ->
-            consume = Enum.at(sink, sink_index - 1 )
-            IO.inspect(consume, label: 'consumed_value')
+            consume = Enum.at(sink, sink_index - 1)
+            #IO.inspect(consume, label: ~c"consumed_value")
             # place at index, position of this instruction in rti (starts at 1 in haai)
             updated_rtm = List.insert_at(rtm, rti_index + 1, consume)
             # seems to go at the wrong index!?
-            IO.inspect(updated_rtm, label: 'UDTM_consume')
+            #IO.inspect(updated_rtm, label: ~c"UDTM_consume")
             {:reply, :ok, {dtm, updated_rtm, rti, pids, src, snk}}
 
           _ ->
@@ -267,7 +279,7 @@ defmodule Memory do
   @impl true
   def handle_call({:get_sink, at}, _from, {dtm, rtm, rti, pids, src, snk}) do
     sink = Enum.at(snk, at)
-    {:reply, {:ok, sink }, {dtm, rtm, rti, pids, src, snk}}
+    {:reply, {:ok, sink}, {dtm, rtm, rti, pids, src, snk}}
   end
 
   @impl true
