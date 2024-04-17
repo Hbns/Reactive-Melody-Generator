@@ -12,7 +12,7 @@ defmodule Hvm do
     deployment_pids =
       Enum.reduce(reactors_catalog, %{}, fn {reactor_name, reactor}, deployment_pids ->
         # pattern match reactor
-        {nos_src, nos_snk, dti, rti} = reactor
+        {_nos_src, _nos_snk, dti, rti} = reactor
         # transform deployment-time-instrcutions (dti) into deployment-time-memroy (dtm)
         dtm_blocks = make_dtm_blocks(dti, reactors_catalog)
         # deploy the reactor (start genserver for this reactor) and receive pid
@@ -320,5 +320,10 @@ defmodule Hvm do
 
     :ok = :file.write_file(file_path, formatted_message, [:append])
     :ok
+  end
+
+  # push to supercollider, takes the values and send the osc message to sc
+  defp push_to_sc(args) do
+
   end
 end
