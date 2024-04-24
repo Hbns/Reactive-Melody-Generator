@@ -2,40 +2,60 @@ defmodule Hvm do
   # module attributes, can only be static.
   # @signal_table %{time: fn -> Time.utc_now() end}
   @signal_table %{time: 26}
+  # to check if a reactor is a native one
   @native_table [:plus, :minus, :divide, :multiply]
 
   # Start the VM for received byte code
   def run_VM(reactor_byte_code) do
     # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
     {:ok, reactors_catalog} = catalog_reactors(reactor_byte_code)
-
-    # IO.inspect(reactors_catalog, label: 'Reactor_catalog: ')
+    # count deployments requested in deployment-time-instructions
     dti_allocations = prepare_deployments(reactors_catalog)
+    # remove native deployments
     user_defined_dti_allocations = drop_native_keys(dti_allocations)
-    IO.inspect(dti_allocations, label: ~c"Total dti_allocations: ")
-    IO.inspect(user_defined_dti_allocations, label: ~c"filtered dti_allocations: ")
 
-    Enum.each(reactors_catalog, fn {reactor_name, reactor} ->
-      {_nos_src, _nos_snk, dti, rti} = reactor
-      {dtms, re} = make_dtm_blocks(dti, user_defined_dti_allocations)
-      IO.inspect(dtms, label: "firs_ndtms: ")
-    end)
-
-    {dtms_list, updated_user_defined_dti_allocations} =
-      Enum.reduce(reactors_catalog, {[], user_defined_dti_allocations}, fn {_, reactor},
-                                                                           {dtms_acc, acc} ->
+    # make deployment-time-blocks for each reactor
+    {all_dtm_blocks, updated_user_defined_dti_allocations} =
+      Enum.reduce(reactors_catalog, {%{}, user_defined_dti_allocations}, fn {reactor_name,
+                                                                             reactor},
+                                                                            {dtms_acc, acc} ->
         {_nos_src, _nos_snk, dti, _rti} = reactor
-        {dtms, re} = make_dtm_blocks(dti, acc)
-        IO.inspect(dtms, label: "ndtms: ")
-        {[dtms | dtms_acc], re}
+        {dtms, udda} = make_dtm_blocks(dti, acc)
+        {Map.put(dtms_acc, reactor_name, dtms), udda}
       end)
 
-    IO.inspect(dtms_list, label: ~c"dtms list: ")
-    IO.inspect(updated_user_defined_dti_allocations, label: ~c"uudda: ")
+    # start all deployments
+    deployment_pids =
+      Enum.reduce(reactors_catalog, %{}, fn {name, reactor}, pids ->
+        # retrieve the run-time-instructions (rti)
+        {_nos_src, _nos_snk, _dti, rti} = reactor
+        # number of deployment (nod)
+        nod = Map.get(user_defined_dti_allocations, name)
+        # retrive dtm blocks for reactor
+        dtm_blocks = Map.get(all_dtm_blocks, name)
 
-    dtms_list = Enum.reverse(dtms_list)
+        # make number of deployment (nod) deployments(pid)
+        updated_pids =
+          if nod == nil do
+            # for main reactor, always one deployment nod == nil
+            pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
+            Map.put(pids, name, pid)
+          else
+            # make nod pids and name correctly, as in deployment-time-memory
+            Enum.reduce(1..nod, pids, fn i, acc ->
+              new_name = String.to_atom(to_string(name) <> "_" <> to_string(i))
+              pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
+              Map.put(acc, new_name, pid)
+            end)
+          end
 
-    # can i deploy and put pid in the dti/dtm? or unique name?
+        # return updated pids
+        updated_pids
+      end)
+
+    ## OLD code, not possible to deploy one rector more then once.
+
+    # deployment_pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
 
     # read all reactors dti, prepare dtm blocks, deploy and store key:reactor_name, value: deployment_pid.
     #   deployment_pids =
@@ -56,44 +76,16 @@ defmodule Hvm do
 
     # IO.inspect(reactors_catalog, label: ~c"Rcatalog")
 
-    # per deployment deployments maken,
-
     # Loads each deployment pid in all deployments, each deployment knows the pid of all other deployments.
-    #    Enum.each(deployment_pids, fn {_reactor_name, deployment_pid} ->
-    #      Memory.load_pids(deployment_pid, deployment_pids)
-    #    end)
+    Enum.each(deployment_pids, fn {_reactor_name, deployment_pid} ->
+      Memory.load_pids(deployment_pid, deployment_pids)
+    end)
 
     # Start looping the deployment
-    # second argument is times to itterate
-    #    loop_deployment(deployment_pids, 10)
+    # second argument is times to itterate (reactor normaly loops infinitly)
+    loop_deployment(deployment_pids, 10)
 
     IO.puts("vm stopped")
-  end
-
-  def prepare_deployments(reactors_catalog) do
-    total_occurrences =
-      Enum.reduce(reactors_catalog, %{}, fn {_, reactor}, acc ->
-        {_nos_src, _nos_snk, dti, _rti} = reactor
-        count = count_occurrences(dti)
-        # IO.inspect(count, label: ~c"count Occurrences: ")
-        Map.merge(acc, count, fn _key, val1, val2 -> val1 + val2 end)
-      end)
-
-    # IO.inspect(total_occurrences, label: ~c"Total Occurrences: ")
-  end
-
-  defp count_occurrences(list) do
-    Enum.reduce(list, %{}, fn ["I-ALLOCMONO", name], acc ->
-      Map.update(acc, name, 1, &(&1 + 1))
-    end)
-  end
-
-  def drop_native_keys(map) do
-    # @native_table = [:plus, :minus, :divide, :multiply] # Assuming this module attribute is defined
-
-    Enum.reduce(@native_table, map, fn key, acc ->
-      Map.delete(acc, key)
-    end)
   end
 
   # basecase, to loop n times..
@@ -139,6 +131,32 @@ defmodule Hvm do
 
     # recurse and accumulate...
     catalog_reactors(tail, updated_reactors_catalog)
+  end
+
+  # count for all reactors how many deployments as requested
+  def prepare_deployments(reactors_catalog) do
+    total_occurrences =
+      Enum.reduce(reactors_catalog, %{}, fn {_, reactor}, acc ->
+        {_nos_src, _nos_snk, dti, _rti} = reactor
+        count = count_occurrences(dti)
+        Map.merge(acc, count, fn _key, val1, val2 -> val1 + val2 end)
+      end)
+  end
+
+  # count for one reactor how many deployments are requetsed
+  defp count_occurrences(list) do
+    Enum.reduce(list, %{}, fn ["I-ALLOCMONO", name], acc ->
+      Map.update(acc, name, 1, &(&1 + 1))
+    end)
+  end
+
+  # native reactors are deployed differently
+  def drop_native_keys(map) do
+    # @native_table = [:plus, :minus, :divide, :multiply] # Assuming this module attribute is defined
+
+    Enum.reduce(@native_table, map, fn key, acc ->
+      Map.delete(acc, key)
+    end)
   end
 
   # make deployment time memory (dtm) blocks and define reactor type: user_defined or native
