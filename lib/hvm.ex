@@ -9,39 +9,59 @@ defmodule Hvm do
     # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
     {:ok, reactors_catalog} = catalog_reactors(reactor_byte_code)
 
-    #IO.inspect(reactors_catalog, label: 'Reactor_catalog: ')
+    # IO.inspect(reactors_catalog, label: 'Reactor_catalog: ')
     dti_allocations = prepare_deployments(reactors_catalog)
-    filtered_dti_allocations = drop_native_keys(dti_allocations)
+    user_defined_dti_allocations = drop_native_keys(dti_allocations)
     IO.inspect(dti_allocations, label: ~c"Total dti_allocations: ")
-    IO.inspect(filtered_dti_allocations, label: ~c"filtered dti_allocations: ")
+    IO.inspect(user_defined_dti_allocations, label: ~c"filtered dti_allocations: ")
 
+    Enum.each(reactors_catalog, fn {reactor_name, reactor} ->
+      {_nos_src, _nos_snk, dti, rti} = reactor
+      {dtms, re} = make_dtm_blocks(dti, user_defined_dti_allocations)
+      IO.inspect(dtms, label: "firs_ndtms: ")
+    end)
 
-
-    # read all reactors dti, prepare dtm blocks, deploy and store key:reactor_name, value: deployment_pid.
-    deployment_pids =
-     Enum.reduce(reactors_catalog, %{}, fn {reactor_name, reactor}, deployment_pids ->
-        # pattern match reactor
-       {_td, _nos_src, _nos_snk, dti, rti} = reactor
-       # transform deployment-time-instrcutions (dti) into deployment-time-memroy (dtm)
-        dtm_blocks = make_dtm_blocks(dti, reactors_catalog)
-        #IO.inspect(dtm_blocks, label: ~c"dtmBlocks: ")
-
-        # deploy the reactor (start genserver for this reactor) and receive pid
-        deployment_pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
-        # update deployment_pids key:reactor_name value:deployment_pid
-        updated_deployment_pids = Map.put(deployment_pids, reactor_name, deployment_pid)
-
-        updated_deployment_pids
+    {dtms_list, updated_user_defined_dti_allocations} =
+      Enum.reduce(reactors_catalog, {[], user_defined_dti_allocations}, fn {_, reactor},
+                                                                           {dtms_acc, acc} ->
+        {_nos_src, _nos_snk, dti, _rti} = reactor
+        {dtms, re} = make_dtm_blocks(dti, acc)
+        IO.inspect(dtms, label: "ndtms: ")
+        {[dtms | dtms_acc], re}
       end)
 
-     #IO.inspect(reactors_catalog, label: ~c"Rcatalog")
+    IO.inspect(dtms_list, label: ~c"dtms list: ")
+    IO.inspect(updated_user_defined_dti_allocations, label: ~c"uudda: ")
+
+    dtms_list = Enum.reverse(dtms_list)
+
+    # can i deploy and put pid in the dti/dtm? or unique name?
+
+    # read all reactors dti, prepare dtm blocks, deploy and store key:reactor_name, value: deployment_pid.
+    #   deployment_pids =
+    #    Enum.reduce(reactors_catalog, %{}, fn {reactor_name, reactor}, deployment_pids ->
+    #       # pattern match reactor
+    #      {_nos_src, _nos_snk, dti, rti} = reactor
+    #      # transform deployment-time-instrcutions (dti) into deployment-time-memroy (dtm)
+    #       dtm_blocks = make_dtm_blocks(dti, reactors_catalog)
+    #       #IO.inspect(dtm_blocks, label: ~c"dtmBlocks: ")
+
+    #       # deploy the reactor (start genserver for this reactor) and receive pid
+    #       deployment_pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
+    #       # update deployment_pids key:reactor_name value:deployment_pid
+    #       updated_deployment_pids = Map.put(deployment_pids, reactor_name, deployment_pid)
+
+    #       updated_deployment_pids
+    #     end)
+
+    # IO.inspect(reactors_catalog, label: ~c"Rcatalog")
 
     # per deployment deployments maken,
 
     # Loads each deployment pid in all deployments, each deployment knows the pid of all other deployments.
-#    Enum.each(deployment_pids, fn {_reactor_name, deployment_pid} ->
-#      Memory.load_pids(deployment_pid, deployment_pids)
-#    end)
+    #    Enum.each(deployment_pids, fn {_reactor_name, deployment_pid} ->
+    #      Memory.load_pids(deployment_pid, deployment_pids)
+    #    end)
 
     # Start looping the deployment
     # second argument is times to itterate
@@ -53,13 +73,13 @@ defmodule Hvm do
   def prepare_deployments(reactors_catalog) do
     total_occurrences =
       Enum.reduce(reactors_catalog, %{}, fn {_, reactor}, acc ->
-        {_td, _nos_src, _nos_snk, dti, _rti} = reactor
+        {_nos_src, _nos_snk, dti, _rti} = reactor
         count = count_occurrences(dti)
-       # IO.inspect(count, label: ~c"count Occurrences: ")
+        # IO.inspect(count, label: ~c"count Occurrences: ")
         Map.merge(acc, count, fn _key, val1, val2 -> val1 + val2 end)
       end)
 
-    #IO.inspect(total_occurrences, label: ~c"Total Occurrences: ")
+    # IO.inspect(total_occurrences, label: ~c"Total Occurrences: ")
   end
 
   defp count_occurrences(list) do
@@ -67,17 +87,14 @@ defmodule Hvm do
       Map.update(acc, name, 1, &(&1 + 1))
     end)
   end
+
   def drop_native_keys(map) do
-    #@native_table = [:plus, :minus, :divide, :multiply] # Assuming this module attribute is defined
+    # @native_table = [:plus, :minus, :divide, :multiply] # Assuming this module attribute is defined
 
     Enum.reduce(@native_table, map, fn key, acc ->
       Map.delete(acc, key)
     end)
   end
-
-
-
-
 
   # basecase, to loop n times..
   def loop_deployment(_deployment_pids, 0) do
@@ -116,16 +133,16 @@ defmodule Hvm do
 
   defp catalog_reactors([[name, nos_src, nos_snk, dti, rti] | tail], reactors_catalog) do
     # to keep track how many times a reactor is deployed
-    td = 0
+
     # add reactor to the map.
-    updated_reactors_catalog = Map.put(reactors_catalog, name, {td, nos_src, nos_snk, dti, rti})
+    updated_reactors_catalog = Map.put(reactors_catalog, name, {nos_src, nos_snk, dti, rti})
 
     # recurse and accumulate...
     catalog_reactors(tail, updated_reactors_catalog)
   end
 
   # make deployment time memory (dtm) blocks and define reactor type: user_defined or native
-  defp make_dtm_blocks([], _reactors, acc \\ []), do: Enum.reverse(acc)
+  defp make_dtm_blocks([], reactors, acc \\ []), do: {Enum.reverse(acc), reactors}
 
   defp make_dtm_blocks([["I-ALLOCMONO", name] | rest], reactors, acc) do
     # define reactor type
@@ -136,33 +153,27 @@ defmodule Hvm do
         :native
       end
 
-    new_name =
-      if type == :user_defined do
-        {td, _nos_src, _nos_snk, _dti, _rti} = Map.get(reactors, name)
-        if td > 0 do
-          :newname
-        else
-          name
-        end
+    ## for number of deployments, make distinct deployment names.
+    # how many deployments are required for this reactor?
+    times_to_deploy = Map.get(reactors, name)
+
+    # keep track of number of deployments and make distinct name
+    new_reactors_and_name =
+      if times_to_deploy != nil and times_to_deploy > 0 do
+        # add _deployment_number to make the name unique
+        new_name = String.to_atom(to_string(name) <> "_" <> to_string(times_to_deploy))
+        # lower the number of deployments for this reactor
+        {Map.put(reactors, name, times_to_deploy - 1), new_name}
       else
-        name
+        {reactors, name}
       end
 
-
-    # update the times of deployment td of the user_defined reactor
-    updated_reactors =
-      if type == :user_defined do
-        {td, _nos_src, _nos_snk, _dti, _rti} = Map.get(reactors, name)
-        updated_td = td + 1
-        Map.put(reactors, name, {updated_td, _nos_src, _nos_snk, _dti, _rti})
-      else
-        reactors
-      end
+    # extract both items
+    {updated_reactors, new_name} = new_reactors_and_name
 
     # make the dtm block
     block = {new_name, [nil], [], type, [nil]}
     # recurse for each dtm block to be allocated
-    #IO.inspect(updated_reactors, label: 'udr: ')
     make_dtm_blocks(rest, updated_reactors, [block | acc])
   end
 
@@ -171,11 +182,12 @@ defmodule Hvm do
     case Memory.start_link(dtm, rtm, rti, %{}, [0], [0]) do
       {:ok, pid} ->
         # Use the pid here
-        #IO.puts("GenServer started with PID: #{inspect(pid)}")
+        # IO.puts("GenServer started with PID: #{inspect(pid)}")
         pid
 
       {:error, reason} ->
-        #IO.puts("Failed to start GenServer: #{reason}")
+        nil
+        # IO.puts("Failed to start GenServer: #{reason}")
     end
   end
 
