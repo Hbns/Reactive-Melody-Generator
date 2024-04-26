@@ -81,6 +81,10 @@ defmodule Hvm do
       Memory.load_pids(deployment_pid, deployment_pids)
     end)
 
+    # use case, reactive melody generator
+    # start Supercollider (sound server)
+    Test_collider.start()
+
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
     main_pid = Map.get(deployment_pids, :main)
@@ -100,7 +104,7 @@ defmodule Hvm do
     # get main deployment pid
     main_pid = main_pid
     # 'receive' stream of input data, can be 'anything'
-    new_src = [0, 426, 120]
+    new_src = [0, pick_base_frequency(), pick_tempo()]
     IO.inspect(new_src, label: "New sources")
     # write the newly recieved input into the deployment
     Memory.set_src(main_pid, new_src)
@@ -155,6 +159,20 @@ defmodule Hvm do
     random_index = :rand.uniform(length(quarter_note_multipliers))
     index = rem(random_index, length(quarter_note_multipliers))
     Enum.at(quarter_note_multipliers, index)
+  end
+
+  def pick_base_frequency() do
+    base_frequencies = [431,432,433,434,435,436,437,438,439]
+    random_index = :rand.uniform(length(base_frequencies))
+    index = rem(random_index, length(base_frequencies))
+    Enum.at(base_frequencies, index)
+  end
+
+  def pick_tempo() do
+    tempos = [60, 65, 75, 85, 90, 100, 110, 120, 130, 140, 150]
+    random_index = :rand.uniform(length(tempos))
+    index = rem(random_index, length(tempos))
+    Enum.at(tempos, index)
   end
 
   # Make key value map, key = reactor_name and value = reactor -> {nos_src, nos_snk, dti, rti}.
