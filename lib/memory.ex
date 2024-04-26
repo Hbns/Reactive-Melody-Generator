@@ -51,6 +51,10 @@ defmodule Memory do
     GenServer.call(pid, {:get_sink, at})
   end
 
+  def get_sink(pid) do
+    GenServer.call(pid, :get_sink)
+  end
+
   def sink(from, from_index, sink_index, rti_index, pid) do
     GenServer.call(pid, {:sink, from, from_index, sink_index, rti_index})
   end
@@ -87,11 +91,6 @@ defmodule Memory do
   @impl true
   def handle_call(:get_rti, _from, {dtm, rtm, rti, pids, src, snk}) do
     {:reply, {:ok, rti}, {dtm, rtm, rti, pids, src, snk}}
-  end
-
-  @impl true
-  def handle_call(:get_sink, _from, {dtm, rtm, rti, pids, src, snk}) do
-    {:reply, {:ok, snk}, {dtm, rtm, rti, pids, src, snk}}
   end
 
   # Save a lookup
@@ -246,6 +245,16 @@ defmodule Memory do
     res
   end
 
+  def apply_native_operation(:multiply, src1, src2) do
+    res = src1 * src2
+    res
+  end
+
+  def apply_native_operation(:divide, src1, src2) do
+    res = src1 / src2
+    res
+  end
+
   # Consume
   @impl true
   def handle_call(
@@ -275,6 +284,12 @@ defmodule Memory do
   end
 
   # Sink
+
+  @impl true
+  def handle_call(:get_sink, _from, {dtm, rtm, rti, pids, src, snk}) do
+    reset_sink = [0]
+    {:reply, {:ok, snk}, {dtm, rtm, rti, pids, src, reset_sink}}
+  end
 
   @impl true
   def handle_call({:get_sink, at}, _from, {dtm, rtm, rti, pids, src, snk}) do

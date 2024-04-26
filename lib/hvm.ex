@@ -1,7 +1,7 @@
 defmodule Hvm do
   # module attributes, can only be static.
   # @signal_table %{time: fn -> Time.utc_now() end}
-  @signal_table %{time: 26}
+  @signal_table %{time: 26, ci: 1.25, lm: 2.0}
   # to check if a reactor is a native one
   @native_table [:plus, :minus, :divide, :multiply]
 
@@ -83,7 +83,7 @@ defmodule Hvm do
 
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
-    loop_deployment(deployment_pids, 10)
+    loop_deployment(deployment_pids, 1)
 
     IO.puts("vm stopped")
   end
@@ -98,18 +98,28 @@ defmodule Hvm do
     # get main deployment pid
     main_pid = Map.get(deployment_pids, :main)
     # 'receive' stream of input data, can be 'anything'
-    new_src = generate_random_numbers()
+    new_src = [0, 1, 120]
     IO.inspect(new_src, label: "New sources")
     # write the newly recieved input into the deployment
     Memory.set_src(main_pid, new_src)
     # run the reaction time instruction of this deployment once
     run_rti(main_pid)
-    # 'receive' the sink from last iteration.
-    {:ok, sink} = Memory.get_sink(main_pid, 0)
-    IO.inspect(sink, label: "Here is the sink")
+    # 'receive' the sink from last iteration
+    {:ok, sinks} = Memory.get_sink(main_pid)
+    frequency = Enum.at(sinks, 0)
+    duration = Enum.at(sinks, 1)
+    IO.inspect(sinks, label: "Here is the sink")
+    # loop at 'musical speed' defined by note duration in sinks
+    Test_collider.plays(frequency, duration)
+    Process.sleep(trunc(Enum.at(sinks, 1)) + 100)
+    #Test_collider.nfree(100)
+    # send values to supercollider
+
     # Keep on looping..
     loop_deployment(deployment_pids, n - 1)
   end
+
+
 
   # make a list with 3 random numbers
   def generate_random_numbers do
@@ -118,6 +128,37 @@ defmodule Hvm do
       Enum.random(44..16860),
       Enum.random(44..16860)
     ]
+  end
+
+  # Consonance in music, is when a combination of notes sounds pleasant...
+  def pick_consonant_interval() do
+    consonant_intervals = [
+      1.0,
+      1.0667,
+      1.250,
+      1.2,
+      1.25,
+      1.33,
+      1.4063,
+      1.5,
+      1.6,
+      1.6667,
+      1.8,
+      1.8750,
+      2.0
+    ]
+
+    random_index = :rand.uniform(length(consonant_intervals))
+    index = rem(random_index, length(consonant_intervals))
+    Enum.at(consonant_intervals, index)
+  end
+
+  # multiply the quarternote duration to make other note durations
+  def pick_quarter_note_multiplier() do
+    quarter_note_multipliers = [4.0, 2.0, 1.0, 0.5, 0.25, 0.125]
+    random_index = :rand.uniform(length(quarter_note_multipliers))
+    index = rem(random_index, length(quarter_note_multipliers))
+    Enum.at(quarter_note_multipliers, index)
   end
 
   # Make key value map, key = reactor_name and value = reactor -> {nos_src, nos_snk, dti, rti}.
@@ -229,9 +270,18 @@ defmodule Hvm do
   # Memory holds call's to the genserver to perform the instruciton.
 
   def handle_instruction(["I-LOOKUP", signal], rti_index, pid) do
-    value = Map.get(@signal_table, signal)
-    # t = System.os_time()
-    # idex 1 hardcoded.
+    value =
+      case signal do
+        :ci ->
+          pick_consonant_interval()
+
+        :lm ->
+          pick_quarter_note_multiplier()
+
+        _ ->
+          Map.get(@signal_table, signal)
+      end
+
     case Memory.save_lookup(rti_index, value, pid) do
       :ok ->
         log_message = "lookup, rti_index: #{rti_index}\n"
@@ -483,6 +533,57 @@ defmodule Hvm do
       ]
     ]
 
-    run_VM(mt2)
+    co_nl = [
+      [
+        :consonance,
+        1,
+        1,
+        [["I-ALLOCMONO", :multiply]],
+        [
+          ["I-LOOKUP", :ci],
+          ["I-SUPPLY", ["%RREF", 1], ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SINK", ["%RREF", 5], 1]
+        ]
+      ],
+      [
+        :note_length,
+        1,
+        1,
+        [["I-ALLOCMONO", :divide], ["I-ALLOCMONO", :multiply]],
+        [
+          ["I-SUPPLY", 60000, ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 2],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-LOOKUP", :lm],
+          ["I-SUPPLY", ["%RREF", 4], ["%DREF", 2], 1],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SUPPLY", ["%RREF", 6], ["%DREF", 2], 2],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 9], 1]
+        ]
+      ],
+      [
+        :main,
+        2,
+        2,
+        [["I-ALLOCMONO", :consonance], ["I-ALLOCMONO", :note_length]],
+        [
+          ["I-SUPPLY", ["%SRC", 1], ["%DREF", 1], 1],
+          ["I-REACT", ["%DREF", 1]],
+          ["I-SUPPLY", ["%SRC", 2], ["%DREF", 2], 1],
+          ["I-REACT", ["%DREF", 2]],
+          ["I-CONSUME", ["%DREF", 1], 1],
+          ["I-SINK", ["%RREF", 5], 1],
+          ["I-CONSUME", ["%DREF", 2], 1],
+          ["I-SINK", ["%RREF", 7], 2]
+        ]
+      ]
+    ]
+
+    run_VM(co_nl)
   end
 end
