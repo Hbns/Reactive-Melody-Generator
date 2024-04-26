@@ -2,7 +2,12 @@ defmodule Test_collider do
 
   def start() do
     SuperCollider.start()
+  end
 
+  def receive(f, d) do
+    IO.inspect(f, label: "freq: ")
+    IO.inspect(d, label: "dura: ")
+    SuperCollider.command(:s_new, ["note_player", 100, 1, 0, ["freq", f, "amp", 0.1, "dur", d / 1000]])
 
   end
 

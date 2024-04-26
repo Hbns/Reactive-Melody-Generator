@@ -83,7 +83,8 @@ defmodule Hvm do
 
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
-    loop_deployment(deployment_pids, 1)
+    main_pid = Map.get(deployment_pids, :main)
+    loop_deployment(main_pid, 100)
 
     IO.puts("vm stopped")
   end
@@ -94,11 +95,12 @@ defmodule Hvm do
     :ok
   end
 
-  def loop_deployment(deployment_pids, n) when n > 0 do
+  def loop_deployment(main_pid, n) when n > 0 do
+    IO.inspect(n, label: 'loop#: ')
     # get main deployment pid
-    main_pid = Map.get(deployment_pids, :main)
+    main_pid = main_pid
     # 'receive' stream of input data, can be 'anything'
-    new_src = [0, 1, 120]
+    new_src = [0, 426, 120]
     IO.inspect(new_src, label: "New sources")
     # write the newly recieved input into the deployment
     Memory.set_src(main_pid, new_src)
@@ -108,18 +110,12 @@ defmodule Hvm do
     {:ok, sinks} = Memory.get_sink(main_pid)
     frequency = Enum.at(sinks, 0)
     duration = Enum.at(sinks, 1)
-    IO.inspect(sinks, label: "Here is the sink")
     # loop at 'musical speed' defined by note duration in sinks
-    Test_collider.plays(frequency, duration)
-    Process.sleep(trunc(Enum.at(sinks, 1)) + 100)
-    #Test_collider.nfree(100)
-    # send values to supercollider
-
+    Test_collider.receive(frequency, duration)
+    Process.sleep(trunc(duration) + 100) # added 100 sometimes nect note to fast
     # Keep on looping..
-    loop_deployment(deployment_pids, n - 1)
+    loop_deployment(main_pid, n - 1)
   end
-
-
 
   # make a list with 3 random numbers
   def generate_random_numbers do
