@@ -83,7 +83,7 @@ defmodule Hvm do
 
     # use case, reactive melody generator
     # start Supercollider (sound server)
-    Test_collider.start()
+    #Test_collider.start()
 
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
@@ -102,7 +102,7 @@ defmodule Hvm do
   def loop_deployment(main_pid, n) when n > 0 do
     IO.inspect(n, label: 'loop#: ')
     # get main deployment pid
-    main_pid = main_pid
+    #main_pid = main_pid
     # 'receive' stream of input data, can be 'anything'
     new_src = [0, pick_base_frequency(), pick_tempo()]
     IO.inspect(new_src, label: "New sources")
@@ -115,7 +115,8 @@ defmodule Hvm do
     frequency = Enum.at(sinks, 0)
     duration = Enum.at(sinks, 1)
     # loop at 'musical speed' defined by note duration in sinks
-    Test_collider.receive(frequency, duration)
+    node = :rand.uniform(1000) + 1 # node number for supecollider
+    Test_collider.play(frequency, duration, node)
     Process.sleep(trunc(duration) + 100) # added 100 sometimes nect note to fast
     # Keep on looping..
     loop_deployment(main_pid, n - 1)
@@ -162,14 +163,14 @@ defmodule Hvm do
   end
 
   def pick_base_frequency() do
-    base_frequencies = [431,432,433,434,435,436,437,438,439]
+    base_frequencies = [432,484.81,544.37,577.83,648.08,726.86,813.74,864]
     random_index = :rand.uniform(length(base_frequencies))
     index = rem(random_index, length(base_frequencies))
     Enum.at(base_frequencies, index)
   end
 
   def pick_tempo() do
-    tempos = [60, 65, 75, 85, 90, 100, 110, 120, 130, 140, 150]
+    tempos = [90, 100, 110, 120, 130]
     random_index = :rand.uniform(length(tempos))
     index = rem(random_index, length(tempos))
     Enum.at(tempos, index)
