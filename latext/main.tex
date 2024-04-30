@@ -1,0 +1,186 @@
+\documentclass[a4paper]{book}
+
+% Load the VUB package.
+% This has many options, please read the documentation at
+% https://gitlab.com/rubdos/texlive-vub
+\usepackage{vub}
+
+% Some highly suggested packages, please read their manuals.
+%\usepackage{cleveref}
+\usepackage[natbib,style=apa]{biblatex}
+\addbibresource{references.bib}
+
+\title{Distributing reactive Haai}
+\pretitle{\flushleft{Graduation thesis submitted in partial fulfilment of the requirements for the degree of de Ingenieurswetenschappen: Computerwetenschappen}}
+\subtitle{Haai Virtual machine}
+\author{Hans}
+\date{June~2024}
+\promotors{Promotors: prof.\ dr.\ Wolfgang De Meuter \and Supervisor: Bjarno Oeyen}
+
+\faculty{sciences and bioengineering sciences} % Note: without the word "Faculty"!
+
+\begin{document}
+\frontmatter
+\maketitle%
+
+% Oftentimes, you need add a second language title.
+%\title{Mijn thesistitel}
+%\pretitle{\flushleft{Proefschrift ingediend met het oog op het behalen van de graad van Master of Science in de %Ingenieurswetenschappen: Computerwetenschappen}}%
+%\subtitle{mijn ondertitel}
+%\date{Juni~2018}%
+%\faculty{wetenschappen en bio-ingenieurswetenschappen}%
+%\maketitle%
+
+\chapter{Abstract}
+sections copied from rrwf paper
+\textbf{Context}
+\textbf{inquiry}
+\textbf{Approach}
+\textbf{Knowledge}
+\textbf{Grounding}
+\textbf{Importance}
+
+Distribution of pure reactive programs.
+
+\tableofcontents%
+
+\mainmatter%
+\chapter{Introduction}
+This thesis steps into the world of distributed reactive programs. Reactive programming revolves around the concept of reacting on streams of data. In reactive programming the program reacts on a stream of data. The stream of data travels trough the reactive program to exit in an altered state. The reactive programming language used is Haai (\cite{oeyen_reactive_2024}), a purely reactive language consisting of only reactors.
+\subsection{Statement of the problem}
+Distributing software has multiple well known issues. 
+
+\subsection{Definition of terms}
+\textbf{Pure reactive language}
+\textbf{Distribution}
+
+\subsection{Literature review}
+
+\subsection{Remaining chapters}
+This is the introduction (\cite{oeyen2022reactive}) and so on 
+
+\chapter{Musical use case}
+Each different node in the distributed network of Haai reactors send there output to Supercollider to evoke this sound server to play a synthesized sound.
+Supercollider is an open-source platform for audio synthesis and algorithmic composition. Developed by James McCartney in the late 1990s (\cite{scBook}), it has since become a powerful tool in the fields of music technology, computer music, and sound art. Supercollider provides a flexible and expressive environment for creating and manipulating sound in real-time, making it an invaluable resource for both research and artistic exploration. 
+\section{Features of Supercollider}
+
+\textbf{Audio Synthesis:} Supercollider offers a wide range of synthesis techniques, including additive, subtractive, granular, and physical modeling synthesis. Users can create complex sounds by combining these techniques and modulating parameters in real-time.
+
+
+\textbf{Real-time Processing:} One of Supercollider's key strengths is its ability to process audio in real-time. This makes it suitable for live performances, interactive installations, and other time-sensitive applications.
+
+\textbf{Algorithmic Composition:} Supercollider provides tools for generating music algorithmically, allowing users to create compositions based on mathematical algorithms, rulesets, or generative processes.
+
+\textbf{Integration with External Hardware:} Supercollider can interface with external MIDI controllers, audio interfaces, and other hardware devices, enabling users to incorporate physical instruments and sensors into their sound projects.
+
+\textbf{Community and Documentation:} Supercollider has a vibrant online community of users who share code, tutorials, and resources. Additionally, comprehensive documentation is available, including tutorials, reference guides, and examples to help users learn and master the software.
+
+\section{Supercollider in Academia}
+
+\textbf{Research in Music Technology:} Supercollider is widely used in academic research projects exploring topics such as digital signal processing, human-computer interaction, and machine learning for music. Researchers leverage its flexibility and programmability to prototype new algorithms, experiment with novel synthesis techniques, and investigate the perceptual and cognitive aspects of sound.
+
+\textbf{Composition and Sound Design:} Composers and sound designers in academia use Supercollider to create innovative works that push the boundaries of traditional music and sound art. Its ability to generate complex and evolving textures, as well as its support for algorithmic composition, makes it a valuable tool for exploring new sonic territories.
+
+\textbf{Teaching and Learning:} Supercollider is increasingly incorporated into music technology and computer music curricula at universities and colleges worldwide. It provides students with hands-on experience in sound synthesis, programming, and digital audio processing, helping them develop technical skills and creative problem-solving abilities.
+
+\textbf{Interactive Installations and Performances:} Academic institutions often host exhibitions, concerts, and multimedia installations that feature interactive audiovisual experiences. Supercollider is frequently used to create the interactive soundscapes and generative audio environments that form an integral part of these events.
+\chapter{Haai}
+We are making use of the novel purely reactive language Haai. Haai is reactive all-the-way-trough. As such the only construct available for expressing computations is a reactor. A reactor has sources or inputs and sinks or outputs. For each time the sources are updated the reactor will react and produce a new sink value. The number of sources and sinks are variable per reactor definition. In Haai there are no functions only reactors. This allows us to build reactive programs without functions. (\cite{oeyen_reactive_2024})
+
+By design these programs are free of the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch}.(\cite{vonder_tackling_2020}) Two problems that arise from mixing reactive code with sequential code in a two-layered reactive programming language. 
+
+\section*{Reactive Thread Hijacking Problem}
+This happens in a two-layered reactive programming language when the reactive runtime or top layer calls a function in the bottom layer and that call never returns. The host has hijacked the control and the reactive runtime will not be able to regain control.  
+
+\section*{Reactive/Imperative Impedance Mismatch}
+When the reactive runtime in a two-layered reactive program used different side effects by calling functions on the first layer. It might be so that the order in which they are executed is not as expected. Creating faults in the programs that might not be easy to detect.
+
+\chapter{Haai Vm}
+We have build a virtual machine for the Haai language. The purpose of this Vm is to be able to distribute Haai code. We have chosen to build this Vm Elixir on top of the Erlang Virtual Machine called BEAM. The BEAM virtual machine provides features such as lightweight processes, scheduling, memory management, and fault tolerance. Elixir code compiles to bytecode that runs on the BEAM, allowing it to take advantage of these features.
+
+The starting point or input into the Haai virtual machine (Hvm) is Haai bytecode. The bytecode is provide by the Haai compiler and the Hvm takes inspiration from Remus. A virtual machine that has been carefully designed to be usable for running reactive programs in low-powered computing environments.(\cite{oeyen_remus_2022})
+
+After parsing the bytecode that was compiled form the original Haai code with the Haai compiler into an Elixir readable format of nested lists a program could look like this. In this example we see two user defined reactors named consonance and note\_length followed by the main reactor the functions as the leading reactor to be executed.
+
+\begin{verbatim}
+	co_nl = [
+	[:consonance, 1, 1,
+	[
+		["I-ALLOCMONO", :multiply]
+	],
+	[
+		["I-LOOKUP", :ci],
+		["I-SUPPLY",["%RREF",1],["%DREF",1],1],
+		["I-SUPPLY",["%SRC",1],["%DREF",1],2],
+		["I-REACT",["%DREF",1]],["I-CONSUME",["%DREF",1],1],
+		["I-SINK",["%RREF",5],1]]
+	],
+	
+	[:note_length, 1, 1,
+	[
+		["I-ALLOCMONO", :divide],["I-ALLOCMONO", :multiply]
+	],
+	[
+		["I-SUPPLY",60000,["%DREF",1],1],
+		["I-SUPPLY",["%SRC",1],["%DREF",1],2],
+		["I-REACT",["%DREF",1]],["I-LOOKUP",:lm],
+		["I-SUPPLY",["%RREF",4],["%DREF",2],1],
+		["I-CONSUME",["%DREF",1],1],
+		["I-SUPPLY",["%RREF",6],["%DREF",2],2],
+		["I-REACT",["%DREF",2]],
+		["I-CONSUME",["%DREF",2],1],
+		["I-SINK",["%RREF",9],1]]
+	],
+	
+	[:main, 2, 2,
+	[
+		["I-ALLOCMONO", :consonance],["I-ALLOCMONO", :note_length]
+	],
+	[
+		["I-SUPPLY",["%SRC",1],["%DREF",1],1],
+		["I-REACT",["%DREF",1]],
+		["I-SUPPLY",["%SRC",2],["%DREF",2],1],
+		["I-REACT",["%DREF",2]],
+		["I-CONSUME",["%DREF",1],1],
+		["I-SINK",["%RREF",5],1],
+		["I-CONSUME",["%DREF",2],1],
+		["I-SINK",["%RREF",7],2]
+	]
+	]
+	]
+\end{verbatim}
+
+The above is an example of bytecode that is send to the Haai virtual machine. This bytecode is a compilation of the following Haai program defining two user defined reactors and joining them together with a main reactor.
+
+\begin{verbatim}
+	(
+		(defr (consonance f)
+		     	(out (* ci f)))
+	
+	    (defr (note_length bpm)
+	      		(def q (/ 60000 bpm))
+	            (out (* lm q)))
+	
+	    (defr (main f bpm)
+	      		(out (consonance f))
+	      		(out (note_length bpm)))
+	)
+	
+\end{verbatim}
+
+
+
+\chapter{Distributed Haai}
+
+\section{Actor model}
+The actor system we use is Erlang which implements the processes actor model. (\cite{de_koster_43_2016}) These actors are modeled as processes and can define there receive primitive to specify what messages it responds to. Thanks to the isolated turn principle the actor model guarantees to be free of data races and deadlocks by design.
+\chapter{Evaluation}
+
+\chapter{Future work}
+
+
+\backmatter
+\chapter{Conclusion}
+
+\printbibliography
+\end{document}
