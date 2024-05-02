@@ -1,0 +1,30 @@
+# use this command to start: konsole --tabs-from-file tabs
+title: %n;; command: iex --name node1@home -S mix
+title: %n;; command: iex --name node2@home -S mix
+title: %n;; command: iex --name node3@home -S mix
+title: %n;; command: iex --name node4@home -S mix
+title: %n;; command: iex --name node5@home -S mix
+title: %n;; command: iex --name node6@home -S mix
+title: %n;; command: iex --name node7@home -S mix
+title: %n;; command: iex --name node8@home -S mix
+title: %n;; command: iex --name node9@home -S mix
+title: %n;; command: iex --name node10@home -S mix
+title: %n;; command: iex --name node11@home -S mix
+title: %n;; command: iex --name node12@home -S mix
+title: %n;; command: iex --name node13@home -S mix
+title: %n;; command: iex --name node14@home -S mix
+title: %n;; command: iex --name node15@home -S mix
+title: %n;; command: iex --name node16@home -S mix
+title: %n;; command: iex --name node17@home -S mix
+title: %n;; command: iex --name node18@home -S mix
+title: %n;; command: iex --name node19@home -S mix
+title: %n;; command: iex --name node20@home -S mix
+title: %n;; command: iex --name node21@home -S mix
+title: %n;; command: iex --name node22@home -S mix
+title: %n;; command: iex --name node23@home -S mix
+title: %n;; command: iex --name node24@home -S mix
+title: %n;; command: iex --name node25@home -S mix
+
+
+
+

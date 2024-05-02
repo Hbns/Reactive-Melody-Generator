@@ -83,12 +83,13 @@ defmodule Hvm do
 
     # use case, reactive melody generator
     # start Supercollider (sound server)
-    #Test_collider.start()
+    SuperCollider.start(ip: '192.168.178.25')
 
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
+    times_to_itterate = 100
     main_pid = Map.get(deployment_pids, :main)
-    loop_deployment(main_pid, 100)
+    loop_deployment(main_pid, times_to_itterate)
 
     IO.puts("vm stopped")
   end
@@ -101,8 +102,6 @@ defmodule Hvm do
 
   def loop_deployment(main_pid, n) when n > 0 do
     IO.inspect(n, label: 'loop#: ')
-    # get main deployment pid
-    #main_pid = main_pid
     # 'receive' stream of input data, can be 'anything'
     new_src = [0, pick_base_frequency(), pick_tempo()]
     IO.inspect(new_src, label: "New sources")
@@ -114,10 +113,11 @@ defmodule Hvm do
     {:ok, sinks} = Memory.get_sink(main_pid)
     frequency = Enum.at(sinks, 0)
     duration = Enum.at(sinks, 1)
-    # loop at 'musical speed' defined by note duration in sinks
     node = :rand.uniform(1000) + 1 # node number for supecollider
+    # send message to Sc to play sound
     Test_collider.play(frequency, duration, node)
-    Process.sleep(trunc(duration) + 100) # added 100 sometimes nect note to fast
+    # loop at 'musical speed' defined by note duration in sinks
+    Process.sleep(trunc(duration) + 50) # added 50 sometimes next note to fast
     # Keep on looping..
     loop_deployment(main_pid, n - 1)
   end
@@ -156,21 +156,21 @@ defmodule Hvm do
 
   # multiply the quarternote duration to make other note durations
   def pick_quarter_note_multiplier() do
-    quarter_note_multipliers = [4.0, 2.0, 1.0, 0.5, 0.25, 0.125]
+    quarter_note_multipliers = [8.0, 4.0, 2.0, 1.0, 0.5, 0.25, 0.125]
     random_index = :rand.uniform(length(quarter_note_multipliers))
     index = rem(random_index, length(quarter_note_multipliers))
     Enum.at(quarter_note_multipliers, index)
   end
 
   def pick_base_frequency() do
-    base_frequencies = [432,484.81,544.37,577.83,648.08,726.86,813.74,864]
+    base_frequencies = [432,242.405,544.37,577.83,324.04,726.86,813.74,864] #G Major
     random_index = :rand.uniform(length(base_frequencies))
     index = rem(random_index, length(base_frequencies))
     Enum.at(base_frequencies, index)
   end
 
   def pick_tempo() do
-    tempos = [90, 100, 110, 120, 130]
+    tempos = [90, 100, 110, 120, 130, 140, 150]
     random_index = :rand.uniform(length(tempos))
     index = rem(random_index, length(tempos))
     Enum.at(tempos, index)

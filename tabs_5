@@ -1,0 +1,6 @@
+# use this command to start: konsole --tabs-from-file tabs
+title: %n;; command: iex --name node1@home -S mix
+title: %n;; command: iex --name node2@home -S mix
+title: %n;; command: iex --name node3@home -S mix
+title: %n;; command: iex --name node4@home -S mix
+title: %n;; command: iex --name node5@home -S mix

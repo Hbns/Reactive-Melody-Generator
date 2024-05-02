@@ -1,0 +1,17 @@
+\contentsline {chapter}{Abstract}{iii}{}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{}%
+\contentsline {subsection}{\numberline {1.0.1}Statement of the problem}{1}{}%
+\contentsline {subsection}{\numberline {1.0.2}Definition of terms}{1}{}%
+\contentsline {subsection}{\numberline {1.0.3}Literature review}{1}{}%
+\contentsline {subsection}{\numberline {1.0.4}Remaining chapters}{1}{}%
+\contentsline {chapter}{\numberline {2}Haai}{3}{}%
+\contentsline {section}{\numberline {2.1}Haai instruction set}{3}{}%
+\contentsline {section}{\numberline {2.2}Reactors}{4}{}%
+\contentsline {subsection}{\numberline {2.2.1}Reactors memory}{4}{}%
+\contentsline {chapter}{\numberline {3}Haai virtual machine}{5}{}%
+\contentsline {section}{\numberline {3.1}Example bytecode program}{5}{}%
+\contentsline {section}{\numberline {3.2}Native reactors}{7}{}%
+\contentsline {chapter}{\numberline {4}Distributed Haai}{9}{}%
+\contentsline {section}{\numberline {4.1}Actor model}{9}{}%
+\contentsline {chapter}{\numberline {5}Use case, sound}{11}{}%
+\contentsline {chapter}{Conclusion}{13}{}%
