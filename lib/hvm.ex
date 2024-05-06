@@ -68,7 +68,7 @@ defmodule Hvm do
     main_pid = Map.get(deployment_pids, :main)
     loop_deployment(main_pid, times_to_itterate, new_source1, new_source2)
 
-    IO.puts("vm stopped")
+    IO.puts("#{Node.self()} stopped")
   end
 
   # basecase, to loop n times..
@@ -77,7 +77,7 @@ defmodule Hvm do
     :ok
   end
 
-  def loop_deployment(main_pid, itteration_number, new_source1, new_source2) when n > 0 do
+  def loop_deployment(main_pid, itteration_number, new_source1, new_source2) when itteration_number > 0 do
     # 'receive' stream of input data
     new_src = [0, new_source1.(), new_source2.()]
 
@@ -93,8 +93,8 @@ defmodule Hvm do
     # print some info per itteration
     IO.inspect(itteration_number, label: "#{Node.self()} loop#: ")
     IO.inspect(new_src, label: "#{Node.self()} - srce: ")
-    IO.inspect(new_src, label: "#{Node.self()} - freq: ")
-    IO.inspect(new_src, label: "#{Node.self()} - dura: ")
+    IO.inspect(frequency, label: "#{Node.self()} - freq: ")
+    IO.inspect(duration, label: "#{Node.self()} - dura: ")
     node = :rand.uniform(1000) + 1 # node number for supecollider
     # send message to Sc to play sound
     Test_collider.play(frequency, duration, node)
