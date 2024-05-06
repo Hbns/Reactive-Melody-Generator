@@ -5,16 +5,16 @@ defmodule Distribution do
     IO.inspect(nodes, label: ~c"Shows nodes connected to #{this_node}: ")
   end
 
-  def startVM(remote_node, reactor_bytecode, connect_source1, connect_source2) do
-    Node.spawn(remote_node, Hvm, :run_VM, [reactor_bytecode, connect_source1, connect_source2])
+  def startVM(remote_node, reactor_bytecode, connect_source1, connect_source2, handle_sink) do
+    Node.spawn(remote_node, Hvm, :run_VM, [reactor_bytecode, connect_source1, connect_source2, handle_sink])
   end
 
   def spawn_to_known_nodes() do
     nodes = Node.list()
     middle_index = Kernel.div(length(nodes), 2)
     {first_part, second_part} = Enum.split(nodes, middle_index)
-    Enum.each(first_part, fn node -> startVM(node, p1(), &pick_base_frequency/0, &pick_tempo/0) end)
-    Enum.each(second_part, fn node -> startVM(node, p1(), &pick_base_frequency2/0, &pick_tempo/0) end)
+    Enum.each(first_part, fn node -> startVM(node, p1(), &pick_base_frequency/0, &pick_tempo/0, &play_sc/2) end)
+    Enum.each(second_part, fn node -> startVM(node, p1(), &pick_base_frequency2/0, &pick_tempo/0, &play_sc/2) end)
   end
 
   ## Distributed reactive melody generator ##
@@ -41,6 +41,10 @@ defmodule Distribution do
     random_index = :rand.uniform(length(tempos))
     index = rem(random_index, length(tempos))
     Enum.at(tempos, index)
+  end
+
+  def play_sc(sinks, node) do
+    Test_collider.play(Enum.at(sinks, 0), Enum.at(sinks, 1), node)
   end
 
   ## example program ##

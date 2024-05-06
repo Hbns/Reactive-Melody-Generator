@@ -6,7 +6,7 @@ defmodule Hvm do
   @native_table [:plus, :minus, :divide, :multiply]
 
   # Start the VM for received byte code
-  def run_VM(reactor_byte_code, new_source1, new_source2) do
+  def run_VM(reactor_byte_code, new_source1, new_source2, handle_sink) do
     # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
     {:ok, reactors_catalog} = catalog_reactors(reactor_byte_code)
     # count deployments requested in deployment-time-instructions
@@ -66,18 +66,18 @@ defmodule Hvm do
     # second argument is times to itterate (reactor normaly loops infinitly)
     times_to_itterate = 24
     main_pid = Map.get(deployment_pids, :main)
-    loop_deployment(main_pid, times_to_itterate, new_source1, new_source2)
+    loop_deployment(main_pid, times_to_itterate, new_source1, new_source2, handle_sink)
 
     IO.puts("#{Node.self()} stopped")
   end
 
   # basecase, to loop n times..
-  def loop_deployment(_deployment_pids, 0, _new_source1, _new_source2) do
+  def loop_deployment(_deployment_pids, 0, _new_source1, _new_source2, _handle_sink) do
     # Base case: when loop count reaches 0, stop looping
     :ok
   end
 
-  def loop_deployment(main_pid, itteration_number, new_source1, new_source2) when itteration_number > 0 do
+  def loop_deployment(main_pid, itteration_number, new_source1, new_source2, handle_sink) when itteration_number > 0 do
     # 'receive' stream of input data
     new_src = [0, new_source1.(), new_source2.()]
 
@@ -87,6 +87,7 @@ defmodule Hvm do
     run_rti(main_pid)
     # 'receive' the sink from last iteration
     {:ok, sinks} = Memory.get_sink(main_pid)
+
     # main reactor has two sinks:
     frequency = Enum.at(sinks, 0)
     duration = Enum.at(sinks, 1)
@@ -95,13 +96,15 @@ defmodule Hvm do
     IO.inspect(new_src, label: "#{Node.self()} - srce: ")
     IO.inspect(frequency, label: "#{Node.self()} - freq: ")
     IO.inspect(duration, label: "#{Node.self()} - dura: ")
+
     node = :rand.uniform(1000) + 1 # node number for supecollider
     # send message to Sc to play sound
-    Test_collider.play(frequency, duration, node)
+    #Test_collider.play(frequency, duration, node)
+    handle_sink.(sinks, node)
     # loop at 'musical speed' defined by note duration in sinks
     Process.sleep(trunc(duration) + 50) # added 50 sometimes next note to fast
     # Keep on looping..
-    loop_deployment(main_pid, itteration_number - 1, new_source1, new_source2)
+    loop_deployment(main_pid, itteration_number - 1, new_source1, new_source2, handle_sink)
   end
 
   # make a list with 3 random numbers
@@ -567,6 +570,6 @@ defmodule Hvm do
       ]
     ]
 
-    run_VM(co_nl,22,22)
+    run_VM(co_nl,22,22,22)
   end
 end
