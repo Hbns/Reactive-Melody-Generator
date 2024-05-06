@@ -1,0 +1,78 @@
+# use this command to start: konsole --tabs-from-file tabs
+# funtion to generate the number of line needed in bash
+#for i in {1..200}; do
+#    title="%n$i;;"
+#    command="iex --name node$i@0.0.0.0 -S mix"
+#    echo "title: $title command: $command"
+#done
+title: %n1;; command: iex --name node1@0.0.0.0 -S mix
+title: %n2;; command: iex --name node2@0.0.0.0 -S mix
+title: %n3;; command: iex --name node3@0.0.0.0 -S mix
+title: %n4;; command: iex --name node4@0.0.0.0 -S mix
+title: %n5;; command: iex --name node5@0.0.0.0 -S mix
+title: %n6;; command: iex --name node6@0.0.0.0 -S mix
+title: %n7;; command: iex --name node7@0.0.0.0 -S mix
+title: %n8;; command: iex --name node8@0.0.0.0 -S mix
+title: %n9;; command: iex --name node9@0.0.0.0 -S mix
+title: %n10;; command: iex --name node10@0.0.0.0 -S mix
+title: %n11;; command: iex --name node11@0.0.0.0 -S mix
+title: %n12;; command: iex --name node12@0.0.0.0 -S mix
+title: %n13;; command: iex --name node13@0.0.0.0 -S mix
+title: %n14;; command: iex --name node14@0.0.0.0 -S mix
+title: %n15;; command: iex --name node15@0.0.0.0 -S mix
+title: %n16;; command: iex --name node16@0.0.0.0 -S mix
+title: %n17;; command: iex --name node17@0.0.0.0 -S mix
+title: %n18;; command: iex --name node18@0.0.0.0 -S mix
+title: %n19;; command: iex --name node19@0.0.0.0 -S mix
+title: %n20;; command: iex --name node20@0.0.0.0 -S mix
+title: %n21;; command: iex --name node21@0.0.0.0 -S mix
+title: %n22;; command: iex --name node22@0.0.0.0 -S mix
+title: %n23;; command: iex --name node23@0.0.0.0 -S mix
+title: %n24;; command: iex --name node24@0.0.0.0 -S mix
+title: %n25;; command: iex --name node25@0.0.0.0 -S mix
+title: %n26;; command: iex --name node26@0.0.0.0 -S mix
+title: %n27;; command: iex --name node27@0.0.0.0 -S mix
+title: %n28;; command: iex --name node28@0.0.0.0 -S mix
+title: %n29;; command: iex --name node29@0.0.0.0 -S mix
+title: %n30;; command: iex --name node30@0.0.0.0 -S mix
+title: %n31;; command: iex --name node31@0.0.0.0 -S mix
+title: %n32;; command: iex --name node32@0.0.0.0 -S mix
+title: %n33;; command: iex --name node33@0.0.0.0 -S mix
+title: %n34;; command: iex --name node34@0.0.0.0 -S mix
+title: %n35;; command: iex --name node35@0.0.0.0 -S mix
+title: %n36;; command: iex --name node36@0.0.0.0 -S mix
+title: %n37;; command: iex --name node37@0.0.0.0 -S mix
+title: %n38;; command: iex --name node38@0.0.0.0 -S mix
+title: %n39;; command: iex --name node39@0.0.0.0 -S mix
+title: %n40;; command: iex --name node40@0.0.0.0 -S mix
+title: %n41;; command: iex --name node41@0.0.0.0 -S mix
+title: %n42;; command: iex --name node42@0.0.0.0 -S mix
+title: %n43;; command: iex --name node43@0.0.0.0 -S mix
+title: %n44;; command: iex --name node44@0.0.0.0 -S mix
+title: %n45;; command: iex --name node45@0.0.0.0 -S mix
+title: %n46;; command: iex --name node46@0.0.0.0 -S mix
+title: %n47;; command: iex --name node47@0.0.0.0 -S mix
+title: %n48;; command: iex --name node48@0.0.0.0 -S mix
+title: %n49;; command: iex --name node49@0.0.0.0 -S mix
+title: %n50;; command: iex --name node50@0.0.0.0 -S mix
+title: %n41;; command: iex --name node51@0.0.0.0 -S mix
+title: %n42;; command: iex --name node52@0.0.0.0 -S mix
+title: %n43;; command: iex --name node53@0.0.0.0 -S mix
+title: %n44;; command: iex --name node54@0.0.0.0 -S mix
+title: %n45;; command: iex --name node55@0.0.0.0 -S mix
+title: %n46;; command: iex --name node56@0.0.0.0 -S mix
+title: %n47;; command: iex --name node57@0.0.0.0 -S mix
+title: %n48;; command: iex --name node58@0.0.0.0 -S mix
+title: %n49;; command: iex --name node59@0.0.0.0 -S mix
+title: %n50;; command: iex --name node60@0.0.0.0 -S mix
+title: %n41;; command: iex --name node61@0.0.0.0 -S mix
+title: %n42;; command: iex --name node62@0.0.0.0 -S mix
+title: %n43;; command: iex --name node63@0.0.0.0 -S mix
+title: %n44;; command: iex --name node64@0.0.0.0 -S mix
+title: %n45;; command: iex --name node65@0.0.0.0 -S mix
+title: %n46;; command: iex --name node66@0.0.0.0 -S mix
+title: %n47;; command: iex --name node67@0.0.0.0 -S mix
+title: %n48;; command: iex --name node68@0.0.0.0 -S mix
+title: %n49;; command: iex --name node69@0.0.0.0 -S mix
+title: %n50;; command: iex --name node70@0.0.0.0 -S mix
+

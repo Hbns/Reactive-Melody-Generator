@@ -6,7 +6,7 @@ defmodule Hvm do
   @native_table [:plus, :minus, :divide, :multiply]
 
   # Start the VM for received byte code
-  def run_VM(reactor_byte_code) do
+  def run_VM(reactor_byte_code, new_source1, new_source2) do
     # reactors_catalog: key = reactor_name and value = {nos_src, nos_snk, dti, rti}.
     {:ok, reactors_catalog} = catalog_reactors(reactor_byte_code)
     # count deployments requested in deployment-time-instructions
@@ -53,29 +53,6 @@ defmodule Hvm do
         updated_pids
       end)
 
-    ## OLD code, not possible to deploy one rector more then once.
-
-    # deployment_pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
-
-    # read all reactors dti, prepare dtm blocks, deploy and store key:reactor_name, value: deployment_pid.
-    #   deployment_pids =
-    #    Enum.reduce(reactors_catalog, %{}, fn {reactor_name, reactor}, deployment_pids ->
-    #       # pattern match reactor
-    #      {_nos_src, _nos_snk, dti, rti} = reactor
-    #      # transform deployment-time-instrcutions (dti) into deployment-time-memroy (dtm)
-    #       dtm_blocks = make_dtm_blocks(dti, reactors_catalog)
-    #       #IO.inspect(dtm_blocks, label: ~c"dtmBlocks: ")
-
-    #       # deploy the reactor (start genserver for this reactor) and receive pid
-    #       deployment_pid = deploy_reaktor(dtm_blocks, List.duplicate(nil, length(rti)), rti)
-    #       # update deployment_pids key:reactor_name value:deployment_pid
-    #       updated_deployment_pids = Map.put(deployment_pids, reactor_name, deployment_pid)
-
-    #       updated_deployment_pids
-    #     end)
-
-    # IO.inspect(reactors_catalog, label: ~c"Rcatalog")
-
     # Loads each deployment pid in all deployments, each deployment knows the pid of all other deployments.
     Enum.each(deployment_pids, fn {_reactor_name, deployment_pid} ->
       Memory.load_pids(deployment_pid, deployment_pids)
@@ -87,39 +64,44 @@ defmodule Hvm do
 
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
-    times_to_itterate = 100
+    times_to_itterate = 24
     main_pid = Map.get(deployment_pids, :main)
-    loop_deployment(main_pid, times_to_itterate)
+    loop_deployment(main_pid, times_to_itterate, new_source1, new_source2)
 
     IO.puts("vm stopped")
   end
 
   # basecase, to loop n times..
-  def loop_deployment(_deployment_pids, 0) do
+  def loop_deployment(_deployment_pids, 0, _new_source1, _new_source2) do
     # Base case: when loop count reaches 0, stop looping
     :ok
   end
 
-  def loop_deployment(main_pid, n) when n > 0 do
-    IO.inspect(n, label: 'loop#: ')
-    # 'receive' stream of input data, can be 'anything'
-    new_src = [0, pick_base_frequency(), pick_tempo()]
-    IO.inspect(new_src, label: "New sources")
+  def loop_deployment(main_pid, itteration_number, new_source1, new_source2) when n > 0 do
+    # 'receive' stream of input data
+    new_src = [0, new_source1.(), new_source2.()]
+
     # write the newly recieved input into the deployment
     Memory.set_src(main_pid, new_src)
     # run the reaction time instruction of this deployment once
     run_rti(main_pid)
     # 'receive' the sink from last iteration
     {:ok, sinks} = Memory.get_sink(main_pid)
+    # main reactor has two sinks:
     frequency = Enum.at(sinks, 0)
     duration = Enum.at(sinks, 1)
+    # print some info per itteration
+    IO.inspect(itteration_number, label: "#{Node.self()} loop#: ")
+    IO.inspect(new_src, label: "#{Node.self()} - srce: ")
+    IO.inspect(new_src, label: "#{Node.self()} - freq: ")
+    IO.inspect(new_src, label: "#{Node.self()} - dura: ")
     node = :rand.uniform(1000) + 1 # node number for supecollider
     # send message to Sc to play sound
     Test_collider.play(frequency, duration, node)
     # loop at 'musical speed' defined by note duration in sinks
     Process.sleep(trunc(duration) + 50) # added 50 sometimes next note to fast
     # Keep on looping..
-    loop_deployment(main_pid, n - 1)
+    loop_deployment(main_pid, itteration_number - 1, new_source1, new_source2)
   end
 
   # make a list with 3 random numbers
@@ -160,20 +142,6 @@ defmodule Hvm do
     random_index = :rand.uniform(length(quarter_note_multipliers))
     index = rem(random_index, length(quarter_note_multipliers))
     Enum.at(quarter_note_multipliers, index)
-  end
-
-  def pick_base_frequency() do
-    base_frequencies = [432,242.405,544.37,577.83,324.04,726.86,813.74,864] #G Major
-    random_index = :rand.uniform(length(base_frequencies))
-    index = rem(random_index, length(base_frequencies))
-    Enum.at(base_frequencies, index)
-  end
-
-  def pick_tempo() do
-    tempos = [90, 100, 110, 120, 130, 140, 150]
-    random_index = :rand.uniform(length(tempos))
-    index = rem(random_index, length(tempos))
-    Enum.at(tempos, index)
   end
 
   # Make key value map, key = reactor_name and value = reactor -> {nos_src, nos_snk, dti, rti}.
@@ -599,6 +567,6 @@ defmodule Hvm do
       ]
     ]
 
-    run_VM(co_nl)
+    run_VM(co_nl,22,22)
   end
 end
