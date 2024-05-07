@@ -19,7 +19,7 @@ defmodule Distribution do
 
   ## Distributed reactive melody generator ##
 
-  # function used as data stream generator
+  # function used as data stream
   def pick_base_frequency() do
     # G Major
     base_frequencies = [432, 242.405, 544.37, 577.83, 324.04, 726.86, 813.74, 864]
@@ -35,7 +35,7 @@ defmodule Distribution do
     Enum.at(base_frequencies, index)
   end
 
-  # function used as data stream generator
+  # function used as data stream
   def pick_tempo() do
     tempos = [90, 100, 110, 120, 130, 140, 150]
     random_index = :rand.uniform(length(tempos))

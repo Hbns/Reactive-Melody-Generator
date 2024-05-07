@@ -52,15 +52,22 @@ We are looking into the distribution of a purely reactive programming language H
 
 \mainmatter%
 \chapter{Introduction}
-This thesis steps into the world of distributed reactive programs. Reactive programming revolves around the concept of reacting on streams of data. In reactive programming the program reacts on a stream of data. The stream of data travels trough the reactive program to exit in an altered state. The reactive programming language used is Haai (\cite{oeyen_reactive_2024}), a purely reactive language consisting of only reactors.
+This thesis steps into the world of distributed reactive programs. Reactive programming revolves around the concept of reacting on streams of data. In reactive programming the program reacts on a stream of data. The stream of data travels trough the reactive program to exit in a possibly altered state. We will investigate possibilities to distribute the reactive programming language Haai. (\cite{oeyen_reactive_2024}) Haai is a purely reactive language consisting of only reactors. The literature review on distribution models for reactive programs lead us to the actor model (\cite{de_koster_43_2016}). We have implemented a virtual machine that opens the possibilities for the Haai language to be distributed on a Elixir (\cite{juric2024elixir}) cluster.
 \subsection{Statement of the problem}
-Distributing software has multiple well known issues. 
+To distribute a reactive program different approaches can be taken, We will select a distribution model to experiment with the distribution of reactive programming languages or reactors written in Haai. Glitch avoidance in reactive programs has been achieved on most modern implementations that run on a single node. In a distributed setting glitch avoidance is not an easy task due to the parts the distributed system is build of. Delays, network failures and other problems make it complicated to reach glitch freedom in a distributed setting. (\cite{DBLP:journals/csur/BainomugishaCCMM13})
 
 \subsection{Definition of terms}
-\textbf{Pure reactive language}
-\textbf{Distribution}
+\textbf{Reactive programming language: }
+A computer language to write reactive programs.
+
+\textbf{Reactive programming: }
+Reactive programming is a programming paradigm that focuses on asynchronous data streams and the propagation of changes. In reactive programming, you model your application as a series of data flows and transformations, where changes in one part of the system can automatically trigger updates in other parts. This paradigm is particularly useful for building interactive and responsive applications, such as user interfaces, real-time analytics, and event-driven systems.
+
+\textbf{Distribution of reactive programs: }In the context of distributing reactive programs, "distribution" refers to the deployment of reactive systems across multiple computing nodes or devices. This distribution enables the system to handle a large volume of data, support high concurrency, and scale horizontally to meet increasing demands. distributing reactive programs enables the creation of resilient, scalable, and responsive applications that can efficiently handle complex workloads and adapt to changing requirements.
 
 \subsection{Literature review}
+
+
 
 \subsection{Remaining chapters}
 This is the introduction (\cite{oeyen2022reactive}) and so on 
@@ -174,7 +181,7 @@ The above is an example of bytecode that is send to the Haai virtual machine. Th
 \end{verbatim}
 
 \section{Native reactors}
-The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm. 
+The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required.
 
 
 \chapter{Distributed Haai}
@@ -182,8 +189,18 @@ The example program is explained in more detail in the use case chapter. The sam
 
 \section{Actor model}
 The actor system we use is Erlang which implements the processes actor model. (\cite{de_koster_43_2016}) These actors are modeled as processes and can define there receive primitive to specify what messages it responds to. Thanks to the isolated turn principle the actor model guarantees to be free of data races and deadlocks by design.
+    Actors are typically used when you need to encapsulate state and behavior within a single unit of computation.
+Actors are spawned using constructs like GenServer, Task, or Agent within a single node.
+Actors communicate with each other using message passing within the same node.
+Actors are suitable for modeling concurrent and stateful components of your application, such as handling user sessions, managing resources, or coordinating complex workflows.
 
-\chapter{Use case, sound}
+\section{Distributed Erlang mechanisms}
+    Distributed Erlang mechanisms come into play when you need to communicate between actors residing on different nodes within a cluster.
+Nodes communicate with each other using distributed Erlang protocols, allowing actors on different nodes to exchange messages.
+Distributed Erlang mechanisms provide fault tolerance, distribution transparency, and location transparency across the cluster.
+You use distributed Erlang features implicitly when you send messages between actors residing on different nodes or explicitly when you need to establish node connections, monitor nodes, or manage global state.
+
+\chapter{Distributed reactive melody generator}
 Sound or the musical expression of notes is the use case for this thesis. On two incoming streams of data reactors will react. The first stream exists out of numbers representing frequencies to be played by the synthesizer. The second stream are numbers that represent the tempo in beats per minute, from that tempo, durations for sounds can be computed by the reactor. Those durations are the time a sound plays until it disappears, that same duration will be the time one reactor iteration takes. The reactor loops over and over but each loop has a defined duration, this duration is virtually equal to the duration calculated by the reactor. 
 
 The synthesizer that produces the sound is s synthdef inside the sound server named SuperCollider. Supercollider is an open-source platform for audio synthesis and algorithmic composition. Developed by James McCartney in the late 1990s (\cite{scBook}), it has since become a powerful tool in the fields of music technology, computer music, and sound art. Supercollider provides a flexible and expressive environment for creating and manipulating sound in real-time, making it an invaluable resource for both research and artistic exploration. Some main features of super collider include:
