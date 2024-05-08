@@ -82,6 +82,76 @@
       \verb https://doi.org/10.1145/2501654.2501666
       \endverb
     \endentry
+    \entry{DBLP:conf/tools/CarretonMCM10}{inbook}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=417c15bc668eb823ac2bd9e11bb476a7}{%
+           family={Carreton},
+           familyi={C\bibinitperiod},
+           given={Andoni\bibnamedelima Lombide},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=fc04b51f072153813b3af4cd434895ae}{%
+           family={Mostinckx},
+           familyi={M\bibinitperiod},
+           given={Stijn},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=37eb688674931f99902c42724268d593}{%
+           family={Cutsem},
+           familyi={C\bibinitperiod},
+           given={Tom\bibnamedelima Van},
+           giveni={T\bibinitperiod\bibinitdelim V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0e03503f6d9eeb0a6ec411ed4c00b569}{%
+           family={Meuter},
+           familyi={M\bibinitperiod},
+           given={Wolfgang\bibnamedelima De},
+           giveni={W\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=02d6346b81238d26cc771c69d33f7a1c}{%
+           family={Vitek},
+           familyi={V\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{f7c956c55eb72053a5e3f1241ffde4fa}
+      \strng{fullhash}{83b0ec85e1cf72a3d0c161b6620921fe}
+      \strng{bibnamehash}{83b0ec85e1cf72a3d0c161b6620921fe}
+      \strng{authorbibnamehash}{83b0ec85e1cf72a3d0c161b6620921fe}
+      \strng{authornamehash}{f7c956c55eb72053a5e3f1241ffde4fa}
+      \strng{authorfullhash}{83b0ec85e1cf72a3d0c161b6620921fe}
+      \strng{editorbibnamehash}{02d6346b81238d26cc771c69d33f7a1c}
+      \strng{editornamehash}{02d6346b81238d26cc771c69d33f7a1c}
+      \strng{editorfullhash}{02d6346b81238d26cc771c69d33f7a1c}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Objects, Models, Components, Patterns, 48th International Conference, {TOOLS} 2010, Málaga, Spain, June 28 - July 2, 2010. Proceedings}
+      \field{series}{Lecture Notes in Computer Science}
+      \field{title}{Loosely-Coupled Distributed Reactive Programming in Mobile Ad Hoc Networks}
+      \field{volume}{6141}
+      \field{year}{2010}
+      \field{pages}{41\bibrangedash 60}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.1007/978-3-642-13953-6\_3
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/978-3-642-13953-6\_3
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/978-3-642-13953-6%5C_3
+      \endverb
+    \endentry
     \entry{de_koster_43_2016}{article}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=22b2acae731f0ec4804f973153a604e1}{%
@@ -350,6 +420,81 @@
       \endverb
       \verb{url}
       \verb https://programming-journal.org/2024/8/11
+      \endverb
+    \endentry
+    \entry{schmeder2010best}{article}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=85f8ed77d434c8f7e5711d6491c66521}{%
+           family={Schmeder},
+           familyi={S\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=dd0bb47c1ce1d810deb49bc87c9f2351}{%
+           family={Freed},
+           familyi={F\bibinitperiod},
+           given={Adrian},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e45a1ee70a698c10195d927bcb230aba}{%
+           family={Wessel},
+           familyi={W\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{14542ef4191e0ed5c881b954949e8d52}
+      \strng{fullhash}{9dd327584b192814501914d8a56c4a93}
+      \strng{bibnamehash}{9dd327584b192814501914d8a56c4a93}
+      \strng{authorbibnamehash}{9dd327584b192814501914d8a56c4a93}
+      \strng{authornamehash}{14542ef4191e0ed5c881b954949e8d52}
+      \strng{authorfullhash}{9dd327584b192814501914d8a56c4a93}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Linux Audio Conference}
+      \field{title}{Best practices for open sound control}
+      \field{volume}{10}
+      \field{year}{2010}
+    \endentry
+    \entry{DBLP:journals/debu/Stonebraker86}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9a603143e19a2dddd58e683838417ea3}{%
+           family={Stonebraker},
+           familyi={S\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{9a603143e19a2dddd58e683838417ea3}
+      \strng{fullhash}{9a603143e19a2dddd58e683838417ea3}
+      \strng{bibnamehash}{9a603143e19a2dddd58e683838417ea3}
+      \strng{authorbibnamehash}{9a603143e19a2dddd58e683838417ea3}
+      \strng{authornamehash}{9a603143e19a2dddd58e683838417ea3}
+      \strng{authorfullhash}{9a603143e19a2dddd58e683838417ea3}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{{IEEE} Database Eng. Bull.}
+      \field{number}{1}
+      \field{title}{The Case for Shared Nothing}
+      \field{volume}{9}
+      \field{year}{1986}
+      \field{pages}{4\bibrangedash 9}
+      \range{pages}{6}
+      \verb{urlraw}
+      \verb http://sites.computer.org/debull/86MAR-CD.pdf
+      \endverb
+      \verb{url}
+      \verb http://sites.computer.org/debull/86MAR-CD.pdf
       \endverb
     \endentry
     \entry{vonder_tackling_2020}{inbook}{}

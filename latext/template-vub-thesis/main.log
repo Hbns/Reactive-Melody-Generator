@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  7 MAY 2024 11:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  8 MAY 2024 14:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -931,7 +931,7 @@ Chapter 1.
 ] [2]
 Chapter 2.
 
-Overfull \hbox (3.20078pt too wide) in paragraph at lines 78--79
+Overfull \hbox (3.20078pt too wide) in paragraph at lines 74--75
 \OT1/cmr/m/n/10 These two prob-lems aer called the \OT1/cmr/m/it/10 Re-ac-tive 
 Thread Hi-jack-ing Prob-lem \OT1/cmr/m/n/10 and the \OT1/cmr/m/it/10 Re-ac-tive
 /Imperative
@@ -947,44 +947,61 @@ Chapter 3.
 
 ]
 Chapter 4.
-[9] [10
 
-]
+Overfull \hbox (2.85876pt too wide) in paragraph at lines 191--192
+[]\OT1/cmr/m/n/10 Shared-nothing ar-chi-tec-tures are highly scal-able hor-i-zo
+n-tally, this makes
+ []
+
+[9] [10]
 Chapter 5.
+[11
 
-Underfull \vbox (badness 7832) has occurred while \output is active []
+] [12] [13] [14
 
- [11]
-[12] [13
+] [15
+
+] [16
+
+] [17] [18
+
+] [19] (./main.aux)
+
+LaTeX Warning: There were undefined references.
 
 
-] [14
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
 
-] [15] (./main.aux)
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 22464 strings out of 478287
- 456036 string characters out of 5849289
- 1211640 words of memory out of 5000000
- 40310 multiletter control sequences out of 15000+600000
+ 22490 strings out of 478287
+ 457038 string characters out of 5849289
+ 1213871 words of memory out of 5000000
+ 40331 multiletter control sequences out of 15000+600000
  496969 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  115i,7n,118p,1914b,5160s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/tex-gyre/q-ec.enc}</usr/share/texlive/texmf
 -dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmsl10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmtt10.pfb></usr/share/texmf/fonts/type1/public/tex-gyre/qagb.pfb></usr/s
-hare/texmf/fonts/type1/public/tex-gyre/qagr.pfb>
-Output written on main.pdf (21 pages, 222473 bytes).
+type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+l10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/shar
+e/texmf/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/publ
+ic/tex-gyre/qagr.pfb>
+Output written on main.pdf (25 pages, 264255 bytes).
 PDF statistics:
- 121 PDF objects out of 1000 (max. 8388607)
- 79 compressed objects within 1 object stream
+ 154 PDF objects out of 1000 (max. 8388607)
+ 100 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  18 words of extra memory for PDF output out of 10000 (max. 10000000)
 

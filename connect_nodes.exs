@@ -8,3 +8,7 @@ nodes_to_connect = [:'node2@0.0.0.0', :'node3@0.0.0.0', :'node4@0.0.0.0', :'node
 Enum.each(nodes_to_connect, fn node ->
   Node.connect(node)
 end)
+
+# initiate SuperCollider on all nodes
+#nodes = Node.list()
+#Enum.each(nodes, fn node -> SuperCollider.start(ip:'192.168.178.25'))

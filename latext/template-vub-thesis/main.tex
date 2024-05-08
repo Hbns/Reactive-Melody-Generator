@@ -57,20 +57,15 @@ This thesis steps into the world of distributed reactive programs. Reactive prog
 To distribute a reactive program different approaches can be taken, We will select a distribution model to experiment with the distribution of reactive programming languages or reactors written in Haai. Glitch avoidance in reactive programs has been achieved on most modern implementations that run on a single node. In a distributed setting glitch avoidance is not an easy task due to the parts the distributed system is build of. Delays, network failures and other problems make it complicated to reach glitch freedom in a distributed setting. (\cite{DBLP:journals/csur/BainomugishaCCMM13})
 
 \subsection{Definition of terms}
-\textbf{Reactive programming language: }
-A computer language to write reactive programs.
-
-\textbf{Reactive programming: }
-Reactive programming is a programming paradigm that focuses on asynchronous data streams and the propagation of changes. In reactive programming, you model your application as a series of data flows and transformations, where changes in one part of the system can automatically trigger updates in other parts. This paradigm is particularly useful for building interactive and responsive applications, such as user interfaces, real-time analytics, and event-driven systems.
-
-\textbf{Distribution of reactive programs: }In the context of distributing reactive programs, "distribution" refers to the deployment of reactive systems across multiple computing nodes or devices. This distribution enables the system to handle a large volume of data, support high concurrency, and scale horizontally to meet increasing demands. distributing reactive programs enables the creation of resilient, scalable, and responsive applications that can efficiently handle complex workloads and adapt to changing requirements.
-
-\subsection{Literature review}
-
+\begin{description}
+	\item[Reactive programming language] A computer language to write reactive programs.
+	\item[Reactive programming] Reactive programming is a programming paradigm that focuses on asynchronous data streams and the propagation of changes. In reactive programming, you model your application as a series of data flows and transformations, where changes in one part of the system can automatically trigger updates in other parts. This paradigm is particularly useful for building interactive and responsive applications, such as user interfaces, real-time analytics, and event-driven systems.
+	\item[Distribution] the deployment of reactive systems across multiple computing nodes or devices. This distribution enables the system to handle a large volume of data, support high concurrency, and scale horizontally to meet increasing demands.
+\end{description}
 
 
 \subsection{Remaining chapters}
-This is the introduction (\cite{oeyen2022reactive}) and so on 
+In the next chapter we give a description of the purely reactive programming language Haai. Chapter 3 about the main implementation of this thesis describes the Haai virtual machine (Hvm). The distribution chapter explains why we selected Elixir as a platform and how we build the distributed cluster that runs multiple independent Hvm's. Before concluding and reflecting on further work we have a description of the use case of the thesis. 
 
 
 \chapter{Haai}
@@ -83,6 +78,7 @@ This happens in a two-layered reactive programming language when the reactive ru
 
 \subsection*{Reactive/Imperative Impedance Mismatch}
 When the reactive runtime in a two-layered reactive program used different side effects by calling functions on the first layer. It might be so that the order in which they are executed is not as expected. Creating faults in the programs that might not be easy to detect.
+\subsection{compare with other rx}
 \section{Haai instruction set}
 After compiling a Haai program into its bytecode everything is based around this instruction set. The instruction set defines the set of low-level operations that the virtual machine can execute. Each instruction corresponds to a specific operation. the Haai virtual machine presented in the next chapter is build around this instruction set. 
 
@@ -99,7 +95,9 @@ After compiling a Haai program into its bytecode everything is based around this
 \section{Reactors}
 In Haai the only construct available for expressing computations is a reactor. Such a reactor consists of the following parts. There are the sources and the sinks, they can be seen as what goes in and what comes out of the reactor Or the sinks will hold the altered value that was found in the source. The reactor has two possibilities to react on the values found in the source. The reactor can use a user defined reactor or a native reactor. For example in the Haai virtual machine we have native reactors for basic arithmetic. The memory size of a reactor is predefined by the number of instructions it needs to run. 
 \subsection{Reactors memory}
-The in size fixed memory block of a reactor exists of the following four parts: sources, deployment-time-memory (dtm), reaction-time-memory (rtm) and sinks.   
+The in size fixed memory block of a reactor exists of the following four parts: sources, deployment-time-memory (dtm), reaction-time-memory (rtm) and sinks.  
+
+\textbf{FIGURE} 
 
 
 
@@ -184,50 +182,89 @@ The above is an example of bytecode that is send to the Haai virtual machine. Th
 The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required.
 
 
-\chapter{Distributed Haai}
+\chapter{Distribution}
+\section{Shared-nothing architecture}
+To organize the distribution of the Haai virtual machine we have opted for a shared-nothing architecture. (\cite{DBLP:journals/debu/Stonebraker86}) This allows us to build the cluster with the following characteristics, suitable for the first time distribution of the reactive language Haai.
+\begin{description}
+	\item[Independent Nodes] Each node can execute its own specific code and perform computations independently since no memory, storage or processing power is shared.
+	\item[No shared state] Each node manages its state independently. Cluster communication between nodes is done with messages. we use Erlang distributed mechanisms in the implementation.
+	\item[Horizontal scalability] Shared-nothing architectures are highly scalable horizontally, this makes it straightforward to add or remove nodes from the cluster. It allows us to run clusters of all sizes. Practically the cluster size will be bound to the available hardware.
+	\item[Fault isolation] Faults or failures in one node do not affect the operation of other nodes in the system. We can monitor node failure with Erlang distributed mechanisms and act accordingly. 
+	\item[Flexibility and Modularity] Changes to one node do not impact the operation of other nodes, allowing for maintenance, upgrades, and system evolution of the cluster.` 
+\end{description}
+
+\section{Erlang virtual machine}
+
+We implemented the shared-nothing architecture in Elixir a functional, concurrent, and fault-tolerant programming language built on the Erlang Virtual Machine (BEAM). The Erlang Virtual Machine provides a robust platform due to several key features and design principles:
+\begin{description}
+	\item[Concurrency model] Erlang has a lightweight concurrency model which is based on actor-like processes. Since each process runs independently and can communicate with other processes trough message passing the Erlang virtual machine is inherently decentralized by design.
+	\item[Fault tolerance] The BEAM VM provides mechanisms for process supervision, fault isolation, and hot code swapping, allowing systems to recover from failures without affecting the overall operation of the cluster.
+	\item[Distribution transparency] Erlang's distribution features enable processes to communicate effortlessly across network boundaries. Within an Erlang cluster, nodes can seamlessly interact through remote procedure calls (RPCs) and message passing. Different types of distribution models can be build on the Erlang platform.
+	\item[Scalability] Horizontal scaling or adding nodes to a cluster is straightforward. This makes it easy to scale clusters to need.
+	\item[Tooling] Common tasks are simplified thanks to a comprehensive tool set. tools like the Mix build tool and the OTP framework are core tools used in the implementation of the distributed Haai cluster.
+\end{description}
+
 The example program is explained in more detail in the use case chapter. The same program or reactor can be run many times. The distributed setup we make exists out of a number of elixir nodes that all send there messages to one sound server. The bigger the distributed network is the more messages that are send to the sound server. The sound server it self has virtually no limit to receive messages. The main parts of the distribution are taken care of by the underlying Beam virtual machine. One main reason to develop the Hvm on this platform is to be able to distribute in a solid and proven way.  
 
 \section{Actor model}
-The actor system we use is Erlang which implements the processes actor model. (\cite{de_koster_43_2016}) These actors are modeled as processes and can define there receive primitive to specify what messages it responds to. Thanks to the isolated turn principle the actor model guarantees to be free of data races and deadlocks by design.
-    Actors are typically used when you need to encapsulate state and behavior within a single unit of computation.
-Actors are spawned using constructs like GenServer, Task, or Agent within a single node.
-Actors communicate with each other using message passing within the same node.
-Actors are suitable for modeling concurrent and stateful components of your application, such as handling user sessions, managing resources, or coordinating complex workflows.
+The actor system in Erlang implements the processes actor model. (\cite{de_koster_43_2016}) These actors are modeled as processes and can define there receive primitive to specify what messages it responds to. Thanks to the isolated turn principle the actor model guarantees to be free of data races and deadlocks by design.
+In Erlang actors are typically used when you need to encapsulate state and behavior within a single unit of computation., actors are spawned using constructs like GenServer, Task, or Agent within a single node. All actors communicate with each other using message passing within the same node. One can use these actors for modeling concurrent and stateful components in an application.
 
 \section{Distributed Erlang mechanisms}
-    Distributed Erlang mechanisms come into play when you need to communicate between actors residing on different nodes within a cluster.
-Nodes communicate with each other using distributed Erlang protocols, allowing actors on different nodes to exchange messages.
-Distributed Erlang mechanisms provide fault tolerance, distribution transparency, and location transparency across the cluster.
-You use distributed Erlang features implicitly when you send messages between actors residing on different nodes or explicitly when you need to establish node connections, monitor nodes, or manage global state.
+Distributed Erlang mechanisms come into play when you need to communicate between actors residing on different nodes within a cluster.
+Nodes communicate with each other using distributed Erlang protocols, allowing actors on different nodes to exchange messages. Distributed Erlang mechanisms provide fault tolerance, distribution transparency, and location transparency across the cluster. 
+
+Distributed Erlang provides location transparency, allowing actors to communicate regardless of their physical location within the cluster. This transparency hides the underlying network details, promoting loose coupling (\cite{DBLP:conf/tools/CarretonMCM10}) between nodes and actors. Actors on different nodes can interact seamlessly through message passing, without needing to be aware of the specific nodes they are communicating with. Loose coupling in distributed Erlang enables the system to scale horizontally by adding or removing nodes without significantly impacting the overall architecture.
 
 \chapter{Distributed reactive melody generator}
-Sound or the musical expression of notes is the use case for this thesis. On two incoming streams of data reactors will react. The first stream exists out of numbers representing frequencies to be played by the synthesizer. The second stream are numbers that represent the tempo in beats per minute, from that tempo, durations for sounds can be computed by the reactor. Those durations are the time a sound plays until it disappears, that same duration will be the time one reactor iteration takes. The reactor loops over and over but each loop has a defined duration, this duration is virtually equal to the duration calculated by the reactor. 
+The use case of this thesis makes sound. The distributed Haai cluster, existing out of many distributed reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data produce the values that result in a rhythmical flow of OSC messages to the sound server. 
 
-The synthesizer that produces the sound is s synthdef inside the sound server named SuperCollider. Supercollider is an open-source platform for audio synthesis and algorithmic composition. Developed by James McCartney in the late 1990s (\cite{scBook}), it has since become a powerful tool in the fields of music technology, computer music, and sound art. Supercollider provides a flexible and expressive environment for creating and manipulating sound in real-time, making it an invaluable resource for both research and artistic exploration. Some main features of super collider include:
+\textbf{FIGURE}
+ 
+The flow of rhythmical messages is related to the duration of each sound. That same duration that makes the sound disappear after it was started determines the iteration speed for the reactor or program that runs on each individual node. Each reactor iterates over and over but each iteration has a defined duration, this duration is virtually equal to the duration for a sound calculated by the reactor. A reactor will calculate the new values, sleep for the calculated duration and then provide the new values in the sink. At this point the Hvm calls a function that it was given to handle the sink values. For this use case that function constructs the message and sends it to the sound server that propagates it to the requested synthesizer. 
 
-\textbf{Audio Synthesis:} Supercollider offers a wide range of synthesis techniques, including additive, subtractive, granular, and physical modeling synthesis. Users can create complex sounds by combining these techniques and modulating parameters in real-time.
+\subsection{Sound server}
+The synthesizer that produces the sound is a Synthdef (the definition of a synthesizer) inside the sound server named SuperCollider. Supercollider is an open-source platform for audio synthesis and algorithmic composition. Developed by James McCartney in the late 1990s (\cite{scBook}), it has since become a powerful tool in the fields of music technology, computer music, and sound art. Supercollider provides a flexible and expressive environment for creating and manipulating sound in real-time, making it an invaluable resource for both research and artistic exploration. Some main features of super collider include:
 
+\begin{description}
+	\item[Audio Synthesis] Supercollider offers a wide range of synthesis techniques, including additive, subtractive, granular, and physical modeling synthesis. Users can create complex sounds by combining these techniques and modulating parameters in real-time.
+	\item[Real-time Processing] One of Supercollider's key strengths is its ability to process audio in real-time. This makes it suitable for live performances, interactive installations, and other time-sensitive applications.
+	\item[Algorithmic Composition] Supercollider provides tools for generating music algorithmically, allowing users to create compositions based on mathematical algorithms, rulesets, or generative processes.
+	\item[Integration with External Hardware] Supercollider can interface with external MIDI controllers, audio interfaces, and other hardware devices, enabling users to incorporate physical instruments and sensors into their sound projects.
+	\item[Community and Documentation] Supercollider has a vibrant online community of users who share code, tutorials, and resources. Additionally, comprehensive documentation is available, including tutorials, reference guides, and examples to help users learn and master the software.
+	
+	
+\end{description}
 
-\textbf{Real-time Processing:} One of Supercollider's key strengths is its ability to process audio in real-time. This makes it suitable for live performances, interactive installations, and other time-sensitive applications.
+SuperCollider has been and still is actively used in academia for many purposes, for example:
+\begin{description}
+	\item[Research in Music Technology] Digital signal processing, human-computer interaction, and machine learning for music. Researchers leverage its flexibility and programmability to prototype new algorithms, experiment with novel synthesis techniques, and investigate the perceptual and cognitive aspects of sound.
+	\item[Composition and Sound Design] Supercollider is used to create innovative works that push the boundaries of traditional music and sound art. Its ability to generate complex and evolving textures, as well as its support for algorithmic composition, makes it a valuable tool for exploring new sonic territories.
+	\item[Teaching and Learning] Supercollider is increasingly incorporated into music technology and computer music curricula at universities and colleges worldwide. It provides students with hands-on experience in sound synthesis, programming, and digital audio processing.
 
-\textbf{Algorithmic Composition:} Supercollider provides tools for generating music algorithmically, allowing users to create compositions based on mathematical algorithms, rulesets, or generative processes.
+\end{description} 
+\subsection{Sound server communication}
+The communication between the nodes in the Elixir cluster and the sound server is done over the network using the UDP network protocol. The sound server can handle a virtual unlimited amount of messages, but is practically bounded to the udp buffer size on the actual machine that runs the sound server. As such the Elixir cluster of reactors can be of any feasible size and the sound server will respond on any number of messages by synthesizing the requested sound. 
 
-\textbf{Integration with External Hardware:} Supercollider can interface with external MIDI controllers, audio interfaces, and other hardware devices, enabling users to incorporate physical instruments and sensors into their sound projects.
+\subsection{Musical values}
+The reactor or program that runs on all nodes in the cluster does for each note the following. It calculates two values given two input streams of numbers. The first source is a stream of base frequencies, represented as a float number, the second source is again a stream of numbers representing a tempo in beats per minute (bpm)
 
-\textbf{Community and Documentation:} Supercollider has a vibrant online community of users who share code, tutorials, and resources. Additionally, comprehensive documentation is available, including tutorials, reference guides, and examples to help users learn and master the software.
+\subsection*{Consonant notes}
+Consonant notes sound harmonious when played together. consonance can be expressed as a ratio between two notes or frequencies. Ratios like the perfect fifth (frequency ratio of 3:2) and the major third (frequency ratio of 5:4) are very commonly used ratios in a musical setting. One of the two reactors in the main program used for this use case calculates such a note for a given base note, both are expressed in there actual frequency represented as a float number.
 
-\section*{Academic use of SuperCollider}
-SuperCollider has been and is actively used in academia, for example with the following purposes:
+\subsection*{Tempo}
+We can express the speed of a musical note progression in beats per minute (bpm). From that number we can then calculate the duration of individual notes in the musical performance. 
 
-\textbf{Research in Music Technology:} Supercollider is widely used in academic research projects exploring topics such as digital signal processing, human-computer interaction, and machine learning for music. Researchers leverage its flexibility and programmability to prototype new algorithms, experiment with novel synthesis techniques, and investigate the perceptual and cognitive aspects of sound.
+We calculate the time in milliseconds. Since one minute is 60000 milliseconds one can calculate the length of a quarter note with \(q = \frac{60000}{bpm}\) with the assumption that we use a 4/4 time signature. From the length of the quarter note it is easy to find other durations. For example, the duration of a halve note is double that of a quarter note or the duration of a eight note is half the time of a quarter note.
 
-\textbf{Composition and Sound Design:} Composers and sound designers in academia use Supercollider to create innovative works that push the boundaries of traditional music and sound art. Its ability to generate complex and evolving textures, as well as its support for algorithmic composition, makes it a valuable tool for exploring new sonic territories.
+One of the two reactors in the main program used for this use case calculates exactly that, the length for a quarter note and improvises a deviser or multiplier to produce some duration. 
 
-\textbf{Teaching and Learning:} Supercollider is increasingly incorporated into music technology and computer music curricula at universities and colleges worldwide. It provides students with hands-on experience in sound synthesis, programming, and digital audio processing, helping them develop technical skills and creative problem-solving abilities.
-
-\textbf{Interactive Installations and Performances:} Academic institutions often host exhibitions, concerts, and multimedia installations that feature interactive audiovisual experiences. Supercollider is frequently used to create the interactive soundscapes and generative audio environments that form an integral part of these events.
 
 \backmatter
+\chapter{Further work}
+Try other distribution models
+
+
 \chapter{Conclusion}
 
 
