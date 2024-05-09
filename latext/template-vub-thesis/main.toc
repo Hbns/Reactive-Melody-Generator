@@ -7,18 +7,20 @@
 \contentsline {subsection}{\numberline {2.0.1}compare with other rx}{3}{}%
 \contentsline {section}{\numberline {2.1}Haai instruction set}{3}{}%
 \contentsline {section}{\numberline {2.2}Reactors}{4}{}%
-\contentsline {subsection}{\numberline {2.2.1}Reactors memory}{4}{}%
-\contentsline {chapter}{\numberline {3}Haai virtual machine}{5}{}%
-\contentsline {section}{\numberline {3.1}Example bytecode program}{5}{}%
-\contentsline {section}{\numberline {3.2}Native reactors}{7}{}%
-\contentsline {chapter}{\numberline {4}Distribution}{9}{}%
-\contentsline {section}{\numberline {4.1}Shared-nothing architecture}{9}{}%
-\contentsline {section}{\numberline {4.2}Erlang virtual machine}{9}{}%
-\contentsline {section}{\numberline {4.3}Actor model}{10}{}%
-\contentsline {section}{\numberline {4.4}Distributed Erlang mechanisms}{10}{}%
-\contentsline {chapter}{\numberline {5}Distributed reactive melody generator}{11}{}%
-\contentsline {subsection}{\numberline {5.0.1}Sound server}{11}{}%
-\contentsline {subsection}{\numberline {5.0.2}Sound server communication}{12}{}%
-\contentsline {subsection}{\numberline {5.0.3}Musical values}{12}{}%
-\contentsline {chapter}{Further work}{15}{}%
-\contentsline {chapter}{Conclusion}{17}{}%
+\contentsline {subsection}{\numberline {2.2.1}Deploying a reactor}{4}{}%
+\contentsline {chapter}{\numberline {3}Haai virtual machine}{7}{}%
+\contentsline {section}{\numberline {3.1}Running the reactor}{7}{}%
+\contentsline {section}{\numberline {3.2}Managing the reactors state}{7}{}%
+\contentsline {section}{\numberline {3.3}Example bytecode program}{7}{}%
+\contentsline {section}{\numberline {3.4}Native reactors}{9}{}%
+\contentsline {chapter}{\numberline {4}Distribution}{11}{}%
+\contentsline {section}{\numberline {4.1}Shared-nothing architecture}{11}{}%
+\contentsline {section}{\numberline {4.2}Erlang virtual machine}{11}{}%
+\contentsline {section}{\numberline {4.3}Actor model}{12}{}%
+\contentsline {section}{\numberline {4.4}Distributed Erlang mechanisms}{12}{}%
+\contentsline {chapter}{\numberline {5}Distributed reactive melody generator}{13}{}%
+\contentsline {subsection}{\numberline {5.0.1}Sound server}{14}{}%
+\contentsline {subsection}{\numberline {5.0.2}Sound server communication}{15}{}%
+\contentsline {subsection}{\numberline {5.0.3}Musical values}{15}{}%
+\contentsline {chapter}{Further work}{17}{}%
+\contentsline {chapter}{Conclusion}{19}{}%

@@ -5,6 +5,10 @@
 % https://gitlab.com/rubdos/texlive-vub
 \usepackage{vub}
 
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+
 % Some highly suggested packages, please read their manuals.
 %\usepackage{cleveref}
 \usepackage[natbib,style=apa]{biblatex}
@@ -93,18 +97,32 @@ After compiling a Haai program into its bytecode everything is based around this
 \end{description}
 
 \section{Reactors}
-In Haai the only construct available for expressing computations is a reactor. Such a reactor consists of the following parts. There are the sources and the sinks, they can be seen as what goes in and what comes out of the reactor Or the sinks will hold the altered value that was found in the source. The reactor has two possibilities to react on the values found in the source. The reactor can use a user defined reactor or a native reactor. For example in the Haai virtual machine we have native reactors for basic arithmetic. The memory size of a reactor is predefined by the number of instructions it needs to run. 
-\subsection{Reactors memory}
-The in size fixed memory block of a reactor exists of the following four parts: sources, deployment-time-memory (dtm), reaction-time-memory (rtm) and sinks.  
+In Haai, a purely reactive computer language, the only construct available for expressing computations is a reactor. We can write one simple reactor or combine multiple reactors in one 'main' reactor or program. The main program is build out of reactors, these can be native or user defined. There is no underlying layer from which we would lift functions and so the Haai virtual machine provides for example native reactors for basic arithmetic. The deployment of a reactor reacts on signals received, that signal altered by the reaction is found in the sink of the reactor. The deployment of a reactor demand for memory block fixed in size. The size of the total memory required for the deployment of a reactor is mainly influenced by the number of run time instructions the reactor has.  
+\subsection{Deploying a reactor}
+A reactor can be seen as a blue print for its deployment, similar how an object created from a class in object-oriented programming is an instantiation of the blueprint the class represents. The deployment of the reactor will request a certain size of memory. That total block of memory exists out of four parts: Sources, deployment time memory (dtm), reaction time memory (rtm) and the sinks. When we go from a reactor to a deployment we can find the following information in the reactor or blue print for the deployment. The number of sources and sinks, the deployment time instructions (dti) and the reaction time instructions (rti). For each source and each sink a position is reserved in the memory block we are constructing. From the deployment time instructions in the reactor we can prepare the deployment time memory (dtm). The Dtm part of the memoryblock we are constructing will reserve space for the deployment of the reactors found in the dti. 
 
-\textbf{FIGURE} 
+Now we have reserved space for the sources the sinks and dtm, the last step is to reserve space for the reaction time memory (rtm). The space required for rtm is equal to the number of instructions found in the reaction time instructions. For each instruction in rti there is one block reserved in rtm. A deployed reactor uses the four memory parts: sources, dtm, rtm and sinks to react according to the reaction time instructions found in rti. The following figure expresses the deployment of a reactor.
+     
+\begin{figure}[h]
+	%\caption{Diagram for the 'Distriuted Reactive Melody Generator'}
+	\includegraphics[width=\textwidth]{rd.drawio}
+\end{figure} 
+
 
 
 
 \chapter{Haai virtual machine}
-The Haai virtual machine (Hvm) is developed in the Elixir computer language. elixir runs on top of the Erlang Virtual Machine called BEAM. The BEAM virtual machine provides features such as lightweight processes, scheduling, memory management, and fault tolerance. This will allow us to explore the possibilities for working with the Haai computer language in a distributed environment.
+To make it possible for Haai code to work on multiple platforms one can make a virtual machine for each required platform. After the example of Remus, a virtual machine that has been carefully designed to be usable for running reactive programs in low-powered computing environments.(\cite{oeyen_remus_2022}) We implement in this thesis a Haai virtual machine to experiment with the distribution of Haai. The Haai virtual machine (Hvm) is developed in the Elixir computer language. The chapter on distribution arguments our choice for Elixir. 
 
-For the development of this virtual machine inspirations was found in a different virtual machine for Haai called Remus. Remus i a virtual machine that has been carefully designed to be usable for running reactive programs in low-powered computing environments.(\cite{oeyen_remus_2022}) 
+\section{Running the reactor}
+The Haai virtual machine needs the following arguments to start: 
+\begin{description}
+	\item[reactor bytecode] Bytecode obtained from the compilation of the reactor with the Haai compiler.
+	\item[connect source x] A function that the Hvm can use to connect input to the sources of the reactor. At the start of the next iteration this function will be called to update the sources of the deployed reactor.
+	\item[handle sink] the function that after each iteration is called to handle the new sinks rpoduced by the deployed reactor.
+\end{description}
+
+\section{Managing the reactors state}
 
 \section{Example bytecode program}
 
@@ -180,6 +198,8 @@ The above is an example of bytecode that is send to the Haai virtual machine. Th
 
 \section{Native reactors}
 The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required.
+No lifting, so we need these reactors cannot perform side effects..
+to perform IO there are special reactors outside of the program (2.5 in witouth funcitons)
 
 
 \chapter{Distribution}
@@ -217,9 +237,15 @@ Nodes communicate with each other using distributed Erlang protocols, allowing a
 Distributed Erlang provides location transparency, allowing actors to communicate regardless of their physical location within the cluster. This transparency hides the underlying network details, promoting loose coupling (\cite{DBLP:conf/tools/CarretonMCM10}) between nodes and actors. Actors on different nodes can interact seamlessly through message passing, without needing to be aware of the specific nodes they are communicating with. Loose coupling in distributed Erlang enables the system to scale horizontally by adding or removing nodes without significantly impacting the overall architecture.
 
 \chapter{Distributed reactive melody generator}
-The use case of this thesis makes sound. The distributed Haai cluster, existing out of many distributed reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data produce the values that result in a rhythmical flow of OSC messages to the sound server. 
+The use case of this thesis makes sound. The distributed Haai cluster, existing out of many distributed reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data, produce the values that result in a rhythmical flow of OSC messages to the sound server. 
 
-\textbf{FIGURE}
+\begin{figure}[h]
+	%\caption{Diagram for the 'Distriuted Reactive Melody Generator'}
+	\includegraphics[width=\textwidth]{drmg200.drawio}
+\end{figure}
+
+
+
  
 The flow of rhythmical messages is related to the duration of each sound. That same duration that makes the sound disappear after it was started determines the iteration speed for the reactor or program that runs on each individual node. Each reactor iterates over and over but each iteration has a defined duration, this duration is virtually equal to the duration for a sound calculated by the reactor. A reactor will calculate the new values, sleep for the calculated duration and then provide the new values in the sink. At this point the Hvm calls a function that it was given to handle the sink values. For this use case that function constructs the message and sends it to the sound server that propagates it to the requested synthesizer. 
 
