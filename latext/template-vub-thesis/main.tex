@@ -15,9 +15,9 @@
 \addbibresource{references.bib}
 
 \title{Distributing reactive Haai}
-\pretitle{\flushleft{Graduation thesis submitted in partial fulfilment of the requirements for the degree of de Ingenieurswetenschappen: Computerwetenschappen}}
+%\pretitle{\flushleft{Graduation thesis submitted in partial fulfilment of the requirements for the degree of de Ingenieurswetenschappen: Computerwetenschappen}}
 \subtitle{Haai Virtual machine}
-\author{Hans}
+\author{Hans Van der Ougstraete}
 \date{June~2024}
 \promotors{Promotors: prof.\ dr.\ Wolfgang De Meuter \and Supervisor: Bjarno Oeyen}
 
@@ -57,10 +57,10 @@ We are looking into the distribution of a purely reactive programming language H
 \mainmatter%
 \chapter{Introduction}
 This thesis steps into the world of distributed reactive programs. Reactive programming revolves around the concept of reacting on streams of data. In reactive programming the program reacts on a stream of data. The stream of data travels trough the reactive program to exit in a possibly altered state. We will investigate possibilities to distribute the reactive programming language Haai. (\cite{oeyen_reactive_2024}) Haai is a purely reactive language consisting of only reactors. The literature review on distribution models for reactive programs lead us to the actor model (\cite{de_koster_43_2016}). We have implemented a virtual machine that opens the possibilities for the Haai language to be distributed on a Elixir (\cite{juric2024elixir}) cluster.
-\subsection{Statement of the problem}
+\section{Statement of the problem}
 To distribute a reactive program different approaches can be taken, We will select a distribution model to experiment with the distribution of reactive programming languages or reactors written in Haai. Glitch avoidance in reactive programs has been achieved on most modern implementations that run on a single node. In a distributed setting glitch avoidance is not an easy task due to the parts the distributed system is build of. Delays, network failures and other problems make it complicated to reach glitch freedom in a distributed setting. (\cite{DBLP:journals/csur/BainomugishaCCMM13})
 
-\subsection{Definition of terms}
+\section{Definition of terms}
 \begin{description}
 	\item[Reactive programming language] A computer language to write reactive programs.
 	\item[Reactive programming] Reactive programming is a programming paradigm that focuses on asynchronous data streams and the propagation of changes. In reactive programming, you model your application as a series of data flows and transformations, where changes in one part of the system can automatically trigger updates in other parts. This paradigm is particularly useful for building interactive and responsive applications, such as user interfaces, real-time analytics, and event-driven systems.
@@ -68,21 +68,28 @@ To distribute a reactive program different approaches can be taken, We will sele
 \end{description}
 
 
-\subsection{Remaining chapters}
+%\section{Overview}
 In the next chapter we give a description of the purely reactive programming language Haai. Chapter 3 about the main implementation of this thesis describes the Haai virtual machine (Hvm). The distribution chapter explains why we selected Elixir as a platform and how we build the distributed cluster that runs multiple independent Hvm's. Before concluding and reflecting on further work we have a description of the use case of the thesis. 
 
 
 \chapter{Haai}
-We are making use of the novel purely reactive language Haai. Haai is reactive all-the-way-trough. As such the only construct available for expressing computations is a reactor. A reactor has sources or inputs and sinks or outputs. For each time the sources are updated the reactor will react and produce a new sink value. The number of sources and sinks are variable per reactor definition. In Haai there are no functions only reactors. This allows us to build reactive programs without functions. (\cite{oeyen_reactive_2024})
+We are making use of the novel purely reactive language Haai. Haai is reactive all-the-way-trough. As such the only construct available for expressing computations is a reactor. A reactor has sources or inputs and sinks or outputs. For each time the sources are updated the reactor will react and produce a new sink value. The number of sources and sinks are variable per reactor definition. In Haai there are no functions, only reactors. This allows us to build reactive programs without functions. (\cite{oeyen_reactive_2024})
 
- Two common problems encountered within reactive programming are by design eliminated. These two problems aer called the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch}.(\cite{vonder_tackling_2020}) Two problems that arise from mixing reactive code with sequential code in a two-layered reactive programming language. 
+Two common problems encountered within reactive programming are eliminated by design in Haai. These two problems are called the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch}.(\cite{vonder_tackling_2020}) Two problems that arise from mixing reactive code with sequential code in a two-layered reactive programming language. By design Haai only has one layer, the reactors.
 
 \subsection*{Reactive Thread Hijacking Problem}
 This happens in a two-layered reactive programming language when the reactive runtime or top layer calls a function in the bottom layer and that call never returns. The host has hijacked the control and the reactive runtime will not be able to regain control.  
 
 \subsection*{Reactive/Imperative Impedance Mismatch}
 When the reactive runtime in a two-layered reactive program used different side effects by calling functions on the first layer. It might be so that the order in which they are executed is not as expected. Creating faults in the programs that might not be easy to detect.
-\subsection{compare with other rx}
+
+\section{Levels of reactivity}
+What is the upper bound for long lasting computations in reactive programming? There is a trade off where more strick levels of reactivity allow for a less wide pallet of reactive programs to be expressed. For Haai the level of reactivity will be related to the computational time of the native reactors. In this implementation of the Haai virtual machine we only have native reactors that have a computational complexity of O(1). This guarantees a strong level of reactivity as classified in this earlier work. (\cite{vonder_tackling_2020})
+
+
+
+
+
 \section{Haai instruction set}
 After compiling a Haai program into its bytecode everything is based around this instruction set. The instruction set defines the set of low-level operations that the virtual machine can execute. Each instruction corresponds to a specific operation. the Haai virtual machine presented in the next chapter is build around this instruction set. 
 
@@ -98,13 +105,13 @@ After compiling a Haai program into its bytecode everything is based around this
 
 \section{Reactors}
 In Haai, a purely reactive computer language, the only construct available for expressing computations is a reactor. We can write one simple reactor or combine multiple reactors in one 'main' reactor or program. The main program is build out of reactors, these can be native or user defined. There is no underlying layer from which we would lift functions and so the Haai virtual machine provides for example native reactors for basic arithmetic. The deployment of a reactor reacts on signals received, that signal altered by the reaction is found in the sink of the reactor. The deployment of a reactor demand for memory block fixed in size. The size of the total memory required for the deployment of a reactor is mainly influenced by the number of run time instructions the reactor has.  
-\subsection{Deploying a reactor}
+\section{Deploying a reactor}
 A reactor can be seen as a blue print for its deployment, similar how an object created from a class in object-oriented programming is an instantiation of the blueprint the class represents. The deployment of the reactor will request a certain size of memory. That total block of memory exists out of four parts: Sources, deployment time memory (dtm), reaction time memory (rtm) and the sinks. When we go from a reactor to a deployment we can find the following information in the reactor or blue print for the deployment. The number of sources and sinks, the deployment time instructions (dti) and the reaction time instructions (rti). For each source and each sink a position is reserved in the memory block we are constructing. From the deployment time instructions in the reactor we can prepare the deployment time memory (dtm). The Dtm part of the memoryblock we are constructing will reserve space for the deployment of the reactors found in the dti. 
 
 Now we have reserved space for the sources the sinks and dtm, the last step is to reserve space for the reaction time memory (rtm). The space required for rtm is equal to the number of instructions found in the reaction time instructions. For each instruction in rti there is one block reserved in rtm. A deployed reactor uses the four memory parts: sources, dtm, rtm and sinks to react according to the reaction time instructions found in rti. The following figure expresses the deployment of a reactor.
      
 \begin{figure}[h]
-	%\caption{Diagram for the 'Distriuted Reactive Melody Generator'}
+	\caption{Reactor deployment, from blueprint to memory block}
 	\includegraphics[width=\textwidth]{rd.drawio}
 \end{figure} 
 
@@ -115,18 +122,31 @@ Now we have reserved space for the sources the sinks and dtm, the last step is t
 To make it possible for Haai code to work on multiple platforms one can make a virtual machine for each required platform. After the example of Remus, a virtual machine that has been carefully designed to be usable for running reactive programs in low-powered computing environments.(\cite{oeyen_remus_2022}) We implement in this thesis a Haai virtual machine to experiment with the distribution of Haai. The Haai virtual machine (Hvm) is developed in the Elixir computer language. The chapter on distribution arguments our choice for Elixir. 
 
 \section{Running the reactor}
-The Haai virtual machine needs the following arguments to start: 
+Running the reactor encompasses starting a Haai virtual machine with all requested arguments for the Hvm to function. The Haai virtual machine needs the following arguments to start: 
 \begin{description}
-	\item[reactor bytecode] Bytecode obtained from the compilation of the reactor with the Haai compiler.
-	\item[connect source x] A function that the Hvm can use to connect input to the sources of the reactor. At the start of the next iteration this function will be called to update the sources of the deployed reactor.
-	\item[handle sink] the function that after each iteration is called to handle the new sinks rpoduced by the deployed reactor.
+	\item[Reactor bytecode] Bytecode obtained from the Haai compiler that compiles reactor definitions in the Haai language to a bytecode.
+	\item[Connect source] A function that the Hvm can use to connect some input to the sources of the reactor. At each start of the next iteration this function will be called to update the sources of the deployed reactor. For example connecting to a WebSocket server to receive the data it broadcasts.
+	\item[handle sink] The function that after each iteration is called to handle the new sinks produced by the deployed reactor. This function is tailored for the specific reactor that has been send as bytecode.
 \end{description}
+	
+\noindent 
+The following line demonstrates the call to the Elixir function startVM to start the Hvm and deploy the reactor found in reactor\_bytecode. Three functions are passed as arguments, two for each source and one for the sinks.
+
+\begin{verbatim}
+	startVM(node, reactor_bytecode, &connect_source1/0, &connect_source2/0, &handle_sinks/2)
+\end{verbatim}
 
 \section{Managing the reactors state}
+Managing the state of a reactor is done by one actor per program or reactor deployment. The actor is build around the GenServer module in Elixir which is a behavior module that provides a generic server implementation. In this implementation the name of the GenServer is Memory. Memory is a single actor that encapsulates multiple functions to respond to various messages or calls. Together these define the behaviour of the Memory GenServer.
+
+Memory will mainly accept calls from the runtime instructions found in the reactor deployment. Available calls are mapped on the Haai instruction set. In addition there are calls to initialize or to get or set sources and sinks into or from the Memory GenServer. One instance of Memory represents the memory block of a deployed reactor.
+
+The GenServer module in Elixir works with calls or casts, we use calls since they are synchronous requests to the GenServer. By calling Memory in a synchronous way we make sure that the values in Memory are only accessed by one operation at a time, assuring correct values. 
+
 
 \section{Example bytecode program}
 
-After parsing the bytecode that was compiled form the original Haai code with the Haai compiler into an Elixir readable format of nested lists a program could look like this. In this example we see two user defined reactors named consonance and note\_length followed by the main reactor that functions as the main reactor to be executed. 
+After parsing the bytecode that was compiled form the original Haai code with the Haai compiler into an Elixir readable format of nested lists a program could look like this. In this example we see two user defined reactors named consonance and note\_length followed by the main reactor that represents the actual program that will be deployed. 
 
 \begin{verbatim}
 	co_nl = [
@@ -178,7 +198,7 @@ After parsing the bytecode that was compiled form the original Haai code with th
 	]
 \end{verbatim}
 
-The above is an example of bytecode that is send to the Haai virtual machine. This bytecode is a compilation of the following Haai program defining two user defined reactors and joining them together within the main reactor. The main reactor could be seen as the 'main' function in C. The starting point or the call that kicks off the programs execution.
+The above is an example for reactor\_bytecode that is send into the Haai virtual machine. It is a compilation of the following Haai program defining two user defined reactors (consonance and note\_length) and making use of two native reactors (:multiply (* in Haai) and :divide (/ in Haai)) and joining them together within the main reactor. The main reactor could be seen as the 'main' function in C. The starting point or the call that kicks off the programs execution.
 
 \begin{verbatim}
 	(
@@ -198,9 +218,12 @@ The above is an example of bytecode that is send to the Haai virtual machine. Th
 
 \section{Native reactors}
 The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required.
-No lifting, so we need these reactors cannot perform side effects..
-to perform IO there are special reactors outside of the program (2.5 in witouth funcitons)
 
+Haai is a one layer reactive programming language, contrary to two layer system where the top reactive layer can lift functions from the bottom imperative layer, Haai only uses reactors for all computation. The Hvm has a collection of frequent reactors. Thanks to the native reactors we do not need to implement the most basic reactors when composing a program. By design Haai prevents the Reactive/imperative impedance mismatch as explained in the chapter on Haai. Having the native reactors smartly covers the lack of lifting possibilities.
+
+\section{Special reactors}
+Specialized reactors ar external to the reactive program. The specialized reactors allow us to perform operations with side effects, side effects are not allowed for a regular reactor or reactive program.
+In this implementation the special reactors are represented as Elixir functions one for each source and one for all sinks as explained in the Running the reactor section.
 
 \chapter{Distribution}
 \section{Shared-nothing architecture}
@@ -236,6 +259,16 @@ Nodes communicate with each other using distributed Erlang protocols, allowing a
 
 Distributed Erlang provides location transparency, allowing actors to communicate regardless of their physical location within the cluster. This transparency hides the underlying network details, promoting loose coupling (\cite{DBLP:conf/tools/CarretonMCM10}) between nodes and actors. Actors on different nodes can interact seamlessly through message passing, without needing to be aware of the specific nodes they are communicating with. Loose coupling in distributed Erlang enables the system to scale horizontally by adding or removing nodes without significantly impacting the overall architecture.
 
+\section{Distributing the Hvm}
+The Elixir cluster exist out of a number of Elixir nodes. An idle Elixir nodes is not hungry for system resources. One can easily run a ten fold of nodes on one machine to simulate a cluster. Once a number of nodes are running one of the nodes will be selected as the controller or master node. The master node will be made aware of all nodes in the cluster. With all nodes connected to the master node but not to each other we can start the deployment of reactors. Deploying a reactor on the cluster comes down to starting the Hvm on that node with the bytecode of that requested reactor. This means that all nodes can run the same or a different reactor depending on the bytecode it received. 
+
+Once the cluster, one master node connected to all other nodes exists, the deployment can be summarized as follows, chose a node in the cluster, a reactor bytecode, functions to connect the sources and handle the sinks and fire of. The reactor or our reactive program is started and will keep on reacting for as long as the node exist in this cluster. 
+
+\begin{figure}[h]
+	\caption{Distributing reactor deployment on Elixir cluster}
+	\includegraphics[width=\textwidth]{distribution300.drawio}
+\end{figure}  
+
 \chapter{Distributed reactive melody generator}
 The use case of this thesis makes sound. The distributed Haai cluster, existing out of many distributed reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data, produce the values that result in a rhythmical flow of OSC messages to the sound server. 
 
@@ -249,7 +282,7 @@ The use case of this thesis makes sound. The distributed Haai cluster, existing 
  
 The flow of rhythmical messages is related to the duration of each sound. That same duration that makes the sound disappear after it was started determines the iteration speed for the reactor or program that runs on each individual node. Each reactor iterates over and over but each iteration has a defined duration, this duration is virtually equal to the duration for a sound calculated by the reactor. A reactor will calculate the new values, sleep for the calculated duration and then provide the new values in the sink. At this point the Hvm calls a function that it was given to handle the sink values. For this use case that function constructs the message and sends it to the sound server that propagates it to the requested synthesizer. 
 
-\subsection{Sound server}
+\section{Sound server}
 The synthesizer that produces the sound is a Synthdef (the definition of a synthesizer) inside the sound server named SuperCollider. Supercollider is an open-source platform for audio synthesis and algorithmic composition. Developed by James McCartney in the late 1990s (\cite{scBook}), it has since become a powerful tool in the fields of music technology, computer music, and sound art. Supercollider provides a flexible and expressive environment for creating and manipulating sound in real-time, making it an invaluable resource for both research and artistic exploration. Some main features of super collider include:
 
 \begin{description}
@@ -269,10 +302,10 @@ SuperCollider has been and still is actively used in academia for many purposes,
 	\item[Teaching and Learning] Supercollider is increasingly incorporated into music technology and computer music curricula at universities and colleges worldwide. It provides students with hands-on experience in sound synthesis, programming, and digital audio processing.
 
 \end{description} 
-\subsection{Sound server communication}
+\section{Sound server communication}
 The communication between the nodes in the Elixir cluster and the sound server is done over the network using the UDP network protocol. The sound server can handle a virtual unlimited amount of messages, but is practically bounded to the udp buffer size on the actual machine that runs the sound server. As such the Elixir cluster of reactors can be of any feasible size and the sound server will respond on any number of messages by synthesizing the requested sound. 
 
-\subsection{Musical values}
+\section{Musical values}
 The reactor or program that runs on all nodes in the cluster does for each note the following. It calculates two values given two input streams of numbers. The first source is a stream of base frequencies, represented as a float number, the second source is again a stream of numbers representing a tempo in beats per minute (bpm)
 
 \subsection*{Consonant notes}
