@@ -64,7 +64,7 @@ defmodule Hvm do
 
     # Start looping the deployment
     # second argument is times to itterate (reactor normaly loops infinitly)
-    times_to_itterate = 24
+    times_to_itterate = 50
     main_pid = Map.get(deployment_pids, :main)
     loop_deployment(main_pid, times_to_itterate, new_source1, new_source2, handle_sink)
 
@@ -162,7 +162,7 @@ defmodule Hvm do
 
   # count for all reactors how many deployments as requested
   def prepare_deployments(reactors_catalog) do
-    total_occurrences =
+    _total_occurrences =
       Enum.reduce(reactors_catalog, %{}, fn {_, reactor}, acc ->
         {_nos_src, _nos_snk, dti, _rti} = reactor
         count = count_occurrences(dti)
@@ -230,7 +230,7 @@ defmodule Hvm do
         # IO.puts("GenServer started with PID: #{inspect(pid)}")
         pid
 
-      {:error, reason} ->
+      {:error, _reason} ->
         nil
         # IO.puts("Failed to start GenServer: #{reason}")
     end
@@ -281,7 +281,7 @@ defmodule Hvm do
     end
   end
 
-  def handle_instruction(["I-SUPPLY", [from, value], [to, destination], index], rti_index, pid)
+  def handle_instruction(["I-SUPPLY", [from, value], [to, destination], index], _rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
     case Memory.supply_from_location(from, value, to, destination, index, pid) do
       :ok ->
@@ -296,7 +296,7 @@ defmodule Hvm do
     end
   end
 
-  def handle_instruction(["I-SUPPLY", value, [to, destination], index], rti_index, pid)
+  def handle_instruction(["I-SUPPLY", value, [to, destination], index], _rti_index, pid)
       when is_integer(value) and is_integer(destination) and is_integer(index) do
     case Memory.supply_constant(value, to, destination, index, pid) do
       :ok ->
@@ -364,10 +364,6 @@ defmodule Hvm do
 
     :ok = :file.write_file(file_path, formatted_message, [:append])
     :ok
-  end
-
-  # push to supercollider, takes the values and send the osc message to sc
-  defp push_to_sc(args) do
   end
 
   # Help to run start

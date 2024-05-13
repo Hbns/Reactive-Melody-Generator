@@ -79,12 +79,12 @@ defmodule Memory do
   end
 
   @impl true
-  def handle_call({:load_pids, deployment_pids}, _from, {dtm, rtm, rti, pids, src, snk}) do
+  def handle_call({:load_pids, deployment_pids}, _from, {dtm, rtm, rti, _pids, src, snk}) do
     {:reply, :ok, {dtm, rtm, rti, deployment_pids, src, snk}}
   end
 
   @impl true
-  def handle_call({:set_src, new_src}, _from, {dtm, rtm, rti, pids, src, snk}) do
+  def handle_call({:set_src, new_src}, _from, {dtm, rtm, rti, pids, _src, snk}) do
     {:reply, :ok, {dtm, rtm, rti, pids, new_src, snk}}
   end
 
@@ -104,7 +104,7 @@ defmodule Memory do
   # i am not using to, dtm is 'hardcoded'
   @impl true
   def handle_call(
-        {:supply, from, from_index, to, into_index, to_source},
+        {:supply, from, from_index, _to, into_index, to_source},
         _from,
         {dtm, rtm, rti, pids, src, snk}
       ) do
@@ -194,7 +194,7 @@ defmodule Memory do
 
   # React
   @impl true
-  def handle_call({:react, at, at_index, rti_index}, from, {dtm, rtm, rti, pids, src, snk}) do
+  def handle_call({:react, _at, at_index, _rti_index}, from, {dtm, rtm, rti, pids, src, snk}) do
     case Enum.fetch(dtm, at_index - 1) do
       {:ok, dtm_block} ->
         case dtm_block do
@@ -299,7 +299,7 @@ defmodule Memory do
 
   @impl true
   def handle_call(
-        {:sink, from, from_index, sink_index, rti_index},
+        {:sink, from, _from_index, sink_index, rti_index},
         _from,
         {dtm, rtm, rti, pids, src, snk}
       ) do

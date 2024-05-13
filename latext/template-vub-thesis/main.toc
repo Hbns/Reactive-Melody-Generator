@@ -2,26 +2,26 @@
 \contentsline {chapter}{\numberline {1}Introduction}{1}{}%
 \contentsline {section}{\numberline {1.1}Statement of the problem}{1}{}%
 \contentsline {section}{\numberline {1.2}Definition of terms}{1}{}%
-\contentsline {chapter}{\numberline {2}Haai}{3}{}%
-\contentsline {section}{\numberline {2.1}Levels of reactivity}{3}{}%
-\contentsline {section}{\numberline {2.2}Haai instruction set}{4}{}%
-\contentsline {section}{\numberline {2.3}Reactors}{4}{}%
-\contentsline {section}{\numberline {2.4}Deploying a reactor}{4}{}%
-\contentsline {chapter}{\numberline {3}Haai virtual machine}{7}{}%
-\contentsline {section}{\numberline {3.1}Running the reactor}{7}{}%
-\contentsline {section}{\numberline {3.2}Managing the reactors state}{7}{}%
-\contentsline {section}{\numberline {3.3}Example bytecode program}{8}{}%
-\contentsline {section}{\numberline {3.4}Native reactors}{9}{}%
-\contentsline {section}{\numberline {3.5}Special reactors}{10}{}%
-\contentsline {chapter}{\numberline {4}Distribution}{11}{}%
-\contentsline {section}{\numberline {4.1}Shared-nothing architecture}{11}{}%
-\contentsline {section}{\numberline {4.2}Erlang virtual machine}{11}{}%
-\contentsline {section}{\numberline {4.3}Actor model}{12}{}%
-\contentsline {section}{\numberline {4.4}Distributed Erlang mechanisms}{12}{}%
-\contentsline {section}{\numberline {4.5}Distributing the Hvm}{13}{}%
-\contentsline {chapter}{\numberline {5}Distributed reactive melody generator}{15}{}%
-\contentsline {section}{\numberline {5.1}Sound server}{16}{}%
-\contentsline {section}{\numberline {5.2}Sound server communication}{17}{}%
-\contentsline {section}{\numberline {5.3}Musical values}{17}{}%
-\contentsline {chapter}{Further work}{19}{}%
-\contentsline {chapter}{Conclusion}{21}{}%
+\contentsline {chapter}{\numberline {2}Reactive programming}{3}{}%
+\contentsline {section}{\numberline {2.1}Haai}{4}{}%
+\contentsline {section}{\numberline {2.2}Haai virtual machine}{5}{}%
+\contentsline {section}{\numberline {2.3}Remus instruction set}{5}{}%
+\contentsline {section}{\numberline {2.4}Reactors}{5}{}%
+\contentsline {section}{\numberline {2.5}Deploying a reactor}{6}{}%
+\contentsline {section}{\numberline {2.6}Running the reactor}{7}{}%
+\contentsline {section}{\numberline {2.7}Managing the reactors state}{7}{}%
+\contentsline {section}{\numberline {2.8}Native reactors}{8}{}%
+\contentsline {section}{\numberline {2.9}Special reactors}{8}{}%
+\contentsline {section}{\numberline {2.10}Example bytecode program}{8}{}%
+\contentsline {chapter}{\numberline {3}Distribution}{11}{}%
+\contentsline {section}{\numberline {3.1}Shared-nothing architecture}{11}{}%
+\contentsline {section}{\numberline {3.2}Erlang virtual machine}{11}{}%
+\contentsline {section}{\numberline {3.3}Actor model}{12}{}%
+\contentsline {section}{\numberline {3.4}Distributed Erlang mechanisms}{12}{}%
+\contentsline {section}{\numberline {3.5}Distributing the Hvm}{13}{}%
+\contentsline {chapter}{\numberline {4}Evaluation}{15}{}%
+\contentsline {section}{\numberline {4.1}Distributed reactive melody generator}{15}{}%
+\contentsline {section}{\numberline {4.2}Sound server}{15}{}%
+\contentsline {section}{\numberline {4.3}Sound server communication}{17}{}%
+\contentsline {section}{\numberline {4.4}Musical values}{17}{}%
+\contentsline {chapter}{Conclusion}{19}{}%
