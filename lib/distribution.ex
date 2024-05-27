@@ -14,21 +14,57 @@ defmodule Distribution do
     ])
   end
 
-  def spawn_to_known_nodes() do
-    nodes = Node.list()
-    middle_index = Kernel.div(length(nodes), 2)
-    {first_part, second_part} = Enum.split(nodes, middle_index)
+  def sound_dsl() do
+    dsl = [
+      {:deploy_to, :"node2@0.0.0.0", :p1, [:f1, :t1], :s1},
+      {:deploy_to, :"node3@0.0.0.0", :p1, [:f2, :t2], :s1},
+      {:deploy_to, :"node4@0.0.0.0", :p1, [:f3, :t1], :s1},
+      {:deploy_to, :"node5@0.0.0.0", :p1, [:f4, :t2], :s1},
+    ]
+    read_dsl(dsl)
+  end
 
-    Enum.each(first_part, fn node ->
-      startVM(node, p1(), &pick_base_frequency/0, &pick_tempo/0, &play_sc/2)
-    end)
-
-    Enum.each(second_part, fn node ->
-      startVM(node, p1(), &pick_base_frequency2/0, &pick_tempo/0, &play_sc/2)
+  # read the dsl
+  def read_dsl(dsl) do
+    Enum.each(dsl, fn
+      {:deploy_to, node_name, byte_code, source_connectors, handle_sinks} ->
+        execute_action(node_name, byte_code, source_connectors, handle_sinks)
     end)
   end
 
-  def spawn_quarter_note_scale() do
+  # execute the dsl lines, find connecting functions in map.
+  defp execute_action(node_name, byte_code, source_connector, handle_sinks) do
+    # reactor_byte_code
+    rb = apply(__MODULE__, byte_code, [])
+    # connecting funtions
+    connecting = %{
+      f1: &Distribution.pick_base_frequency/0,
+      f2: &Distribution.pick_base_frequency2/0,
+      f3: &Distribution.pick_base_frequency3/0,
+      f4: &Distribution.pick_base_frequency4/0,
+      t1: &Distribution.pick_tempo/0,
+      t2: &Distribution.pick_tempo2/0,
+      s1: &Distribution.play_sc/2
+    }
+    #source_connector
+    sc = Enum.map(source_connector, &Map.get(connecting, &1))
+    # handles only two connectors for now.
+    [sc1, sc2 | _rest] = sc
+    #handle_sinks
+    hs = connecting[handle_sinks]
+    # Start the VM on the specified node with its arguments
+    startVM(node_name, rb, sc1, sc2, hs)
+  end
+
+  def spawn_to_known_nodesO() do
+    nodes = Node.list()
+
+    Enum.each(nodes, fn node ->
+      startVM(node, p1(), &pick_base_frequency/0, &pick_tempo/0, &play_sc/2)
+    end)
+  end
+
+  def spawn_quarter_note_scaleO() do
     nodes = Node.list()
     middle_index = Kernel.div(length(nodes), 2)
     {first_part, second_part} = Enum.split(nodes, middle_index)
@@ -175,6 +211,8 @@ defmodule Distribution do
   def play_sc(sinks, node) do
     Test_collider.play(Enum.at(sinks, 0), Enum.at(sinks, 1), node)
   end
+
+
 
   ## example program ##
   # function to be called from iex to receive bytcode of p1
