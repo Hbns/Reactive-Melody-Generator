@@ -2,11 +2,12 @@
 \contentsline {chapter}{\numberline {1}Introduction}{1}{}%
 \contentsline {section}{\numberline {1.1}Reactive programming}{1}{}%
 \contentsline {section}{\numberline {1.2}Statement of the problem}{2}{}%
+\contentsline {section}{\numberline {1.3}Overview}{2}{}%
 \contentsline {chapter}{\numberline {2}Reactive programming}{3}{}%
 \contentsline {section}{\numberline {2.1}State of the art}{3}{}%
 \contentsline {section}{\numberline {2.2}Distributed reactive programming}{3}{}%
 \contentsline {chapter}{\numberline {3}Strategy and Methodology}{5}{}%
-\contentsline {chapter}{\numberline {4}Purely reactive programming language}{7}{}%
+\contentsline {chapter}{\numberline {4}Purely reactive programming}{7}{}%
 \contentsline {section}{\numberline {4.1}Reactors}{7}{}%
 \contentsline {section}{\numberline {4.2}Haai}{8}{}%
 \contentsline {section}{\numberline {4.3}Remus instruction set}{8}{}%
@@ -17,16 +18,17 @@
 \contentsline {section}{\numberline {5.3}Managing the reactors state}{12}{}%
 \contentsline {section}{\numberline {5.4}Native reactors}{13}{}%
 \contentsline {chapter}{\numberline {6}Distribution}{15}{}%
-\contentsline {section}{\numberline {6.1}Shared-nothing architecture}{15}{}%
-\contentsline {section}{\numberline {6.2}Erlang virtual machine}{15}{}%
-\contentsline {section}{\numberline {6.3}Actor model}{16}{}%
-\contentsline {section}{\numberline {6.4}Distributed Erlang mechanisms}{16}{}%
-\contentsline {section}{\numberline {6.5}Distributing the Hvm}{17}{}%
+\contentsline {section}{\numberline {6.1}Distributing the Hvm}{15}{}%
+\contentsline {section}{\numberline {6.2}Distributed environment}{15}{}%
+\contentsline {subsection}{\numberline {6.2.1}Shared-nothing architecture}{16}{}%
+\contentsline {subsection}{\numberline {6.2.2}Erlang virtual machine}{16}{}%
+\contentsline {subsection}{\numberline {6.2.3}Actor model}{17}{}%
+\contentsline {subsection}{\numberline {6.2.4}Distributed Erlang mechanisms}{17}{}%
 \contentsline {chapter}{\numberline {7}Evaluation}{19}{}%
-\contentsline {section}{\numberline {7.1}Distributed reactive melody generator}{19}{}%
-\contentsline {section}{\numberline {7.2}Sound server}{19}{}%
-\contentsline {section}{\numberline {7.3}Sound server communication}{21}{}%
-\contentsline {section}{\numberline {7.4}Musical values}{21}{}%
-\contentsline {section}{\numberline {7.5}Evaluating the distribution model}{21}{}%
+\contentsline {section}{\numberline {7.1}Evaluating the distribution model}{19}{}%
+\contentsline {section}{\numberline {7.2}Distributed reactive melody generator}{20}{}%
+\contentsline {subsection}{\numberline {7.2.1}Sound server}{21}{}%
+\contentsline {subsection}{\numberline {7.2.2}Sound server communication}{21}{}%
+\contentsline {subsection}{\numberline {7.2.3}Musical values}{22}{}%
 \contentsline {chapter}{\numberline {8}Conclusion}{23}{}%
 \contentsline {section}{\numberline {8.1}Further work}{23}{}%
