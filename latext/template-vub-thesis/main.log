@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  13 MAY 2024 15:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  30 MAY 2024 12:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -912,110 +912,152 @@ File: t1qag.fd 2009/09/25 v1.2 font definition file for T1/qag
 
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./vub_logo_cmyk.pdf>] [2
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./vub_logo_cmyk.pdf>]
+*geometry* verbose mode - [ newgeometry ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: twoside 
+* h-part:(L,W,R)=(51.21495pt, 517.84018pt, 28.45274pt)
+* v-part:(T,H,B)=(56.9055pt, 686.7347pt, 101.40665pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=517.84018pt
+* \textheight=686.7347pt
+* \oddsidemargin=-21.05504pt
+* \evensidemargin=-43.81725pt
+* \topmargin=-45.43198pt
+* \headheight=12.0pt
+* \headsep=18.06749pt
+* \topskip=10.0pt
+* \footskip=25.29494pt
+* \marginparwidth=115.0pt
+* \marginparsep=7.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+ [2
+
+
+
+]
+File: vub_logo_cmyk.pdf Graphic file (type pdf)
+<use vub_logo_cmyk.pdf>
+Package pdftex.def Info: vub_logo_cmyk.pdf  used on input line 37.
+(pdftex.def)             Requested size: 161.0427pt x 56.76566pt.
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 37--37
+[]$[]$ 
+ []
+
+[1] [2
 
 
 ] [3] [4
 
-] (./main.toc)
+] (./main.toc [5])
 \tf@toc=\write5
 \openout5 = `main.toc'.
 
- [5]
-[6
-
-]
+ [6]
 Chapter 1.
 [1
+
 
 ] [2]
 Chapter 2.
 [3
 
-] [4]
-<./images//reactor300.drawio.png, id=49, 581.17125pt x 981.6675pt>
+]
+Overfull \hbox (8.48886pt too wide) in paragraph at lines 82--83
+[]\OT1/cmr/m/n/10 Asynchronous com-mu-ni-ca-tion be-tween dis-tributed com-
+ []
+
+[4]
+Chapter 3.
+[5
+
+] [6
+
+]
+Chapter 4.
+<./images//reactor300.drawio.png, id=62, 581.17125pt x 981.6675pt>
 File: ./images//reactor300.drawio.png Graphic file (type png)
 <use ./images//reactor300.drawio.png>
-Package pdftex.def Info: ./images//reactor300.drawio.png  used on input line 13
-1.
+Package pdftex.def Info: ./images//reactor300.drawio.png  used on input line 10
+2.
 (pdftex.def)             Requested size: 116.23218pt x 196.33002pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[5]
-<./images//rd.drawio.png, id=54, 1431.3475pt x 668.4975pt>
+[7 <./images//reactor300.drawio.png>] [8] [9] [10]
+Chapter 5.
+<./images//rd.drawio.png, id=78, 1431.3475pt x 668.4975pt>
 File: ./images//rd.drawio.png Graphic file (type png)
 <use ./images//rd.drawio.png>
-Package pdftex.def Info: ./images//rd.drawio.png  used on input line 144.
+Package pdftex.def Info: ./images//rd.drawio.png  used on input line 215.
 (pdftex.def)             Requested size: 418.25368pt x 195.33836pt.
-
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [6 <./images//reactor300.drawio.png>]
-Overfull \hbox (43.7423pt too wide) in paragraph at lines 160--160
-[]\OT1/cmtt/m/n/10 startVM(node, reactor_bytecode, &connect_source1/0, &connect
-_source2/0, &handle_sinks/2)[] 
- []
+ [11
 
-[7 <./images//rd.drawio.png>] [8] [9] [10]
-Chapter 3.
+]
+[12 <./images//rd.drawio.png>] [13] [14
 
-Overfull \hbox (2.85876pt too wide) in paragraph at lines 257--258
+]
+Chapter 6.
+
+Overfull \hbox (2.85876pt too wide) in paragraph at lines 247--248
 []\OT1/cmr/m/n/10 Shared-nothing ar-chi-tec-tures are highly scal-able hor-i-zo
 n-tally, this makes
  []
 
-[11
-
-] [12]
-<./images//distribution300.drawio.png, id=80, 1728.4575pt x 551.05875pt>
+[15] [16]
+<./images//distribution300.drawio.png, id=99, 1728.4575pt x 551.05875pt>
 File: ./images//distribution300.drawio.png Graphic file (type png)
 <use ./images//distribution300.drawio.png>
 Package pdftex.def Info: ./images//distribution300.drawio.png  used on input li
-ne 292.
+ne 282.
 (pdftex.def)             Requested size: 418.25368pt x 133.34149pt.
- [13 <./images//distribution300.drawio.png>] [14
+ [17 <./images//distribution300.drawio.png>] [18
 
 ]
-Chapter 4.
-<./images//drmg200.drawio.png, id=89, 1457.445pt x 1088.065pt>
+Chapter 7.
+<./images//drmg200.drawio.png, id=108, 1457.445pt x 1088.065pt>
 File: ./images//drmg200.drawio.png Graphic file (type png)
 <use ./images//drmg200.drawio.png>
-Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 304.
+Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 295.
 (pdftex.def)             Requested size: 418.25368pt x 312.24347pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[15] [16 <./images//drmg200.drawio.png>] [17] [18
+[19] [20 <./images//drmg200.drawio.png>] [21] [22
 
-] [19
+]
+Chapter 8.
+[23] [24
 
-] [20
-
-] [21] (./main.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-Package biblatex Warning: Please (re)run Biber on the file:
-(biblatex)                main
-(biblatex)                and rerun LaTeX afterwards.
-
+] [25] (./main.aux)
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 22541 strings out of 478287
- 458439 string characters out of 5849289
- 1213748 words of memory out of 5000000
- 40374 multiletter control sequences out of 15000+600000
- 491598 words of font info for 47 fonts, out of 8000000 for 9000
+ 22538 strings out of 478287
+ 458269 string characters out of 5849289
+ 1213977 words of memory out of 5000000
+ 40371 multiletter control sequences out of 15000+600000
+ 496969 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  115i,7n,118p,1914b,5160s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/tex-gyre/q-ec.enc}</usr/share/texlive/texmf
@@ -1030,10 +1072,10 @@ b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/shar
 e/texmf/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/publ
 ic/tex-gyre/qagr.pfb>
-Output written on main.pdf (27 pages, 842028 bytes).
+Output written on main.pdf (33 pages, 846490 bytes).
 PDF statistics:
- 170 PDF objects out of 1000 (max. 8388607)
- 105 compressed objects within 2 object streams
+ 189 PDF objects out of 1000 (max. 8388607)
+ 118 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

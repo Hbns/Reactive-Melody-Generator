@@ -219,76 +219,50 @@
       \verb https://dl.acm.org/doi/10.1145/3001886.3001890
       \endverb
     \endentry
-    \entry{juric2024elixir}{book}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=9ad6d7e0f4bd0ee74234732694aa221a}{%
-           family={Juric},
-           familyi={J\bibinitperiod},
-           given={Saša},
-           giveni={S\bibinitperiod},
+    \entry{DBLP:journals/tse/MargaraS18}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=0cb96c89d78e7f4b886e9d3427a1710f}{%
+           family={Margara},
+           familyi={M\bibinitperiod},
+           given={Alessandro},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e402b2ae11147cc53c2a5cd57fb4e2b4}{%
+           family={Salvaneschi},
+           familyi={S\bibinitperiod},
+           given={Guido},
+           giveni={G\bibinitperiod},
            givenun=0}}%
       }
-      \list{publisher}{2}{%
-        {Simon}%
-        {Schuster}%
-      }
-      \strng{namehash}{9ad6d7e0f4bd0ee74234732694aa221a}
-      \strng{fullhash}{9ad6d7e0f4bd0ee74234732694aa221a}
-      \strng{bibnamehash}{9ad6d7e0f4bd0ee74234732694aa221a}
-      \strng{authorbibnamehash}{9ad6d7e0f4bd0ee74234732694aa221a}
-      \strng{authornamehash}{9ad6d7e0f4bd0ee74234732694aa221a}
-      \strng{authorfullhash}{9ad6d7e0f4bd0ee74234732694aa221a}
-      \field{sortinit}{J}
-      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \strng{namehash}{3959e569c2955d7e373f7d6267950202}
+      \strng{fullhash}{3959e569c2955d7e373f7d6267950202}
+      \strng{bibnamehash}{3959e569c2955d7e373f7d6267950202}
+      \strng{authorbibnamehash}{3959e569c2955d7e373f7d6267950202}
+      \strng{authornamehash}{3959e569c2955d7e373f7d6267950202}
+      \strng{authorfullhash}{3959e569c2955d7e373f7d6267950202}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{year}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Elixir in action}
-      \field{year}{2024}
-    \endentry
-    \entry{oeyen2022reactive}{article}{}
-      \name{author}{3}{}{%
-        {{un=0,uniquepart=base,hash=635a46627398603b77b30c3c1865625f}{%
-           family={Oeyen},
-           familyi={O\bibinitperiod},
-           given={Bjarno},
-           giveni={B\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=22b2acae731f0ec4804f973153a604e1}{%
-           family={De\bibnamedelima Koster},
-           familyi={D\bibinitperiod\bibinitdelim K\bibinitperiod},
-           given={Joeri},
-           giveni={J\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=adbb5599634d37a093e4c0227d5be086}{%
-           family={De\bibnamedelima Meuter},
-           familyi={D\bibinitperiod\bibinitdelim M\bibinitperiod},
-           given={Wolfgang},
-           giveni={W\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{b8a9d4382a536896d0a2e630ecae85b7}
-      \strng{fullhash}{717240ec3fe7dc83bc72683d175d9f3e}
-      \strng{bibnamehash}{717240ec3fe7dc83bc72683d175d9f3e}
-      \strng{authorbibnamehash}{717240ec3fe7dc83bc72683d175d9f3e}
-      \strng{authornamehash}{b8a9d4382a536896d0a2e630ecae85b7}
-      \strng{authorfullhash}{717240ec3fe7dc83bc72683d175d9f3e}
-      \field{extraname}{1}
-      \field{sortinit}{O}
-      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
-      \field{extradate}{1}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{year}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of the 9th ACM SIGPLAN International Workshop on Reactive and Event-Based Languages and Systems}
-      \field{title}{Reactive Programming on the Bare Metal: A Formal Model for a Low-Level Reactive Virtual Machine}
-      \field{year}{2022}
-      \field{pages}{50\bibrangedash 62}
-      \range{pages}{13}
+      \field{journaltitle}{{IEEE} Trans. Software Eng.}
+      \field{number}{7}
+      \field{title}{On the Semantics of Distributed Reactive Programming: The Cost of Consistency}
+      \field{volume}{44}
+      \field{year}{2018}
+      \field{pages}{689\bibrangedash 711}
+      \range{pages}{23}
+      \verb{doi}
+      \verb 10.1109/TSE.2018.2833109
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1109/TSE.2018.2833109
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1109/TSE.2018.2833109
+      \endverb
     \endentry
     \entry{oeyen_remus_2022}{article}{}
       \name{author}{3}{}{%
@@ -323,10 +297,9 @@
       \strng{authorbibnamehash}{717240ec3fe7dc83bc72683d175d9f3e}
       \strng{authornamehash}{b8a9d4382a536896d0a2e630ecae85b7}
       \strng{authorfullhash}{717240ec3fe7dc83bc72683d175d9f3e}
-      \field{extraname}{2}
+      \field{extraname}{1}
       \field{sortinit}{O}
       \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
-      \field{extradate}{2}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -386,7 +359,7 @@
       \strng{authorbibnamehash}{717240ec3fe7dc83bc72683d175d9f3e}
       \strng{authornamehash}{b8a9d4382a536896d0a2e630ecae85b7}
       \strng{authorfullhash}{717240ec3fe7dc83bc72683d175d9f3e}
-      \field{extraname}{3}
+      \field{extraname}{2}
       \field{sortinit}{O}
       \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
       \field{extradatescope}{labelyear}
