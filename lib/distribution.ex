@@ -16,10 +16,10 @@ defmodule Distribution do
 
   def sound_dsl() do
     dsl = [
-      {:deploy_to, :"node2@0.0.0.0", :p1, [:f1, :t1], :s1},
-      {:deploy_to, :"node3@0.0.0.0", :p1, [:f2, :t2], :s1},
-      {:deploy_to, :"node4@0.0.0.0", :p1, [:f3, :t1], :s1},
-      {:deploy_to, :"node5@0.0.0.0", :p1, [:f4, :t2], :s1},
+      {:deploy_to, :"node2@0.0.0.0", :p1, :f1, :t1, :s1},
+      {:deploy_to, :"node3@0.0.0.0", :p1, :f2, :t2, :s1},
+      {:deploy_to, :"node4@0.0.0.0", :p1, :f3, :t1, :s1},
+      {:deploy_to, :"node5@0.0.0.0", :p1, :f4, :t2, :s1},
     ]
     read_dsl(dsl)
   end
@@ -27,13 +27,13 @@ defmodule Distribution do
   # read the dsl
   def read_dsl(dsl) do
     Enum.each(dsl, fn
-      {:deploy_to, node_name, byte_code, source_connectors, handle_sinks} ->
-        execute_action(node_name, byte_code, source_connectors, handle_sinks)
+      {:deploy_to, node_name, byte_code, source_connector1, source_connector2, handle_sinks} ->
+        execute_action(node_name, byte_code, source_connector1, source_connector2, handle_sinks)
     end)
   end
 
   # execute the dsl lines, find connecting functions in map.
-  def execute_action(node_name, byte_code, source_connector, handle_sinks) do
+  def execute_action(node_name, byte_code, source_connector1, source_connector2, handle_sinks) do
     # reactor_byte_code
     rb = apply(__MODULE__, byte_code, [])
     # connecting funtions
@@ -47,9 +47,8 @@ defmodule Distribution do
       s1: &Distribution.play_sc/2
     }
     #source_connector
-    sc = Enum.map(source_connector, &Map.get(connecting, &1))
-    # handles only two connectors for now.
-    [sc1, sc2 | _rest] = sc
+    sc1 = connecting[source_connector1]
+    sc2 = connecting[source_connector2]
     #handle_sinks
     hs = connecting[handle_sinks]
     # Start the VM on the specified node with its arguments
