@@ -33,7 +33,7 @@ defmodule Distribution do
   end
 
   # execute the dsl lines, find connecting functions in map.
-  defp execute_action(node_name, byte_code, source_connector, handle_sinks) do
+  def execute_action(node_name, byte_code, source_connector, handle_sinks) do
     # reactor_byte_code
     rb = apply(__MODULE__, byte_code, [])
     # connecting funtions

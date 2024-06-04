@@ -7,14 +7,16 @@ defmodule Dsl do
   defmacro __using__(_opts) do
     quote do
       import Dsl
+
     end
   end
 
   defmacro execute_dsl(do: block) do
     quote do
       unquote(block)
-      |> parse_dsl()
-      |> execute_actions()
+      #p = Dsl.parse_dsl(block)
+      #a = Dsl.execute_actions(p)
+      IO.inspect(block, label: 'block: ')
     end
   end
 
@@ -23,35 +25,31 @@ defmodule Dsl do
     |> Enum.map(&parse_line/1)
   end
 
-  defp parse_line({key, value}) do
+  def parse_line({key, value}) do
     {key, value}
   end
 
-  defp execute_actions(actions) do
+  def execute_actions(actions) do
     task = Keyword.get(actions, :task)
     reactor = Keyword.get(actions, :reactor)
     node = Keyword.get(actions, :node)
     source_connector1 = Keyword.get(actions, :source1)
     source_connector2 = Keyword.get(actions, :source2)
-    #source_connector = Keyword.get(actions, :connector1) |> parse_connectors()
     sinks = Keyword.get(actions, :sinks)
 
     execute_actiont(node, reactor, source_connector1, source_connector2, sinks)
   end
 
-  defp parse_connectors(connector) do
-    [String.to_atom("#{connector}1"), String.to_atom("#{connector}2")]
-  end
-
-  defp execute_actiont(node_name, byte_code, source_connector1, source_connector2, handle_sinks) do
+  def execute_actiont(node_name, byte_code, source_connector1, source_connector2, handle_sinks) do
     IO.inspect(node_name, label: 'node_name: ')
     IO.inspect(byte_code, label: 'byte_code: ')
     IO.inspect(source_connector1, label: 'src_conector1: ')
+    IO.inspect(source_connector2, label: 'src_conector2: ')
     IO.inspect(handle_sinks, label: 'handle_sinks: ')
   end
 
 
-  defp execute_action(node_name, byte_code, source_connector, handle_sinks) do
+  def execute_action(node_name, byte_code, source_connector, handle_sinks) do
     # reactor_byte_code
     rb = apply(__MODULE__, byte_code, [])
     # connecting functions

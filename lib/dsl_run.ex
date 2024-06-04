@@ -1,14 +1,17 @@
 defmodule DslRun do
-  require Dsl
+  use Dsl2
 
   def run do
-    Dsl.execute_dsl do
+    cute_dsl do
       [
+
         task: :deploy,
         reactor: :p1,
-        node: :pick_node,
+        node: :'node3@0.0.0.0',
         connector1: :f1,
+        connector1: :f2,
         sinks: :s1
+
       ]
     end
   end
