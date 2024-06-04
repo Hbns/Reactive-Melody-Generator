@@ -55,28 +55,6 @@ defmodule Distribution do
     startVM(node_name, rb, sc1, sc2, hs)
   end
 
-  def spawn_to_known_nodesO() do
-    nodes = Node.list()
-
-    Enum.each(nodes, fn node ->
-      startVM(node, p1(), &pick_base_frequency/0, &pick_tempo/0, &play_sc/2)
-    end)
-  end
-
-  def spawn_quarter_note_scaleO() do
-    nodes = Node.list()
-    middle_index = Kernel.div(length(nodes), 2)
-    {first_part, second_part} = Enum.split(nodes, middle_index)
-
-    Enum.each(first_part, fn node ->
-      startVM(node, p1(), &pick_base_frequency3/0, &pick_tempo/0, &play_sc/2)
-    end)
-
-    Enum.each(second_part, fn node ->
-      startVM(node, p1(), &pick_base_frequency4/0, &pick_tempo2/0, &play_sc/2)
-    end)
-  end
-
   ## Distributed reactive melody generator ##
 
   # function used as data stream

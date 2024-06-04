@@ -14,20 +14,20 @@ defmodule DslRun do
           sinks: :s1
         ],
         [
-        task: :deploy,
-        reactor: :p1,
-        node: :'node3@0.0.0.0',
-        connector1: :f1,
-        connector2: :t2,
-        sinks: :s1
+          task: :deploy,
+          reactor: :p1,
+          node: :'node3@0.0.0.0',
+          connector1: :f1,
+          connector2: :t2,
+          sinks: :s1
         ],
         [
-        task: :deploy,
-        reactor: :p1,
-        node: :'node4@0.0.0.0',
-        connector1: :f2,
-        connector2: :t2,
-        sinks: :s1
+          task: :deploy,
+          reactor: :p1,
+          node: :'node4@0.0.0.0',
+          connector1: :f2,
+          connector2: :t2,
+          sinks: :s1
         ]
       ]
     end
