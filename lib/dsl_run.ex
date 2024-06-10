@@ -9,12 +9,12 @@ defmodule DslRun do
           task: :deploy,
           reactor: :p1,
           node: :'node2@0.0.0.0',
-          connector1: :f4,
+          connector1: "f4",
           connector2: :t1,
           sinks: :s1
         ],
         [
-          task: :deploy,
+          task: "deploy",
           reactor: :p1,
           node: :'node3@0.0.0.0',
           connector1: :f1,
@@ -22,7 +22,7 @@ defmodule DslRun do
           sinks: :s1
         ],
         [
-          task: :deploy,
+          task: :daploy,
           reactor: :p1,
           node: :'node4@0.0.0.0',
           connector1: :f2,
