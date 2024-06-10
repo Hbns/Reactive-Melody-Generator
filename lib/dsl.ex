@@ -6,79 +6,53 @@ defmodule Dsl do
     end
   end
 
-  # Valid argument lists here
+  # Valid values per field
   @valid_tasks [:start, :stop, :restart, :deploy]
   @valid_reactors [:p1]
-  @valid_nodes [:'node2@0.0.0.0', :'node3@0.0.0.0', :'node4@0.0.0.0', :'node5@0.0.0.0']
+  @valid_nodes [:"node2@0.0.0.0", :"node3@0.0.0.0", :"node4@0.0.0.0", :"node5@0.0.0.0"]
   @valid_connectors [:f1, :f2, :f3, :f4, :t1, :t2]
   @valid_sinkers [:s1]
 
-  # takes a block of deployments and starts each block in the cluster.
+  # Helper function to validate a single field
+  def validate_field(value, valid_list, field_name, deployment) do
+    if value not in valid_list do
+      IO.puts(
+        "Error: #{field_name} #{inspect(value)} is not valid in deployment #{inspect(deployment)}. Valid values are: #{inspect(valid_list)}"
+      )
+      false
+    else
+      true
+    end
+  end
+
+  # Main macro to process deployments
   defmacro cluster_dsl(do: block) do
     quote do
-
-      # extract relevant information for each deployment
+      # Extract relevant information for each deployment
       blk = unquote(block)
-      Enum.each(blk, fn b ->
-        task = Keyword.get(b, :task)
-        reactor = Keyword.get(b, :reactor)
-        node = Keyword.get(b, :node)
-        connector1 = Keyword.get(b, :connector1)
-        connector2 = Keyword.get(b, :connector2)
-        sinks = Keyword.get(b, :sinks)
 
-      # Verify each argument for validity
+      Enum.each(blk, fn deployment ->
+        task = Keyword.get(deployment, :task)
+        reactor = Keyword.get(deployment, :reactor)
+        node = Keyword.get(deployment, :node)
+        connector1 = Keyword.get(deployment, :connector1)
+        connector2 = Keyword.get(deployment, :connector2)
+        sinks = Keyword.get(deployment, :sinks)
 
-        if task not in unquote(@valid_tasks) do
-            errors = errors + 1
+        # Validate each field and collect errors
+        valid_task = Dsl.validate_field(task, unquote(@valid_tasks), "Task", deployment)
+        valid_reactor = Dsl.validate_field(reactor, unquote(@valid_reactors), "Reactor", deployment)
+        valid_node = Dsl.validate_field(node, unquote(@valid_nodes), "Node", deployment)
+        valid_connector1 = Dsl.validate_field(connector1, unquote(@valid_connectors), "Connector1", deployment)
+        valid_connector2 = Dsl.validate_field(connector2, unquote(@valid_connectors), "Connector2", deployment)
+        valid_sinks = Dsl.validate_field(sinks, unquote(@valid_sinkers), "Sinks", deployment)
 
-          IO.puts(
-            "Error: Task #{inspect(task)} is not a valid TASK in deployment #{inspect(b)}. Valid tasks are: #{inspect(unquote(@valid_tasks))}"
-          )
-          IO.inspect(errors, label: 'errors: ')
+        if valid_task and valid_reactor and valid_node and valid_connector1 and valid_connector2 and valid_sinks do
+          IO.puts("Configuration has been sent for deployment")
+          #Distribution.execute_action(node, reactor, connector1, connector2, sinks)
+        else
+          IO.puts("Errors encountered, deployment aborted")
         end
-        IO.inspect(errors, label: 'errors outside : ')
-        if reactor not in unquote(@valid_reactors) do
-          errors = errors + 1
-          IO.puts(
-            "Error: Reactor #{inspect(reactor)} is not a valid REACTOR in deployment #{inspect(b)}. Valid tasks are: #{inspect(unquote(@valid_reactors))}"
-          )
-        end
-
-        if node not in unquote(@valid_nodes) do
-          errors = errors + 1
-          IO.puts(
-            "Error: Node #{inspect(node)} is not a valid NODE in deployment #{inspect(b)}. Valid tasks are: #{inspect(unquote(@valid_nodes))}"
-          )
-        end
-
-        if connector1 not in unquote(@valid_connectors) do
-          errors = errors + 1
-          IO.puts(
-            "Error: Connector #{inspect(connector1)} is not a valid CONNECTOR in deployment #{inspect(b)}. Valid tasks are: #{inspect(unquote(@valid_connectors))}"
-          )
-        end
-
-        if connector2 not in unquote(@valid_connectors) do
-          errors = errors + 1
-          IO.puts(
-            "Error: Connector #{inspect(connector2)} is not a valid CONNECTOR in deployment #{inspect(b)}. Valid tasks are: #{inspect(unquote(@valid_connectors))}"
-          )
-        end
-
-        if sinks not in unquote(@valid_sinkers) do
-          errors = errors + 1
-          IO.puts(
-            "Error: Sinks #{inspect(sinks)} is not a valid SINKS in deployment #{inspect(b)}. Valid tasks are: #{inspect(unquote(@valid_sinkers))}"
-          )
-        end
-
-            if errors == 0 do
-              IO.puts("configuration has been send for deployment")
-              # Distribution.execute_action(node, reactor, connector1, connector2, sinks)
-            else
-              IO.puts("errors, did not deploy")
-            end
       end)
     end
   end
