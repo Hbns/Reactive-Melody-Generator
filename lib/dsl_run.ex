@@ -4,6 +4,8 @@ defmodule DslRun do
   def run do
     cluster_dsl do
       # small example to declaratively deploy reactors on specific nodes
+      # could be seen as a datastructure parsed form a file.
+      # this format is handy to add or remove things, together with adapting dsl.ex
       [
         [
           task: :deploy,

@@ -39,7 +39,7 @@ defmodule Dsl do
         connector2 = Keyword.get(deployment, :connector2)
         sinks = Keyword.get(deployment, :sinks)
 
-        # Validate each field and collect errors
+        # Validate each field
         valid_task = Dsl.validate_field(task, unquote(@valid_tasks), "Task", deployment)
         valid_reactor = Dsl.validate_field(reactor, unquote(@valid_reactors), "Reactor", deployment)
         valid_node = Dsl.validate_field(node, unquote(@valid_nodes), "Node", deployment)
