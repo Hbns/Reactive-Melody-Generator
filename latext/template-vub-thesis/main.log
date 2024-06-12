@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  30 MAY 2024 15:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  12 JUN 2024 10:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1016,7 +1016,12 @@ Overfull \hbox (15.0pt too wide) in paragraph at lines 39--39
 
  [6]
 Chapter 1.
-[1
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+) [1
 
 
 ] [2]
@@ -1024,7 +1029,7 @@ Chapter 2.
 [3
 
 ]
-Overfull \hbox (8.48886pt too wide) in paragraph at lines 81--82
+Overfull \hbox (8.48886pt too wide) in paragraph at lines 86--87
 []\OT1/cmr/m/n/10 Asynchronous com-mu-ni-ca-tion be-tween dis-tributed com-
  []
 
@@ -1036,23 +1041,17 @@ Chapter 3.
 
 ]
 Chapter 4.
-<./images//reactor300.drawio.png, id=62, 581.17125pt x 981.6675pt>
+<./images//reactor300.drawio.png, id=63, 581.17125pt x 981.6675pt>
 File: ./images//reactor300.drawio.png Graphic file (type png)
 <use ./images//reactor300.drawio.png>
 Package pdftex.def Info: ./images//reactor300.drawio.png  used on input line 10
-1.
+6.
 (pdftex.def)             Requested size: 116.23218pt x 196.33002pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [7 <./images//reactor300.drawio.png>]
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2020/03/24 1.8d listings language file
-)
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
-)
-Overfull \hbox (6.99725pt too wide) in paragraph at lines 138--149
+Overfull \hbox (6.99725pt too wide) in paragraph at lines 143--154
  [][] 
  []
 
@@ -1064,7 +1063,7 @@ Chapter 5.
 <./images//rd.drawio.png, id=78, 1431.3475pt x 668.4975pt>
 File: ./images//rd.drawio.png Graphic file (type png)
 <use ./images//rd.drawio.png>
-Package pdftex.def Info: ./images//rd.drawio.png  used on input line 223.
+Package pdftex.def Info: ./images//rd.drawio.png  used on input line 228.
 (pdftex.def)             Requested size: 418.25368pt x 195.33836pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1083,13 +1082,13 @@ Chapter 6.
 File: ./images//distribution300.drawio.png Graphic file (type png)
 <use ./images//distribution300.drawio.png>
 Package pdftex.def Info: ./images//distribution300.drawio.png  used on input li
-ne 258.
+ne 263.
 (pdftex.def)             Requested size: 418.25368pt x 133.34149pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [15]
-Overfull \hbox (2.85876pt too wide) in paragraph at lines 272--273
+Overfull \hbox (2.85876pt too wide) in paragraph at lines 277--278
 []\OT1/cmr/m/n/10 Shared-nothing ar-chi-tec-tures are highly scal-able hor-i-zo
 n-tally, this makes
  []
@@ -1105,7 +1104,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <./images//drmg200.drawio.png, id=111, 1457.445pt x 1088.065pt>
 File: ./images//drmg200.drawio.png Graphic file (type png)
 <use ./images//drmg200.drawio.png>
-Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 321.
+Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 326.
 (pdftex.def)             Requested size: 418.25368pt x 312.24347pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1122,10 +1121,10 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 24367 strings out of 478287
- 483005 string characters out of 5849289
- 1265196 words of memory out of 5000000
- 42178 multiletter control sequences out of 15000+600000
+ 24375 strings out of 478287
+ 483071 string characters out of 5849289
+ 1266210 words of memory out of 5000000
+ 42186 multiletter control sequences out of 15000+600000
  496969 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  115i,9n,118p,1914b,5162s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1141,7 +1140,7 @@ b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/shar
 e/texmf/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/publ
 ic/tex-gyre/qagr.pfb>
-Output written on main.pdf (33 pages, 851870 bytes).
+Output written on main.pdf (33 pages, 852973 bytes).
 PDF statistics:
  189 PDF objects out of 1000 (max. 8388607)
  118 compressed objects within 2 object streams
