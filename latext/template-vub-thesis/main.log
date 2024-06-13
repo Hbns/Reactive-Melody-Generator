@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  12 JUN 2024 10:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  13 JUN 2024 13:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -481,6 +481,24 @@ File: listings.cfg 2020/03/24 1.8d listings configuration
 ))
 Package: listings 2020/03/24 1.8d (Carsten Heinz)
 
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/10/26 v3.5g Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
+\captionmargin=\dimen286
+\captionmargin@=\dimen287
+\captionwidth=\dimen288
+\caption@tempdima=\dimen289
+\caption@indent=\dimen290
+\caption@parindent=\dimen291
+\caption@hangindent=\dimen292
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count299
+\c@continuedfloat=\count300
+Package caption Info: listings package is loaded.
+)
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
 Package: biblatex 2022/02/02 v3.17 programmable bibliographies (PK/MW)
 
@@ -497,11 +515,11 @@ Package pdftexcmds Info: \pdfdraftmode found.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count299
+\etb@tempcnta=\count301
 )
 (/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
 Package: logreq 2010/08/04 v1.0 xml request logger
-\lrq@indent=\count300
+\lrq@indent=\count302
 
 (/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def
 File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
@@ -513,48 +531,48 @@ Package: ifthen 2020/11/24 v1.1c Standard LaTeX ifthen package (DPC)
 \Urlmuskip=\muskip16
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-\c@tabx@nest=\count301
-\c@listtotal=\count302
-\c@listcount=\count303
-\c@liststart=\count304
-\c@liststop=\count305
-\c@citecount=\count306
-\c@citetotal=\count307
-\c@multicitecount=\count308
-\c@multicitetotal=\count309
-\c@instcount=\count310
-\c@maxnames=\count311
-\c@minnames=\count312
-\c@maxitems=\count313
-\c@minitems=\count314
-\c@citecounter=\count315
-\c@maxcitecounter=\count316
-\c@savedcitecounter=\count317
-\c@uniquelist=\count318
-\c@uniquename=\count319
-\c@refsection=\count320
-\c@refsegment=\count321
-\c@maxextratitle=\count322
-\c@maxextratitleyear=\count323
-\c@maxextraname=\count324
-\c@maxextradate=\count325
-\c@maxextraalpha=\count326
-\c@abbrvpenalty=\count327
-\c@highnamepenalty=\count328
-\c@lownamepenalty=\count329
-\c@maxparens=\count330
-\c@parenlevel=\count331
-\blx@tempcnta=\count332
-\blx@tempcntb=\count333
-\blx@tempcntc=\count334
-\c@blx@maxsection=\count335
-\c@blx@maxsegment@0=\count336
-\blx@notetype=\count337
-\blx@parenlevel@text=\count338
-\blx@parenlevel@foot=\count339
-\c@blx@sectionciteorder@0=\count340
-\blx@entrysetcounter=\count341
-\blx@biblioinstance=\count342
+\c@tabx@nest=\count303
+\c@listtotal=\count304
+\c@listcount=\count305
+\c@liststart=\count306
+\c@liststop=\count307
+\c@citecount=\count308
+\c@citetotal=\count309
+\c@multicitecount=\count310
+\c@multicitetotal=\count311
+\c@instcount=\count312
+\c@maxnames=\count313
+\c@minnames=\count314
+\c@maxitems=\count315
+\c@minitems=\count316
+\c@citecounter=\count317
+\c@maxcitecounter=\count318
+\c@savedcitecounter=\count319
+\c@uniquelist=\count320
+\c@uniquename=\count321
+\c@refsection=\count322
+\c@refsegment=\count323
+\c@maxextratitle=\count324
+\c@maxextratitleyear=\count325
+\c@maxextraname=\count326
+\c@maxextradate=\count327
+\c@maxextraalpha=\count328
+\c@abbrvpenalty=\count329
+\c@highnamepenalty=\count330
+\c@lownamepenalty=\count331
+\c@maxparens=\count332
+\c@parenlevel=\count333
+\blx@tempcnta=\count334
+\blx@tempcntb=\count335
+\blx@tempcntc=\count336
+\c@blx@maxsection=\count337
+\c@blx@maxsegment@0=\count338
+\blx@notetype=\count339
+\blx@parenlevel@text=\count340
+\blx@parenlevel@foot=\count341
+\c@blx@sectionciteorder@0=\count342
+\blx@entrysetcounter=\count343
+\blx@biblioinstance=\count344
 \labelnumberwidth=\skip49
 \labelalphawidth=\skip50
 \biblabelsep=\skip51
@@ -566,9 +584,9 @@ Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 \blx@bcfin=\read3
 \blx@bcfout=\write4
 \blx@langwohyphens=\language87
-\c@mincomprange=\count343
-\c@maxcomprange=\count344
-\c@mincompwidth=\count345
+\c@mincomprange=\count345
+\c@maxcomprange=\count346
+\c@mincompwidth=\count347
 Package biblatex Info: Trying to load biblatex default data model...
 Package biblatex Info: ... file 'blx-dm.def' found.
 
@@ -583,84 +601,84 @@ File: apa.dbx 2021/12/24 v9.15 APA biblatex style data model
 )
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
-\c@afterword=\count346
-\c@savedafterword=\count347
-\c@annotator=\count348
-\c@savedannotator=\count349
-\c@author=\count350
-\c@savedauthor=\count351
-\c@bookauthor=\count352
-\c@savedbookauthor=\count353
-\c@commentator=\count354
-\c@savedcommentator=\count355
-\c@editor=\count356
-\c@savededitor=\count357
-\c@editora=\count358
-\c@savededitora=\count359
-\c@editorb=\count360
-\c@savededitorb=\count361
-\c@editorc=\count362
-\c@savededitorc=\count363
-\c@foreword=\count364
-\c@savedforeword=\count365
-\c@holder=\count366
-\c@savedholder=\count367
-\c@introduction=\count368
-\c@savedintroduction=\count369
-\c@namea=\count370
-\c@savednamea=\count371
-\c@nameb=\count372
-\c@savednameb=\count373
-\c@namec=\count374
-\c@savednamec=\count375
-\c@translator=\count376
-\c@savedtranslator=\count377
-\c@shortauthor=\count378
-\c@savedshortauthor=\count379
-\c@shorteditor=\count380
-\c@savedshorteditor=\count381
-\c@narrator=\count382
-\c@savednarrator=\count383
-\c@execproducer=\count384
-\c@savedexecproducer=\count385
-\c@execdirector=\count386
-\c@savedexecdirector=\count387
-\c@with=\count388
-\c@savedwith=\count389
-\c@labelname=\count390
-\c@savedlabelname=\count391
-\c@institution=\count392
-\c@savedinstitution=\count393
-\c@lista=\count394
-\c@savedlista=\count395
-\c@listb=\count396
-\c@savedlistb=\count397
-\c@listc=\count398
-\c@savedlistc=\count399
-\c@listd=\count400
-\c@savedlistd=\count401
-\c@liste=\count402
-\c@savedliste=\count403
-\c@listf=\count404
-\c@savedlistf=\count405
-\c@location=\count406
-\c@savedlocation=\count407
-\c@organization=\count408
-\c@savedorganization=\count409
-\c@origlocation=\count410
-\c@savedoriglocation=\count411
-\c@origpublisher=\count412
-\c@savedorigpublisher=\count413
-\c@publisher=\count414
-\c@savedpublisher=\count415
-\c@language=\count416
-\c@savedlanguage=\count417
-\c@origlanguage=\count418
-\c@savedoriglanguage=\count419
-\c@citation=\count420
-\c@savedcitation=\count421
-\c@pageref=\count422
-\c@savedpageref=\count423
+\c@afterword=\count348
+\c@savedafterword=\count349
+\c@annotator=\count350
+\c@savedannotator=\count351
+\c@author=\count352
+\c@savedauthor=\count353
+\c@bookauthor=\count354
+\c@savedbookauthor=\count355
+\c@commentator=\count356
+\c@savedcommentator=\count357
+\c@editor=\count358
+\c@savededitor=\count359
+\c@editora=\count360
+\c@savededitora=\count361
+\c@editorb=\count362
+\c@savededitorb=\count363
+\c@editorc=\count364
+\c@savededitorc=\count365
+\c@foreword=\count366
+\c@savedforeword=\count367
+\c@holder=\count368
+\c@savedholder=\count369
+\c@introduction=\count370
+\c@savedintroduction=\count371
+\c@namea=\count372
+\c@savednamea=\count373
+\c@nameb=\count374
+\c@savednameb=\count375
+\c@namec=\count376
+\c@savednamec=\count377
+\c@translator=\count378
+\c@savedtranslator=\count379
+\c@shortauthor=\count380
+\c@savedshortauthor=\count381
+\c@shorteditor=\count382
+\c@savedshorteditor=\count383
+\c@narrator=\count384
+\c@savednarrator=\count385
+\c@execproducer=\count386
+\c@savedexecproducer=\count387
+\c@execdirector=\count388
+\c@savedexecdirector=\count389
+\c@with=\count390
+\c@savedwith=\count391
+\c@labelname=\count392
+\c@savedlabelname=\count393
+\c@institution=\count394
+\c@savedinstitution=\count395
+\c@lista=\count396
+\c@savedlista=\count397
+\c@listb=\count398
+\c@savedlistb=\count399
+\c@listc=\count400
+\c@savedlistc=\count401
+\c@listd=\count402
+\c@savedlistd=\count403
+\c@liste=\count404
+\c@savedliste=\count405
+\c@listf=\count406
+\c@savedlistf=\count407
+\c@location=\count408
+\c@savedlocation=\count409
+\c@organization=\count410
+\c@savedorganization=\count411
+\c@origlocation=\count412
+\c@savedoriglocation=\count413
+\c@origpublisher=\count414
+\c@savedorigpublisher=\count415
+\c@publisher=\count416
+\c@savedpublisher=\count417
+\c@language=\count418
+\c@savedlanguage=\count419
+\c@origlanguage=\count420
+\c@savedoriglanguage=\count421
+\c@citation=\count422
+\c@savedcitation=\count423
+\c@pageref=\count424
+\c@savedpageref=\count425
 \shorthandwidth=\skip57
 \shortjournalwidth=\skip58
 \shortserieswidth=\skip59
@@ -686,19 +704,19 @@ Package biblatex Info: ... file 'biblatex.def' found.
 
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def
 File: biblatex.def 2022/02/02 v3.17 biblatex compatibility (PK/MW)
-\c@textcitecount=\count424
-\c@textcitetotal=\count425
-\c@textcitemaxnames=\count426
-\c@biburlbigbreakpenalty=\count427
-\c@biburlbreakpenalty=\count428
-\c@biburlnumpenalty=\count429
-\c@biburlucpenalty=\count430
-\c@biburllcpenalty=\count431
+\c@textcitecount=\count426
+\c@textcitetotal=\count427
+\c@textcitemaxnames=\count428
+\c@biburlbigbreakpenalty=\count429
+\c@biburlbreakpenalty=\count430
+\c@biburlnumpenalty=\count431
+\c@biburlucpenalty=\count432
+\c@biburllcpenalty=\count433
 \biburlbigskip=\muskip17
 \biburlnumskip=\muskip18
 \biburlucskip=\muskip19
 \biburllcskip=\muskip20
-\c@smartand=\count432
+\c@smartand=\count434
 )
 Package biblatex Info: Trying to load natbib compatibility...
 Package biblatex Info: ... file 'blx-natbib.def' found.
@@ -718,8 +736,8 @@ Package biblatex Info: ... file 'standard.bbx' found.
 
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
 File: standard.bbx 2022/02/02 v3.17 biblatex bibliography style (PK/MW)
-\c@bbx:relatedcount=\count433
-\c@bbx:relatedtotal=\count434
+\c@bbx:relatedcount=\count435
+\c@bbx:relatedtotal=\count436
 )
 Package biblatex Info: Delimiter 'nameyeardelim' in context 'bib' already defin
 ed, overwriting.
@@ -775,7 +793,7 @@ Package: expl3 2022-01-21 L3 programming layer (loader)
 
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-01-12 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count435
+\l__color_backend_stack_int=\count437
 \l__pdf_internal_box=\box65
 ))
 Package biblatex Info: ... and expl3
@@ -789,38 +807,38 @@ Package: xparse 2022-01-12 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2022/02/02 v3.17 expl3 case changing code for biblatex
 ))
-\@quotelevel=\count436
-\@quotereset=\count437
+\@quotelevel=\count438
+\@quotereset=\count439
 
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 28.
-LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
  (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count438
-\scratchdimen=\dimen286
+\scratchcounter=\count440
+\scratchdimen=\dimen293
 \scratchbox=\box66
-\nofMPsegments=\count439
-\nofMParguments=\count440
+\nofMPsegments=\count441
+\nofMParguments=\count442
 \everyMPshowfont=\toks33
-\MPscratchCnt=\count441
-\MPscratchDim=\dimen287
-\MPnumerator=\count442
-\makeMPintoPDFobject=\count443
+\MPscratchCnt=\count443
+\MPscratchDim=\dimen294
+\MPnumerator=\count444
+\makeMPintoPDFobject=\count445
 \everyMPtoPDFconversion=\toks34
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -865,7 +883,9 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c@lstlisting=\count444
+\c@lstlisting=\count446
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
 Package biblatex Info: Trying to load language 'english' -> 'english-apa'...
 Package biblatex Info: ... file 'english-apa.lbx' found.
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex-apa/english-apa.lbx
@@ -901,8 +921,8 @@ Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
 
 (./main.bbl)
-Package biblatex Info: Reference section=0 on input line 28.
-Package biblatex Info: Reference segment=0 on input line 28.
+Package biblatex Info: Reference section=0 on input line 32.
+Package biblatex Info: Reference segment=0 on input line 32.
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: pdftex
 * paper: a4paper
@@ -938,18 +958,18 @@ Package biblatex Info: Reference segment=0 on input line 28.
 <vub_logo_cmyk.pdf, id=4, 2094.8363pt x 738.42874pt>
 File: vub_logo_cmyk.pdf Graphic file (type pdf)
 <use vub_logo_cmyk.pdf>
-Package pdftex.def Info: vub_logo_cmyk.pdf  used on input line 30.
+Package pdftex.def Info: vub_logo_cmyk.pdf  used on input line 34.
 (pdftex.def)             Requested size: 161.0427pt x 56.76566pt.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 30.
+(Font)              <7> on input line 34.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 30.
+(Font)              <5> on input line 34.
 
-Overfull \hbox (15.0pt too wide) in paragraph at lines 30--30
+Overfull \hbox (15.0pt too wide) in paragraph at lines 34--34
 []$[]$ 
  []
 
-LaTeX Font Info:    Trying to load font information for T1+qag on input line 30
+LaTeX Font Info:    Trying to load font information for T1+qag on input line 34
 .
 (/usr/share/texmf/tex/latex/tex-gyre/t1qag.fd
 File: t1qag.fd 2009/09/25 v1.2 font definition file for T1/qag
@@ -998,10 +1018,10 @@ File: t1qag.fd 2009/09/25 v1.2 font definition file for T1/qag
 ]
 File: vub_logo_cmyk.pdf Graphic file (type pdf)
 <use vub_logo_cmyk.pdf>
-Package pdftex.def Info: vub_logo_cmyk.pdf  used on input line 39.
+Package pdftex.def Info: vub_logo_cmyk.pdf  used on input line 43.
 (pdftex.def)             Requested size: 161.0427pt x 56.76566pt.
 
-Overfull \hbox (15.0pt too wide) in paragraph at lines 39--39
+Overfull \hbox (15.0pt too wide) in paragraph at lines 43--43
 []$[]$ 
  []
 
@@ -1026,10 +1046,15 @@ File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
 
 ] [2]
 Chapter 2.
-[3
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <9> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 92.
+ [3
 
 ]
-Overfull \hbox (8.48886pt too wide) in paragraph at lines 86--87
+Overfull \hbox (8.48886pt too wide) in paragraph at lines 117--118
 []\OT1/cmr/m/n/10 Asynchronous com-mu-ni-ca-tion be-tween dis-tributed com-
  []
 
@@ -1041,17 +1066,17 @@ Chapter 3.
 
 ]
 Chapter 4.
-<./images//reactor300.drawio.png, id=63, 581.17125pt x 981.6675pt>
+<./images//reactor300.drawio.png, id=64, 581.17125pt x 981.6675pt>
 File: ./images//reactor300.drawio.png Graphic file (type png)
 <use ./images//reactor300.drawio.png>
-Package pdftex.def Info: ./images//reactor300.drawio.png  used on input line 10
-6.
+Package pdftex.def Info: ./images//reactor300.drawio.png  used on input line 13
+9.
 (pdftex.def)             Requested size: 116.23218pt x 196.33002pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 7451) has occurred while \output is active []
 
  [7 <./images//reactor300.drawio.png>]
-Overfull \hbox (6.99725pt too wide) in paragraph at lines 143--154
+Overfull \hbox (6.99725pt too wide) in paragraph at lines 176--187
  [][] 
  []
 
@@ -1060,10 +1085,10 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [8] [9] [10]
 Chapter 5.
-<./images//rd.drawio.png, id=78, 1431.3475pt x 668.4975pt>
+<./images//rd.drawio.png, id=79, 1431.3475pt x 668.4975pt>
 File: ./images//rd.drawio.png Graphic file (type png)
 <use ./images//rd.drawio.png>
-Package pdftex.def Info: ./images//rd.drawio.png  used on input line 228.
+Package pdftex.def Info: ./images//rd.drawio.png  used on input line 261.
 (pdftex.def)             Requested size: 418.25368pt x 195.33836pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1078,17 +1103,17 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 ]
 Chapter 6.
-<./images//distribution300.drawio.png, id=93, 1728.4575pt x 551.05875pt>
+<./images//distribution300.drawio.png, id=94, 1728.4575pt x 551.05875pt>
 File: ./images//distribution300.drawio.png Graphic file (type png)
 <use ./images//distribution300.drawio.png>
 Package pdftex.def Info: ./images//distribution300.drawio.png  used on input li
-ne 263.
+ne 296.
 (pdftex.def)             Requested size: 418.25368pt x 133.34149pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [15]
-Overfull \hbox (2.85876pt too wide) in paragraph at lines 277--278
+Overfull \hbox (2.85876pt too wide) in paragraph at lines 310--311
 []\OT1/cmr/m/n/10 Shared-nothing ar-chi-tec-tures are highly scal-able hor-i-zo
 n-tally, this makes
  []
@@ -1101,10 +1126,10 @@ Chapter 7.
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [19]
-<./images//drmg200.drawio.png, id=111, 1457.445pt x 1088.065pt>
+<./images//drmg200.drawio.png, id=112, 1457.445pt x 1088.065pt>
 File: ./images//drmg200.drawio.png Graphic file (type png)
 <use ./images//drmg200.drawio.png>
-Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 326.
+Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 359.
 (pdftex.def)             Requested size: 418.25368pt x 312.24347pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1115,19 +1140,24 @@ Chapter 8.
 
 ] [24
 
-] [25] (./main.aux)
+]
+
+Package caption Warning: Unused \captionsetup[listings] on input line 15.
+See the caption package documentation for explanation.
+
+[25] (./main.aux)
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 24375 strings out of 478287
- 483071 string characters out of 5849289
- 1266210 words of memory out of 5000000
- 42186 multiletter control sequences out of 15000+600000
- 496969 words of font info for 49 fonts, out of 8000000 for 9000
+ 25783 strings out of 478287
+ 509469 string characters out of 5849289
+ 1280911 words of memory out of 5000000
+ 43584 multiletter control sequences out of 15000+600000
+ 497435 words of font info for 51 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 115i,9n,118p,1914b,5162s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 115i,9n,118p,1914b,5160s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/tex-gyre/q-ec.enc}</usr/share/texlive/texmf
 -dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/
@@ -1138,12 +1168,13 @@ s/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
 l10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/shar
-e/texmf/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/publ
-ic/tex-gyre/qagr.pfb>
-Output written on main.pdf (33 pages, 852973 bytes).
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/texmf
+/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/public/tex-
+gyre/qagr.pfb>
+Output written on main.pdf (33 pages, 868400 bytes).
 PDF statistics:
- 189 PDF objects out of 1000 (max. 8388607)
- 118 compressed objects within 2 object streams
+ 194 PDF objects out of 1000 (max. 8388607)
+ 121 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,11 +1,13 @@
 \contentsline {chapter}{Abstract}{iii}{}%
 \contentsline {chapter}{\numberline {1}Introduction}{1}{}%
 \contentsline {section}{\numberline {1.1}Reactive programming}{1}{}%
-\contentsline {section}{\numberline {1.2}Statement of the problem}{2}{}%
+\contentsline {section}{\numberline {1.2}Problem Statement}{2}{}%
 \contentsline {section}{\numberline {1.3}Overview}{2}{}%
 \contentsline {chapter}{\numberline {2}Reactive programming}{3}{}%
-\contentsline {section}{\numberline {2.1}State of the art}{3}{}%
-\contentsline {section}{\numberline {2.2}Distributed reactive programming}{3}{}%
+\contentsline {subsection}{\numberline {2.0.1}Signal Dependencies}{3}{}%
+\contentsline {subsection}{\numberline {2.0.2}Signal Orchestration}{3}{}%
+\contentsline {section}{\numberline {2.1}State of the art}{4}{}%
+\contentsline {section}{\numberline {2.2}Distributed reactive programming}{4}{}%
 \contentsline {chapter}{\numberline {3}Strategy and Methodology}{5}{}%
 \contentsline {chapter}{\numberline {4}Purely reactive programming}{7}{}%
 \contentsline {section}{\numberline {4.1}Reactors}{7}{}%

@@ -7,8 +7,12 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{caption}
 \usepackage{xcolor}
 \graphicspath{ {./images/} }
+
+\captionsetup[figure]{position=bottom}
+\captionsetup[listings]{position=bottom}
 
 
 % Some highly suggested packages, please read their manuals.
@@ -48,7 +52,7 @@ Reactive programming has gained significant traction for its efficacy in handlin
 
 Reactive programming has been around for a while, gaining traction in various domains due to its ability to handle asynchronous and event-driven scenarios effectively. One of its notable advantages lies in its suitability for distributed systems. By its nature, reactive programming facilitates the development of systems that can easily scale across distributed environments, allowing components to communicate asynchronously and react to events in real-time. However, distributing reactive programming poses several challenges (\cite{DBLP:journals/csur/BainomugishaCCMM13}) such as consistency, coordination, fault tolerance and many more. These challenges highlight the need for further research and study in understanding how reactive programming principles can be effectively applied and scaled in distributed environments. By investigating these challenges, we can gain insights into best practices and architectural approaches for building robust and scalable distributed reactive systems.
 
-\section{Reactive programming}
+\section{Reactive programming} \label{sec:irp}
 Reactive Programming (RP) is a broader programming paradigm that encompasses the idea of reacting to changes and events in a system. It involves modeling the flow of data as streams of events and using declarative and composable abstractions to handle asynchronous and event-driven scenarios. The canonical reactive program model (ref?) is based on time-varying values and propagation of change. 
 
 Spreadsheets offer a good example to illustrate this. When a cell containing a formula that includes other cells it is dependent on the cells that are used in that formula. As an example lets take a cell A3 that contains the formula "=A1*A2" whenever the value changes in the cells A1 or A2, A3 will automatically update. We call each spreadsheet cell a time-varying value or signal because there concrete value changes over time due to events. In this example, an event could be when a user changes the value A1 or A2 using the gui of the spreadsheet program.
@@ -63,21 +67,48 @@ In this example A3 is defined as a behavior that continuously contains the resul
 
 
 \section{Problem Statement}
-In a distributed system where single components or nodes communicate in an asynchronous way RP is an interesting programming paradigm since it deals well with asynchronous data. In an RP defined behaviors can behave or react on the data based on asynchronous events. The distribution of reactive programming (RP) introduces a myriad of complexities and challenges. In this work we would like to focus on two things. Developing a declarative specification to deploy the distributed reactive program and Simulating a virtual representation of a general clock between the individual nodes. 
+In a distributed system where single components or nodes communicate in an asynchronous way RP is an interesting programming paradigm since it deals well with asynchronous data. The distribution of reactive programming (RP) introduces a myriad of complexities and challenges. In this work we would like to focus on the following two challenges. Developing a declarative specification to deploy the distributed reactive program and simulating a virtual general clock between the individual nodes by temporizing the occurrence of events or discrete time-varying values. 
 
 \section{Overview}
 The Structure of this thesis starts with a situation of (distributed) reactive programming. After explaining the strategy of the thesis we explain purely reactive programming in section \ref{sec:prp}. More detail on the runtime is found in chapter \ref{sec:Hvm}. Chapter \ref{sec:distribution} explains the distribution of the runtime and the tools used to build it. Before ending with the conclusion we have chapter \ref{sec:evaluation} with the evaluation of the distribution and the use case of the distributed reactive melody generator. 
 
 \chapter{Reactive programming}
 
-Reactive programming (RP) offers a paradigm that well fit the needs for building responsive, scalable and resilient software systems. RP offers a declarative approach for handling asynchronous streams of data. A reactive program will automatically react to changes over time. We can build (soft) real time applications that react given incoming data. We could say that the program has been programmed in a declarative way to know what to do when an input is presented to the ever running reactive program. 
+Reactive programming (RP) and reactive streams (RS) are terms that are often used interchangeably. Both adhere to the same canonical model, explained in section \ref{sec:irp}, showing there similarities. Two fundamental differences instead are the way dependencies between signals are established and how updates to signals are orchestrated.
+
+\subsection{Signal Dependencies}
+The way signal dependencies are established in the source code differs in the following way. In RP languages these dependencies are automatically taken care of by the language. Programmers implement there desired functionality in RP similar as they would in a non-reactive language. In RS the dependencies are explicitly programmed by the programmer by making use of operators provided by the RS library. The programmer creates a linear application of those operators often called a pipe as shown in listing \ref{code:rxpy} where an observable exiting of the numbers 1 to 10 will be the source of the pipe. The second or last operator in the pipe is Sum, who will produce one value to be printed on screen.
+
+\subsection{Signal Orchestration}
+The operators used in RS define independently for each signal how these will be updated. In contrary to RP where it is again the system that updates signals in a global way. As can be seen in listing \ref{code:Haairp}, no special code defines how or in what order the values a1 and a2 need to be updated. Both approaches can fail and result in a glitch, if for example the RP language updates signals in the wrong order, dependent signals end up having the wrong value, this is called a glitch. On the other hand in RS, if the programmer does not exactly know what an operator does and uses it in a pipe or collection of operators, inconsistencies might arise and also produce a glitch. 
+
+\vspace{1em} % Adjust the space as needed
+\noindent
+The responsibility to handle signal dependencies and orchestration correct is at the system side for RP and in the developers hand for RS.
+
+
+\begin{lstlisting}[language=Python, caption={Python, RxPy library}, label={code:rxpy}, basicstyle=\small\ttfamily, frame=single]
+rx.of(1,2,3,4,5,6,7,8,9,10).pipe(
+	operators.filter(lambda i: i %2 == 0),
+	operators.sum()
+).subscribe(lambda x: print("Value is {0}".format(x)))
+\end{lstlisting}
+
+
+
+
 
 \section{State of the art}
+
+Show a state of the art only reactive programming from now on...
+
 RP has its roots in functional programming and event-driven architectures. Over the years, it has evolved from simple event handling mechanisms to sophisticated reactive systems that emphasize declarative and composable data flows. The advent of reactive extensions (Rx) in various programming languages, such as RxJava, RxJS, and Rx.NET, played a pivotal role in popularizing RP and standardizing its concepts across different platforms.
 
 All of the mentioned frameworks and libraries have the downside of being composed of two components. The reactive system is build on top of an imperative language. This makes them prone to the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch} problems (\cite{vonder_tackling_2020}).
 
 \section{Distributed reactive programming} \label{sec:drp}
+
+
 
 When distributing a reactive program, issues related to distributed systems come apparent in the distributed reactive program (drp). Resolving those issues becomes part of the distributed reactive program and the distributed system architecture. In this thesis we focus on the following challenges.
 \begin{description}
@@ -90,6 +121,8 @@ When distributing a reactive program, issues related to distributed systems come
 In the literature inconsistencies in the data are called glitches. A glitch is a momentary inconsistency in a time-varying value. For example in a financial application we do not want to read inconsistent values. We want to read the new value after the update on the values this new value depends on has been finished. Being free of glitches is called glitch-freedom. According to Margara and Salvaneschi (\cite{DBLP:journals/tse/MargaraS18}) there are two types of glitch-freedom. A 'single-source' and 'complete' way for the program to be free of glitches. In the single-source case we assume one node, all pending updates to that node are performed before the updated values is available. Complete glitch freedom is considered when we have more then one node. To have complete glitch freedom we must make sure that updates occurred in the same order for all nodes considered by this update. 
 
 \chapter{Strategy and Methodology}
+
+Can we use the tempo of events arriving at the source to steer the global update orchestrator (introduce guo)?
 
 Our approach in this work is to remove as many of the issues known to rp and drp by developing a system that by design solves the challenges known to drp. The distributed system is build as a shared nothing architecture (sna) and hosts an Erlang cluster. We have chosen this architecture for basic simplicity as it allows to easily scale and monitor fault tolerance since each node is independent and self-sufficient.
 
