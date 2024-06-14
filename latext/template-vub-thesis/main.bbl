@@ -152,6 +152,68 @@
       \verb https://doi.org/10.1007/978-3-642-13953-6%5C_3
       \endverb
     \endentry
+    \entry{DBLP:conf/haskell/CourtneyNP03}{inbook}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=86fa7c517e85607d90c926432c66c22d}{%
+           family={Courtney},
+           familyi={C\bibinitperiod},
+           given={Antony},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b55c2f87ffa9505d89f5a5483ef8156b}{%
+           family={Nilsson},
+           familyi={N\bibinitperiod},
+           given={Henrik},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7c824b8e6319dcc90d543c77a92e59a2}{%
+           family={Peterson},
+           familyi={P\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=d482224f26a05a874fb92f802d202179}{%
+           family={Jeuring},
+           familyi={J\bibinitperiod},
+           given={Johan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{bfe9bf2d3c754939b6cd5b09af82c8ff}
+      \strng{fullhash}{f9d7fe32843ecbf4566f5c92ac80a4c4}
+      \strng{bibnamehash}{f9d7fe32843ecbf4566f5c92ac80a4c4}
+      \strng{authorbibnamehash}{f9d7fe32843ecbf4566f5c92ac80a4c4}
+      \strng{authornamehash}{bfe9bf2d3c754939b6cd5b09af82c8ff}
+      \strng{authorfullhash}{f9d7fe32843ecbf4566f5c92ac80a4c4}
+      \strng{editorbibnamehash}{d482224f26a05a874fb92f802d202179}
+      \strng{editornamehash}{d482224f26a05a874fb92f802d202179}
+      \strng{editorfullhash}{d482224f26a05a874fb92f802d202179}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the {ACM} {SIGPLAN} Workshop on Haskell, Haskell 2003, Uppsala, Sweden, August 28, 2003}
+      \field{title}{The Yampa arcade}
+      \field{year}{2003}
+      \field{pages}{7\bibrangedash 18}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1145/871895.871897
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/871895.871897
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/871895.871897
+      \endverb
+    \endentry
     \entry{de_koster_43_2016}{article}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=22b2acae731f0ec4804f973153a604e1}{%
@@ -217,6 +279,72 @@
       \endverb
       \verb{url}
       \verb https://dl.acm.org/doi/10.1145/3001886.3001890
+      \endverb
+    \endentry
+    \entry{DBLP:conf/icfp/ElliottH97}{inbook}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=8cda345210e062e3fe85eaa4954fa44e}{%
+           family={Elliott},
+           familyi={E\bibinitperiod},
+           given={Conal},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ebfbf9d5ed6e5a1698b8fe9fb2b322a4}{%
+           family={Hudak},
+           familyi={H\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=90ef31075dd95fd2be1405cab57a8fb4}{%
+           family={Jones},
+           familyi={J\bibinitperiod},
+           given={Simon\bibnamedelimb L.\bibnamedelimi Peyton},
+           giveni={S\bibinitperiod\bibinitdelim L\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=5780065392a3c6c91ee5a3b8c079ca35}{%
+           family={Tofte},
+           familyi={T\bibinitperiod},
+           given={Mads},
+           giveni={M\bibinitperiod}}}%
+        {{hash=1fb5a08790e4398ec71d5d0703273c64}{%
+           family={Berman},
+           familyi={B\bibinitperiod},
+           given={A.\bibnamedelimi Michael},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{2738725fb05c95a9f54e0ff00fa5b4d3}
+      \strng{fullhash}{2738725fb05c95a9f54e0ff00fa5b4d3}
+      \strng{bibnamehash}{2738725fb05c95a9f54e0ff00fa5b4d3}
+      \strng{authorbibnamehash}{2738725fb05c95a9f54e0ff00fa5b4d3}
+      \strng{authornamehash}{2738725fb05c95a9f54e0ff00fa5b4d3}
+      \strng{authorfullhash}{2738725fb05c95a9f54e0ff00fa5b4d3}
+      \strng{editorbibnamehash}{51c06f88451b0c61840f10987d714afc}
+      \strng{editornamehash}{5cff72aa53a2a38a6889c5be77750bf7}
+      \strng{editorfullhash}{51c06f88451b0c61840f10987d714afc}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 1997 {ACM} {SIGPLAN} International Conference on Functional Programming {(ICFP} '97), Amsterdam, The Netherlands, June 9-11, 1997}
+      \field{title}{Functional Reactive Animation}
+      \field{year}{1997}
+      \field{pages}{263\bibrangedash 273}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1145/258948.258973
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/258948.258973
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/258948.258973
       \endverb
     \endentry
     \entry{DBLP:journals/tse/MargaraS18}{article}{}
@@ -433,6 +561,87 @@
       \field{title}{Best practices for open sound control}
       \field{volume}{10}
       \field{year}{2010}
+    \endentry
+    \entry{DBLP:journals/programming/SterzEMBGHMF21}{article}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=a495b326ede71e73d0d4040c0c7d6861}{%
+           family={Sterz},
+           familyi={S\bibinitperiod},
+           given={Artur},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=925e676b56fcca6e14bacb444b8604c3}{%
+           family={Eichholz},
+           familyi={E\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c4b1f72e9677c5f6f8c39ff3d5516637}{%
+           family={Mogk},
+           familyi={M\bibinitperiod},
+           given={Ragnar},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=86f1aabcb2824740b1a6ca2699e1e6f8}{%
+           family={Baumgärtner},
+           familyi={B\bibinitperiod},
+           given={Lars},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=85b455bb985f246134e57d1c1aa53b86}{%
+           family={Graubner},
+           familyi={G\bibinitperiod},
+           given={Pablo},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=104bd9cfb4266064b98e05af02615827}{%
+           family={Hollick},
+           familyi={H\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4c8995f42a6a2e4a5997d105c6463290}{%
+           family={Mezini},
+           familyi={M\bibinitperiod},
+           given={Mira},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c80891d229e763521e433eea6c10d5c5}{%
+           family={Freisleben},
+           familyi={F\bibinitperiod},
+           given={Bernd},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{dab6c85fd827b194dac4556c876240b8}
+      \strng{fullhash}{4b42fa3fbbe6eee9851e4c2f2432be44}
+      \strng{bibnamehash}{4b42fa3fbbe6eee9851e4c2f2432be44}
+      \strng{authorbibnamehash}{4b42fa3fbbe6eee9851e4c2f2432be44}
+      \strng{authornamehash}{dab6c85fd827b194dac4556c876240b8}
+      \strng{authorfullhash}{4b42fa3fbbe6eee9851e4c2f2432be44}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Art Sci. Eng. Program.}
+      \field{number}{2}
+      \field{title}{ReactiFi: Reactive Programming of Wi-Fi Firmware on Mobile Devices}
+      \field{volume}{5}
+      \field{year}{2021}
+      \field{pages}{4}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.22152/PROGRAMMING-JOURNAL.ORG/2021/5/4
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.22152/programming-journal.org/2021/5/4
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.22152/programming-journal.org/2021/5/4
+      \endverb
     \endentry
     \entry{DBLP:journals/debu/Stonebraker86}{article}{}
       \name{author}{1}{}{%

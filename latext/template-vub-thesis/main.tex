@@ -100,9 +100,9 @@ rx.of(1,2,3,4,5,6,7,8,9,10).pipe(
 
 \section{State of the art}
 
-Show a state of the art only reactive programming from now on...
+In this section and the rest of this thesis we will focus on reactive programming. Reactive programming has many applications, for example Fran (\cite{DBLP:conf/icfp/ElliottH97}) the first reactive programming language, originated to compose richly interactive multimedia animations based on behaviors and events. ReactiFi (\cite{DBLP:journals/programming/SterzEMBGHMF21}) a high-level reactive programming language to program Wi-Fi chips on mobile consumer devices without expert knowledge of Wi-Fi chips. Or the domain-specific language Yampa (\cite{DBLP:conf/haskell/CourtneyNP03}) embedded in Haskell for programming hybrid (mixed discrete-time and continuous-time) systems. Most of the reactive programming languages ar build on top of a sequential host language. Fran and Yampa are build on Haskell, ReactiFi is build on Scala and C. Host languages provide functions that can be called form the reactive programming language, this is called lifting the function form the host language into the RP language. 
 
-RP has its roots in functional programming and event-driven architectures. Over the years, it has evolved from simple event handling mechanisms to sophisticated reactive systems that emphasize declarative and composable data flows. The advent of reactive extensions (Rx) in various programming languages, such as RxJava, RxJS, and Rx.NET, played a pivotal role in popularizing RP and standardizing its concepts across different platforms.
+
 
 All of the mentioned frameworks and libraries have the downside of being composed of two components. The reactive system is build on top of an imperative language. This makes them prone to the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch} problems (\cite{vonder_tackling_2020}).
 
