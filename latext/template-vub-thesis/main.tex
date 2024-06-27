@@ -324,18 +324,16 @@ The GenServer module in Elixir operates with calls or casts. In this context, we
 The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required. Thanks to the native reactors we do not need to implement the most basic reactors when composing a program or one could add native reactors to the system if needed. Native reactors provide us a possibility to define the capabilities of the system by providing a certain set of native reactors equipped for basic tasks in a domain.
 
 \chapter{Distribution} \label{sec:distribution}
-The cluster environment over which we distribute the first-class reactors is an environment where no communication between reactors on different nodes is possible at this time. Technically the cluster is setup on shared nothing archi
-\subsection{Shared-nothing architecture}
-To organize the distribution of the Haai virtual machine we have opted for a shared-nothing architecture. (\cite{DBLP:journals/debu/Stonebraker86}) This allows us to build the cluster with the following characteristics, suitable for our research in distributing the reactive language Haai.
-\begin{description}
-	\item[Independent Nodes] Each node can execute its own specific code and perform computations independently since no memory, storage or processing power is shared.
-	\item[No shared state] Each node manages its state independently. Cluster communication between nodes is done with messages. we use Erlang distributed mechanisms in the implementation.
-	\item[Horizontal scalability] Shared-nothing architectures are highly scalable horizontally, this makes it straightforward to add or remove nodes from the cluster. It allows us to run clusters of all sizes. Practically the cluster size will be bound to the available hardware.
-	\item[Fault isolation] Faults or failures in one node do not affect the operation of other nodes in the system. We can monitor node failure with Erlang distributed mechanisms and act accordingly. 
-	\item[Flexibility and Modularity] Changes to one node do not impact the operation of other nodes, allowing for maintenance, upgrades, and system evolution of the cluster.` 
-\end{description}  
+The cluster environment over which we distribute the first-class reactors is an environment where no communication between reactors on different nodes in the cluster is allowed for the moment. In this thesis we focus on starting  different configurations on different cluster nodes. A configuration exists out of bytecode for a reactor, connecting functions for the source and sink and the node or group of nodes on which the should be deployed. 
+
+Technically the cluster is setup on shared nothing architecture (\cite{DBLP:journals/debu/Stonebraker86}). This allows us to build the cluster  environment with independent nodes that can execute there code independently. Since nothing is shared we can easily add and remove nodes form the cluster environment. This flexibility and modularity allows us to fastly organize different sized cluster environments. An idle Elixir node is not resource-intensive, making it feasible to run tenfold of nodes on a single machine to simulate a cluster. In order to set up the system we start a number of nodes that all have the same code base. each node is then ready to receive start command with the required configuration details. sending the start command is done from a selected master node. The master node interprets the small domain specific language describing the whole cluster environment.
+
+\section{Domain specific language}
+Validating tasks, extracting configuration values, talking to the Distribution module on the master node...
+...
+
 \section{Distributing the Hvm}
-The Elixir cluster consists of a number of Elixir nodes. An idle Elixir node is not resource-intensive, making it feasible to run tenfold of nodes on a single machine to simulate a cluster. Once multiple nodes are operational, one node will be selected as the controller or master node. The master node will be made aware of all nodes within the cluster. With all nodes connected to the master node, but not directly to each other, we can commence the deployment of reactors.
+The Elixir cluster consists of a number of Elixir nodes. Once multiple nodes are operational, one node will be selected as the controller or master node. The master node will be made aware of all nodes within the cluster. With all nodes connected to the master node, but not directly to each other, we can commence the deployment of reactors.
 
 Deploying a reactor on the cluster involves initiating the Hvm on the selected node with the bytecode of the requested reactor. This allows each node to run either the same reactor or different reactors, depending on the bytecode it receives. The ability to send the actual reactor to a node enables us to dynamically replace a node that has gone down or to balance the load by adjusting the number of nodes running a particular reactor. Code mobility operates from the master node to any of the nodes in the cluster.
 
@@ -353,38 +351,10 @@ Once the deployments are active each deployment will start sending messages towa
 \section{Distributed environment}
 We explain here in more detail the details of the system on which the Hvm is running..........?
 
-\subsection{Shared-nothing architecture}
-To organize the distribution of the Haai virtual machine we have opted for a shared-nothing architecture. (\cite{DBLP:journals/debu/Stonebraker86}) This allows us to build the cluster with the following characteristics, suitable for our research in distributing the reactive language Haai.
-\begin{description}
-	\item[Independent Nodes] Each node can execute its own specific code and perform computations independently since no memory, storage or processing power is shared.
-	\item[No shared state] Each node manages its state independently. Cluster communication between nodes is done with messages. we use Erlang distributed mechanisms in the implementation.
-	\item[Horizontal scalability] Shared-nothing architectures are highly scalable horizontally, this makes it straightforward to add or remove nodes from the cluster. It allows us to run clusters of all sizes. Practically the cluster size will be bound to the available hardware.
-	\item[Fault isolation] Faults or failures in one node do not affect the operation of other nodes in the system. We can monitor node failure with Erlang distributed mechanisms and act accordingly. 
-	\item[Flexibility and Modularity] Changes to one node do not impact the operation of other nodes, allowing for maintenance, upgrades, and system evolution of the cluster.` 
-\end{description}
 
-\subsection{Erlang virtual machine}
-
-We implemented the shared-nothing architecture in Elixir a functional, concurrent, and fault-tolerant programming language built on the Erlang Virtual Machine (BEAM). The Erlang Virtual Machine provides a robust platform due to several key features and design principles:
-\begin{description}
-	\item[Concurrency model] Erlang has a lightweight concurrency model which is based on actor-like processes. Since each process runs independently and can communicate with other processes trough message passing the Erlang virtual machine is inherently decentralized by design.
-	\item[Fault tolerance] The BEAM VM provides mechanisms for process supervision, fault isolation, and hot code swapping, allowing systems to recover from failures without affecting the overall operation of the cluster.
-	\item[Distribution transparency] Erlang's distribution features enable processes to communicate effortlessly across network boundaries. Within an Erlang cluster, nodes can seamlessly interact through remote procedure calls (RPCs) and message passing. Different types of distribution models can be build on the Erlang platform.
-	\item[Scalability] Horizontal scaling or adding nodes to a cluster is straightforward. This makes it easy to scale clusters to need.
-	\item[Tooling] Common tasks are simplified thanks to a comprehensive tool set. tools like the Mix build tool and the OTP framework are core tools used in the implementation of the distributed Haai cluster.
-\end{description}
 
 The example program is explained in more detail in the use case chapter. The same program or reactor can be run many times. The distributed setup we make exists out of a number of elixir nodes that all send there messages to one sound server. The bigger the distributed network is the more messages that are send to the sound server. The sound server it self has virtually no limit to receive messages. The main parts of the distribution are taken care of by the underlying Beam virtual machine. One main reason to develop the Hvm on this platform is to be able to distribute in a solid and proven way.  
 
-\subsection{Actor model}
-The actor system in Erlang implements the processes actor model. (\cite{de_koster_43_2016}) These actors are modeled as processes and can define there receive primitive to specify what messages it responds to. Thanks to the isolated turn principle the actor model guarantees to be free of data races and deadlocks by design.
-In Erlang actors are typically used when you need to encapsulate state and behavior within a single unit of computation., actors are spawned using constructs like GenServer, Task, or Agent within a single node. All actors communicate with each other using message passing within the same node. One can use these actors for modeling concurrent and stateful components in an application.
-
-\subsection{Distributed Erlang mechanisms}
-Distributed Erlang mechanisms come into play when you need to communicate between actors residing on different nodes within a cluster.
-Nodes communicate with each other using distributed Erlang protocols, allowing actors on different nodes to exchange messages. Distributed Erlang mechanisms provide fault tolerance, distribution transparency, and location transparency across the cluster. 
-
-Distributed Erlang provides location transparency, allowing actors to communicate regardless of their physical location within the cluster. This transparency hides the underlying network details, promoting loose coupling (\cite{DBLP:conf/tools/CarretonMCM10}) between nodes and actors. Actors on different nodes can interact seamlessly through message passing, without needing to be aware of the specific nodes they are communicating with. Loose coupling in distributed Erlang enables the system to scale horizontally by adding or removing nodes without significantly impacting the overall architecture.
 
 \chapter{Evaluation} \label{sec:evaluation}
 

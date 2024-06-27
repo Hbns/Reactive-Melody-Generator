@@ -18,7 +18,6 @@
 \contentsline {subsection}{\numberline {2.4.3}Managing the reactors state}{10}{}%
 \contentsline {subsection}{\numberline {2.4.4}Native reactors}{10}{}%
 \contentsline {chapter}{\numberline {3}Distribution}{13}{}%
-\contentsline {subsection}{\numberline {3.0.1}Shared-nothing architecture}{13}{}%
 \contentsline {section}{\numberline {3.1}Distributing the Hvm}{13}{}%
 \contentsline {section}{\numberline {3.2}Distributed environment}{14}{}%
 \contentsline {subsection}{\numberline {3.2.1}Shared-nothing architecture}{14}{}%
