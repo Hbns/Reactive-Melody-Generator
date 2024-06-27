@@ -347,6 +347,52 @@
       \verb https://doi.org/10.1145/258948.258973
       \endverb
     \endentry
+    \entry{10.5555/1951582}{book}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=a821e4373b3eaf36e31e1a09b5096f7a}{%
+           family={Logan},
+           familyi={L\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=53d6c032b5bf78892acc00237ff8101f}{%
+           family={Merritt},
+           familyi={M\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e31caa0e2de28b573e1e2d5196357529}{%
+           family={Carlsson},
+           familyi={C\bibinitperiod},
+           given={Richard},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {USA}%
+      }
+      \list{publisher}{1}{%
+        {Manning Publications Co.}%
+      }
+      \strng{namehash}{43110bc0168ed95da41cc62198bf8e23}
+      \strng{fullhash}{0043b651d304b3799d47858bc5d51749}
+      \strng{bibnamehash}{0043b651d304b3799d47858bc5d51749}
+      \strng{authorbibnamehash}{0043b651d304b3799d47858bc5d51749}
+      \strng{authornamehash}{43110bc0168ed95da41cc62198bf8e23}
+      \strng{authorfullhash}{0043b651d304b3799d47858bc5d51749}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Concurrent programming has become a required discipline for all programmers. Multi-core processors and the increasing demand for maximum performance and scalability in mission-critical applications have renewed interest in functional languages like Erlang that are designed to handle concurrent programming. Erlang, and the OTP platform, make it possible to deliver more robust applications that satisfy rigorous uptime and performance requirements. Erlang and OTP in Action teaches you to apply Erlang's message passing model for concurrent programming--a completely different way of tackling the problem of parallel programming from the more common multi-threaded approach. This book walks you through the practical considerations and steps of building systems in Erlang and integrating them with real-world C/C++, Java, and .NET applications. Unlike other books on the market, Erlang and OTP in Action offers a comprehensive view of how concurrency relates to SOA and web technologies. This hands-on guide is perfect for readers just learning Erlang or for those who want to apply their theoretical knowledge of this powerful language. You'll delve into the Erlang language and OTP runtime by building several progressively more interesting real-world distributed applications. Once you are competent in the fundamentals of Erlang, the book takes you on a deep dive into the process of designing complex software systems in Erlang.}
+      \field{edition}{1st}
+      \field{isbn}{1933988789}
+      \field{title}{Erlang and OTP in Action}
+      \field{year}{2010}
+    \endentry
     \entry{DBLP:journals/tse/MargaraS18}{article}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=0cb96c89d78e7f4b886e9d3427a1710f}{%
@@ -392,6 +438,82 @@
       \verb https://doi.org/10.1109/TSE.2018.2833109
       \endverb
     \endentry
+    \entry{DBLP:conf/ecoop/MogkBSFM18}{inbook}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=c4b1f72e9677c5f6f8c39ff3d5516637}{%
+           family={Mogk},
+           familyi={M\bibinitperiod},
+           given={Ragnar},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=86f1aabcb2824740b1a6ca2699e1e6f8}{%
+           family={Baumgärtner},
+           familyi={B\bibinitperiod},
+           given={Lars},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e402b2ae11147cc53c2a5cd57fb4e2b4}{%
+           family={Salvaneschi},
+           familyi={S\bibinitperiod},
+           given={Guido},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c80891d229e763521e433eea6c10d5c5}{%
+           family={Freisleben},
+           familyi={F\bibinitperiod},
+           given={Bernd},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4c8995f42a6a2e4a5997d105c6463290}{%
+           family={Mezini},
+           familyi={M\bibinitperiod},
+           given={Mira},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=4b307100fe68e8e9152a6f533d7bbe7e}{%
+           family={Millstein},
+           familyi={M\bibinitperiod},
+           given={Todd\bibnamedelima D.},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Schloss Dagstuhl - Leibniz-Zentrum für Informatik}%
+      }
+      \strng{namehash}{f350fb8d4b1a890d6e5389c34d67cba7}
+      \strng{fullhash}{ac86c12922803c3995acce74e1a07421}
+      \strng{bibnamehash}{ac86c12922803c3995acce74e1a07421}
+      \strng{authorbibnamehash}{ac86c12922803c3995acce74e1a07421}
+      \strng{authornamehash}{f350fb8d4b1a890d6e5389c34d67cba7}
+      \strng{authorfullhash}{ac86c12922803c3995acce74e1a07421}
+      \strng{editorbibnamehash}{4b307100fe68e8e9152a6f533d7bbe7e}
+      \strng{editornamehash}{4b307100fe68e8e9152a6f533d7bbe7e}
+      \strng{editorfullhash}{4b307100fe68e8e9152a6f533d7bbe7e}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{32nd European Conference on Object-Oriented Programming, {ECOOP} 2018, July 16-21, 2018, Amsterdam, The Netherlands}
+      \field{series}{LIPIcs}
+      \field{title}{Fault-tolerant Distributed Reactive Programming}
+      \field{volume}{109}
+      \field{year}{2018}
+      \field{pages}{1:1\bibrangedash 1:26}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.4230/LIPICS.ECOOP.2018.1
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.4230/LIPIcs.ECOOP.2018.1
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.4230/LIPIcs.ECOOP.2018.1
+      \endverb
+    \endentry
     \entry{oeyen_remus_2022}{article}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=635a46627398603b77b30c3c1865625f}{%
@@ -433,7 +555,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{shorttitle}
-      \field{abstract}{Reactive programming has many applications for embedded devices in {IoT} and other application domains. For these constrained devices it is crucial to bound the overhead of the execution of non-functional concerns such as glitch freedom. Reactive programming languages with static dependency graphs can implement glitch freedom by topologically sorting the dependency graph ahead of time. However, for more traditional reactive programming languages that support a dependency graph that can dynamically change, glitch freedom is typically implemented using a priority queue in which signals are enqueued according to their location in the graph. This is undesirable for embedded devices, as dynamically updating this priority queue has an undesirable, and sometimes unbounded, overhead. In this paper, we present a small-step operational semantics of a virtual machine specialised for running reactive programs that combines static ahead-of-time compilation of reactive programs into topologically sorted dependancy graphs while maintaining support for dynamic modifications to those dependency graphs.}
+      \field{abstract}{Reactive programming has many applications for embedded devices in {IoT} and other application domains. For these constrained devices it is crucial to bound the overhead of the execution of non-functional concerns such as freedom. Reactive programming languages with static dependency graphs can implement glitch freedom by topologically sorting the dependency graph ahead of time. However, for more traditional reactive programming languages that support a dependency graph that can dynamically change, glitch freedom is typically implemented using a priority queue in which signals are enqueued according to their location in the graph. This is undesirable for embedded devices, as dynamically updating this priority queue has an undesirable, and sometimes unbounded, overhead. In this paper, we present a small-step operational semantics of a virtual machine specialised for running reactive programs that combines static ahead-of-time compilation of reactive programs into topologically sorted dependancy graphs while maintaining support for dynamic modifications to those dependency graphs.}
       \field{day}{29}
       \field{eventtitle}{{REBLS} '22: 9th {ACM} {SIGPLAN} International Workshop on Reactive and Event-Based Languages and Systems}
       \field{isbn}{978-1-4503-9911-1}

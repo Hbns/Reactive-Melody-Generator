@@ -77,7 +77,7 @@ abstract = {SuperCollider is one of the most important domain-specific audio pro
 	url = {https://dl.acm.org/doi/10.1145/3563837.3568342},
 	doi = {10.1145/3563837.3568342},
 	shorttitle = {Reactive Programming on the Bare Metal},
-	abstract = {Reactive programming has many applications for embedded devices in {IoT} and other application domains. For these constrained devices it is crucial to bound the overhead of the execution of non-functional concerns such as glitch freedom. Reactive programming languages with static dependency graphs can implement glitch freedom by topologically sorting the dependency graph ahead of time. However, for more traditional reactive programming languages that support a dependency graph that can dynamically change, glitch freedom is typically implemented using a priority queue in which signals are enqueued according to their location in the graph. This is undesirable for embedded devices, as dynamically updating this priority queue has an undesirable, and sometimes unbounded, overhead. In this paper, we present a small-step operational semantics of a virtual machine specialised for running reactive programs that combines static ahead-of-time compilation of reactive programs into topologically sorted dependancy graphs while maintaining support for dynamic modifications to those dependency graphs.},
+	abstract = {Reactive programming has many applications for embedded devices in {IoT} and other application domains. For these constrained devices it is crucial to bound the overhead of the execution of non-functional concerns such as  freedom. Reactive programming languages with static dependency graphs can implement glitch freedom by topologically sorting the dependency graph ahead of time. However, for more traditional reactive programming languages that support a dependency graph that can dynamically change, glitch freedom is typically implemented using a priority queue in which signals are enqueued according to their location in the graph. This is undesirable for embedded devices, as dynamically updating this priority queue has an undesirable, and sometimes unbounded, overhead. In this paper, we present a small-step operational semantics of a virtual machine specialised for running reactive programs that combines static ahead-of-time compilation of reactive programs into topologically sorted dependancy graphs while maintaining support for dynamic modifications to those dependency graphs.},
 	eventtitle = {{REBLS} '22: 9th {ACM} {SIGPLAN} International Workshop on Reactive and Event-Based Languages and Systems},
 	pages = {50--62},
 	booktitle = {Proceedings of the 9th {ACM} {SIGPLAN} International Workshop on Reactive and Event-Based Languages and Systems},
@@ -234,4 +234,40 @@ abstract = {SuperCollider is one of the most important domain-specific audio pro
 	biburl       = {https://dblp.org/rec/conf/haskell/CourtneyNP03.bib},
 	bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
+
+@inproceedings{DBLP:conf/ecoop/MogkBSFM18,
+	author       = {Ragnar Mogk and
+	Lars Baumg{\"{a}}rtner and
+	Guido Salvaneschi and
+	Bernd Freisleben and
+	Mira Mezini},
+	editor       = {Todd D. Millstein},
+	title        = {Fault-tolerant Distributed Reactive Programming},
+	booktitle    = {32nd European Conference on Object-Oriented Programming, {ECOOP} 2018,
+	July 16-21, 2018, Amsterdam, The Netherlands},
+	series       = {LIPIcs},
+	volume       = {109},
+	pages        = {1:1--1:26},
+	publisher    = {Schloss Dagstuhl - Leibniz-Zentrum f{\"{u}}r Informatik},
+	year         = {2018},
+	url          = {https://doi.org/10.4230/LIPIcs.ECOOP.2018.1},
+	doi          = {10.4230/LIPICS.ECOOP.2018.1},
+	timestamp    = {Mon, 26 Jun 2023 20:47:01 +0200},
+	biburl       = {https://dblp.org/rec/conf/ecoop/MogkBSFM18.bib},
+	bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@book{10.5555/1951582,
+	author = {Logan, Martin and Merritt, Eric and Carlsson, Richard},
+	title = {Erlang and OTP in Action},
+	year = {2010},
+	isbn = {1933988789},
+	publisher = {Manning Publications Co.},
+	address = {USA},
+	edition = {1st},
+	abstract = {Concurrent programming has become a required discipline for all programmers. Multi-core processors and the increasing demand for maximum performance and scalability in mission-critical applications have renewed interest in functional languages like Erlang that are designed to handle concurrent programming. Erlang, and the OTP platform, make it possible to deliver more robust applications that satisfy rigorous uptime and performance requirements. Erlang and OTP in Action teaches you to apply Erlang's message passing model for concurrent programming--a completely different way of tackling the problem of parallel programming from the more common multi-threaded approach. This book walks you through the practical considerations and steps of building systems in Erlang and integrating them with real-world C/C++, Java, and .NET applications. Unlike other books on the market, Erlang and OTP in Action offers a comprehensive view of how concurrency relates to SOA and web technologies. This hands-on guide is perfect for readers just learning Erlang or for those who want to apply their theoretical knowledge of this powerful language. You'll delve into the Erlang language and OTP runtime by building several progressively more interesting real-world distributed applications. Once you are competent in the fundamentals of Erlang, the book takes you on a deep dive into the process of designing complex software systems in Erlang.}
+}
+
+
+
 

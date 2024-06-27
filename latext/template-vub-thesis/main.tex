@@ -11,8 +11,8 @@
 \usepackage{xcolor}
 \graphicspath{ {./images/} }
 
-\captionsetup[figure]{position=bottom}
-\captionsetup[listings]{position=bottom}
+%\captionsetup[figure]{position=bottom}
+%\captionsetup[listings]{position=bottom}
 
 
 % Some highly suggested packages, please read their manuals.
@@ -60,26 +60,34 @@ Spreadsheets offer a good example to illustrate this. When a cell containing a f
 The two fundamental abstractions defined by RP to represent time-varying values are behaviors and events. Both can be seen as time-varying values but behaviors are said to be continuous over time whilst events are discrete over time. Behaviors have a value at any moment (continuous). Events have a value at specific moments in time (discrete). 
 Listing \ref{code:Haairp} shows the spreadsheet example represented in the RP language Haai (\cite{oeyen_reactive_2024}).
 In this example A3 is defined as a behavior that continuously contains the result of a1 * a2. For each time that an event occurs updating a1 or a2, A3 will be automatically updated. One could say that the tempo or rhythm of the propagation of change for the behavior A3 depends on the speed that events have a new discrete value.     
-\begin{lstlisting}[language=C, caption={Haai code}, label={code:Haairp}, basicstyle=\ttfamily, frame=single]
+\begin{lstlisting}[language=C, caption={Haai code}, captionpos=b, label={code:Haairp}, basicstyle=\ttfamily, frame=single]
 	(defr (A3 a1 a2)
 	(out (* a1 a2)))
 \end{lstlisting}
 
 
 \section{Problem Statement}
-In a distributed system where single components or nodes communicate in an asynchronous way RP is an interesting programming paradigm since it deals well with asynchronous data. The distribution of reactive programming (RP) introduces a myriad of complexities and challenges. In this work we would like to focus on the following two challenges. Developing a declarative specification to deploy the distributed reactive program and simulating a virtual general clock between the individual nodes by temporizing the occurrence of events or discrete time-varying values. 
+The distribution of reactive programming (RP) introduces a myriad of complexities and challenges. In this work we would like to focus on the following two challenges. Developing a declarative specification to deploy the distributed reactive program and simulating a virtual general clock between the individual nodes by temporizing the occurrence of events or discrete time-varying values.  
 
 \section{Overview}
-The Structure of this thesis starts with a situation of (distributed) reactive programming. After explaining the strategy of the thesis we explain purely reactive programming in section \ref{sec:prp}. More detail on the runtime is found in chapter \ref{sec:Hvm}. Chapter \ref{sec:distribution} explains the distribution of the runtime and the tools used to build it. Before ending with the conclusion we have chapter \ref{sec:evaluation} with the evaluation of the distribution and the use case of the distributed reactive melody generator. 
+The Structure of this thesis starts with a situation of (distributed) reactive programming. After explaining the strategy of the thesis we explain purely reactive programming in section \ref{sec:prp}. More detail on the runtime is found in chapter \ref{sec:Hvm}. Chapter \ref{sec:distribution} explains the distribution of the runtime and the tools used to build it. Before ending with the conclusion we have chapter \ref{sec:evaluation} with the evaluation of the distribution and the musical use case of the distributed reactive melody generator. 
+
+\section{Strategy and Methodology}
+
+In order to run the first-class reactors in a distributed setting we setup a cluster environment. The cluster environment is build as a shared nothing architecture (sna) and hosts an Erlang cluster. We have chosen this architecture for basic simplicity as it allows to easily scale and monitor fault tolerance since each node is independent and self-sufficient.
+
+To deploy the system (combination of firs-class reactors) we make use a declarative domain specific language to define which reactor needs to run on what node or group of nodes. We have build a runtime for the purely functional reactive language Haai on top of the sna. Each node represents a runtime towards which a (master) node can send the code to be deployed.
+
+All the different nodes or runtimes in the cluster have a rhythmical organization (eg: the loop time of a reactor is a fixed value in milliseconds).   
 
 \chapter{Reactive programming}
 
 Reactive programming (RP) and reactive streams (RS) are terms that are often used interchangeably. Both adhere to the same canonical model, explained in section \ref{sec:irp}, showing there similarities. Two fundamental differences instead are the way dependencies between signals are established and how updates to signals are orchestrated.
 
-\subsection{Signal Dependencies}
+\subsubsection{Signal Dependencies}
 The way signal dependencies are established in the source code differs in the following way. In RP languages these dependencies are automatically taken care of by the language. Programmers implement there desired functionality in RP similar as they would in a non-reactive language. In RS the dependencies are explicitly programmed by the programmer by making use of operators provided by the RS library. The programmer creates a linear application of those operators often called a pipe as shown in listing \ref{code:rxpy} where an observable exiting of the numbers 1 to 10 will be the source of the pipe. The second or last operator in the pipe is Sum, who will produce one value to be printed on screen.
 
-\subsection{Signal Orchestration}
+\subsubsection{Signal Orchestration}
 The operators used in RS define independently for each signal how these will be updated. In contrary to RP where it is again the system that updates signals in a global way. As can be seen in listing \ref{code:Haairp}, no special code defines how or in what order the values a1 and a2 need to be updated. Both approaches can fail and result in a glitch, if for example the RP language updates signals in the wrong order, dependent signals end up having the wrong value, this is called a glitch. On the other hand in RS, if the programmer does not exactly know what an operator does and uses it in a pipe or collection of operators, inconsistencies might arise and also produce a glitch. 
 
 \vspace{1em} % Adjust the space as needed
@@ -87,7 +95,7 @@ The operators used in RS define independently for each signal how these will be 
 The responsibility to handle signal dependencies and orchestration correct is at the system side for RP and in the developers hand for RS.
 
 
-\begin{lstlisting}[language=Python, caption={Python, RxPy library}, label={code:rxpy}, basicstyle=\small\ttfamily, frame=single]
+\begin{lstlisting}[language=Python, caption={Python, RxPy library},captionpos=b, label={code:rxpy}, basicstyle=\small\ttfamily, frame=single]
 rx.of(1,2,3,4,5,6,7,8,9,10).pipe(
 	operators.filter(lambda i: i %2 == 0),
 	operators.sum()
@@ -95,64 +103,104 @@ rx.of(1,2,3,4,5,6,7,8,9,10).pipe(
 \end{lstlisting}
 
 
-
-
-
 \section{State of the art}
 
-In this section and the rest of this thesis we will focus on reactive programming. Reactive programming has many applications, for example Fran (\cite{DBLP:conf/icfp/ElliottH97}) the first reactive programming language, originated to compose richly interactive multimedia animations based on behaviors and events. ReactiFi (\cite{DBLP:journals/programming/SterzEMBGHMF21}) a high-level reactive programming language to program Wi-Fi chips on mobile consumer devices without expert knowledge of Wi-Fi chips. Or the domain-specific language Yampa (\cite{DBLP:conf/haskell/CourtneyNP03}) embedded in Haskell for programming hybrid (mixed discrete-time and continuous-time) systems. Most of the reactive programming languages ar build on top of a sequential host language. Fran and Yampa are build on Haskell, ReactiFi is build on Scala and C. Host languages provide functions that can be called form the reactive programming language, this is called lifting the function form the host language into the RP language. 
+In this section and the rest of this thesis we will focus on reactive programming. Reactive programming has many applications we will show tree selected examples. Fran (\cite{DBLP:conf/icfp/ElliottH97}) the first reactive programming language, originated to compose interactive multimedia animations based on behaviors and events. Listing \ref{code:fran} show a small fran code example that animates a bitmap file with the moveXY behavior given the argument wiggle (a value that changes over time form 0 to +1 to -1 back to 0 and so on) for x and 0 for y.
+\begin{lstlisting}[language=Python, caption={Fran, animation},captionpos=b, label={code:fran}, basicstyle=\small\ttfamily, frame=single]
+leftRightCharlotte = moveXY wiggle 0 charlotte
+charlotte = importBitmap "../Media/charlotte.bmp"
+\end{lstlisting}
+
+ReactiFi (\cite{DBLP:journals/programming/SterzEMBGHMF21}) a high-level reactive programming language to program Wi-Fi chips on mobile consumer devices without expert knowledge of Wi-Fi chips. In listing \ref{code:reactifi} we show part of the code for adaptive file sharing programmed on the Wi-Fi chip. A ReactiFi program exists out of reactives, like monitor, frames en count in the example, that are reactive definitions of individual processing steps triggered by incoming events.
+
+\begin{lstlisting}[language=Python, caption={ReactiFi, Wi-Fi file sharing},captionpos=b, label={code:reactifi}, basicstyle=\small\ttfamily, frame=single]
+ val monitor = Source(Monitor)
+ val frames  = monitor.filter(frame -> { frame.dst == ADDR })
+ val count   = frames.fold({ 0 })((count, frame) -> { count + 1 })
+\end{lstlisting}
+
+The domain-specific language Yampa (\cite{DBLP:conf/haskell/CourtneyNP03}) embedded in Haskell for programming hybrid (mixed discrete-time and continuous-time) systems. Listening \ref{code:yampa} shows a signal function that describes the behavior of a bouncing ball with position (p) and velocity (v) that are continuously updated over time. When the discrete event 'hitGround' occurs the velocity of the ball reverses.
+\begin{lstlisting}[language=Python, caption={Yampa, bouncing ball},captionpos=b, label={code:yampa}, basicstyle=\small\ttfamily, frame=single]
+-- The bouncing ball signal function
+fallingBall :: SF () Ball
+fallingBall = proc () -> do
+ rec
+   -- Velocity integrates to position
+   v <- integral -< gravity
+   p <- integral -< v
+
+   -- Event that occurs when the ball hits the ground
+   let hitGround = if p <= 0 then Event () else NoEvent
+	
+   -- Velocity changes direction on hit
+   v <- (arr (\v -> if p <= 0 then -v else v) <<< identity) -< v
+
+ returnA -< (p, v)
+\end{lstlisting}
 
 
+Most, if not all, of the reactive programming languages are build on top of a sequential host language. Fran and Yampa are build on Haskell, ReactiFi is build on Scala and C. This allows the reactive programming languages to leverage the existing ecosystems of the host language. For example a host languages can provide functions to be called form the reactive programming language, this is called lifting, the host-functionality is lifted form the host language into the RP language adapted to work with continuous and discrete notions of time. On the other hand, when a system is composed of those two components, the host part and the reactive part, they are prone to the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch} problems (\cite{vonder_tackling_2020}). Both problems could make stop a reactive program from being reactive. In section \ref{sec:prp} we will introduce a novel reactive language Haai that by design excludes both problems mentioned above.  
 
-All of the mentioned frameworks and libraries have the downside of being composed of two components. The reactive system is build on top of an imperative language. This makes them prone to the \textit{Reactive Thread Hijacking Problem} and the \textit{Reactive/Imperative Impedance Mismatch} problems (\cite{vonder_tackling_2020}).
+
 
 \section{Distributed reactive programming} \label{sec:drp}
 
 
+Different distributed systems can be thought of as a reactive system. The distributed system reacts to events in a similar way a non distributed reactive system would do. For example an internet of things application with many connected sensors. Or a distributed reactive system with strong computational differences for different behaviors that should finish in a certain requested time. The distribution can optimize multiple nodes with different computational capacities related to the application. 
 
-When distributing a reactive program, issues related to distributed systems come apparent in the distributed reactive program (drp). Resolving those issues becomes part of the distributed reactive program and the distributed system architecture. In this thesis we focus on the following challenges.
-\begin{description}
-	\item[Consistency and Coordination:] In distributed environments, maintaining consistency across different nodes can be challenging. Reactive programming relies on the propagation of changes and events, and ensuring that all nodes in a distributed system are in sync requires careful coordination and management of data flows. Different nodes may receive events in different orders, leading to potential inconsistencies that need to be addressed through synchronization mechanisms and event ordering techniques. 
-	\item[Fault Tolerance and Resilience:] Distributed systems are prone to failures, whether due to network partitions, node crashes, or other issues. Reactive programming emphasizes responsiveness and fault tolerance, but distributing these principles across a network introduces new challenges in handling failures gracefully and ensuring system resilience.
-	\item[Network Communication Overhead:] Asynchronous communication between distributed components in a reactive system can introduce overhead in terms of network latency and message passing. Efficiently managing this communication overhead while maintaining responsiveness is crucial for the performance of distributed reactive systems.
-	
-\end{description}
+Once working in a distributed setting, typical problems arise like data inconsistencies and node disconnects and crashes. In the literature inconsistencies in the data are called glitches. A glitch is a momentary inconsistency in a time-varying value. For example in a financial application we do not want to read inconsistent values. We need to be sure that all dependencies for a certain value are correct before reading that value. Being free of glitches is called glitch-freedom (\cite{DBLP:journals/tse/MargaraS18}). 
 
-In the literature inconsistencies in the data are called glitches. A glitch is a momentary inconsistency in a time-varying value. For example in a financial application we do not want to read inconsistent values. We want to read the new value after the update on the values this new value depends on has been finished. Being free of glitches is called glitch-freedom. According to Margara and Salvaneschi (\cite{DBLP:journals/tse/MargaraS18}) there are two types of glitch-freedom. A 'single-source' and 'complete' way for the program to be free of glitches. In the single-source case we assume one node, all pending updates to that node are performed before the updated values is available. Complete glitch freedom is considered when we have more then one node. To have complete glitch freedom we must make sure that updates occurred in the same order for all nodes considered by this update. 
+To date, REScala has been the only reactive language providing a solution to node disconnects and crashes in distributed reactive programs. REScala does not delegate the responsibility to handle errors to the host language (Scala). REScala has been extended to support recovery after node crashes and cope with unreliable network connections by enhancing the data flow graph for a particular program (\cite{DBLP:conf/ecoop/MogkBSFM18}). Listing \ref{code:rescala} shows a shared calendar application written in REScala. This is a distributed application where one calendar is shared among many users. In order to provide recovery after crashes, signals such as Var[Date] are stored in snapshots. This allows for the signal to be reloaded after a crash. In cases where a signal is dependent on dynamic signals in the network of distribution, the REScala program handles errors explicitly. For example the selectedEntries in code listing \ref{code:rescala} expects a value from another node (selectedWeek.value). The try catch block will by default wait for the value but by returning false in the catch block the filter will drop this signal and continue filtering when a 'disconnectedSignal' error is received. By doing so the program does not block and keeps on running reactively.  
 
-\chapter{Strategy and Methodology}
+\begin{lstlisting}[language=Scala, caption={REScala, shared calendar application},captionpos=b, label={code:rescala}, basicstyle=\small\ttfamily, frame=single]
+val newEntry = Evt[Entry]()
+val automaticEntries: Event[Entry] = App.nationalHolidays() 
+val allEntries = newEntry || automaticEntries 
 
-Can we use the tempo of events arriving at the source to steer the global update orchestrator (introduce guo)?
+val selectedDay: Var[Date] = Var(Date.today) 
+val selectedWeek = Signal { Week.of(selectedDay.value) } 
 
-Our approach in this work is to remove as many of the issues known to rp and drp by developing a system that by design solves the challenges known to drp. The distributed system is build as a shared nothing architecture (sna) and hosts an Erlang cluster. We have chosen this architecture for basic simplicity as it allows to easily scale and monitor fault tolerance since each node is independent and self-sufficient.
+val entrySet: Signal[Set[Entry]] = 
+ if (distribute) ReplicatedSet("SharedEntries").collect(allEntries)
+ else allEntries.fold(Set.empty) { (entries, entry) => entries + entry}
 
-To deploy the system we make use of code mobility, allowing us to declaratively define which rp needs to run on what node or group of nodes. We have build a runtime for the purely functional reactive language Haai on top of the sna. Each node represents a runtime towards which a (master) node can send the code to be deployed.
+case class Entry(title: Signal[String], date: Signal[Date]) 
 
-All the different nodes or runtimes in the cluster have a rhythmical organization (eg: the loop time of a reactor is a fixed value in milliseconds). The 'tempo' of each runtime will allow us to monitor the cluster for failures of nodes in the sna.  
+val selectedEntries = Signal {
+ entrySet.value.filter { entry => 
+ 	try selectedWeek.value == Week.of(entry.date.value)
+ 	catch { case DisconnectedSignal => false } 
+ } 
+} 
 
-\chapter{Purely reactive programming} \label{sec:prp}
-\section{Reactors}
-In Haai, a purely reactive computer language, the only construct available for expressing computations is a reactor. A reactor is a sort of blue print that will be used to deploy any number of deployments based on that reactor. We can write a single reactor or combine multiple reactors in one 'main' reactor or program. The main program is build out of reactors, these can be native or user defined. Every computation in a reactor is done by a reactor, some are native to the runtime others are user defined. For example the runtime could provide native reactors for basic arithmetic. \ref{fig:reactor} show the concept of a reactor.
+allEntries.observe(Log.appendEntry)
+selectedEntries.observe(
+ onValue = Ui.displayEntryList, 
+ onError = Ui.displayError)
+\end{lstlisting}
+
+
+\section{Purely reactive programming} \label{sec:prp}
+In all previous examples the reactive programming language is build on top of a host language that lend some functionality to the reactive program. What we will discuss next is the idea of a purely reactive program. A reactive program constructed by combining only reactive programs that we call reactors.
+\subsection{Reactors}
+In Haai, a purely reactive computer language, the only construct available for expressing computations is a reactor. A reactor is a sort of blue print (as shown in figure \ref{fig:reactor}) that will be used to deploy any number of deployments based on that reactor. We can write a single reactor or combine multiple reactors in one 'main' reactor or program. The main program is build out of reactors, these can be native or user defined. Every computation in a reactor is done by a reactor, some are native to the runtime others are user defined. For example the runtime could provide native reactors for basic arithmetic. All functionality in the purely reactive programming language Haai comes from the language itself, it is not build on top of a host language. 
 
 \begin{figure}[h]
-	\caption{Graphical representation of a reactor}
 	\includegraphics[scale=0.2]{reactor300.drawio}
 	\centering
+	\caption{Graphical representation of a reactor}
 	\label{fig:reactor}
 \end{figure}
 
-The deployment of a reactor reacts on a data stream, that data altered by the reaction is found in the sink of the reactor. The deployment of a rector is explained in the next chapter.
+The deployment of a reactor reacts on a data stream, that data altered by the reaction is found in the sink of the reactor. The deployment of a reactor is further explained in section \ref{sec:dar}.
 
-\section{Haai}
-We are making use of the novel purely reactive language Haai. Haai is reactive all-the-way-trough. As such the only construct available for expressing computations is a reactor. A reactor has sources or inputs and sinks or outputs. For each time the sources are updated the reactor will react and produce a new sink value. The number of sources and sinks are variable per reactor definition. In Haai there are no functions, only reactors. This allows us to build reactive programs without functions (\cite{oeyen_reactive_2024}). Different from other rp is that Haai exists out of only one layer. By design Haai solves the Reactive thread hijacking problem and the reactive/imperative impedance mismatch. 
+\subsection{Haai}
+We are making use of the novel purely reactive language Haai. Haai is reactive all-the-way-trough. As such the only construct available for expressing computations is a reactor. A reactor has sources or inputs and sinks or outputs. For each time the sources are updated the reactor will react and produce a new sink value. The number of sources and sinks are variable per reactor definition. In Haai there are no functions, only reactors. This allows us to build reactive programs without functions (\cite{oeyen_reactive_2024}). Haai is an independent language, it does not work on top of a host-language.  
 
-\subsection*{Levels of reactivity}
-There is a trade off where more strict levels of reactivity allow for a less wide pallet of reactive programs to be expressed. For Haai the level of reactivity will be partly defined by the computational time of the native reactors. In this implementation of the Haai virtual machine we only have native reactors that have a computational complexity of O(1). This guarantees a strong level of reactivity (\cite{oeyen_reactive_2024}).
+\subsubsection*{Haai Code example}
+This Haai code in listing \ref{code:Haai} represents three user defined reactors: consonance, duration and main. The main reactor is build out of the two user defined reactors consonance and duration and makes no use of native reactors (except for the ones in consonance and duration). Consonance and duration make use of multiple native reactors to perform arithmetic. The arguments to the reactor are the sources and the keyword 'out' defines the sink of the reactor.
 
-\subsection*{Code example}
-This Haai code in listing \ref{code:Haai} represents three user defined reactors: consonance, duration and main. The main reactor is build out of the two user defined reactors consonance and duration and makes no use of native reactors. Consonance and duration make use of multiple native reactors to perform arithmetic. The arguments to the reactor are the sources and the keyword 'out' defines the sink of the reactor.
-
-\begin{lstlisting}[language=C, caption={Haai code}, label={code:Haai}, basicstyle=\ttfamily, frame=single]
+\begin{lstlisting}[language=C, caption={Haai code}, captionpos=b,label={code:Haai}, basicstyle=\ttfamily, frame=single]
 (defr (consonance f)
 	(out (* ci f)))
 
@@ -165,11 +213,11 @@ This Haai code in listing \ref{code:Haai} represents three user defined reactors
 	(out (note_length bpm)))
 	
 \end{lstlisting}
+The reactor in listing \ref{code:Haai} has two sources (f and bpm) and two sinks defined with the keyword out. To port the Haai code (listing \ref{code:Haai}) into the cluster environment we compile the Haai code into a byte code representation (listing \ref{code:bytecode}) that was developed for the Remus virtual machine. "a virtual machine that has been carefully designed to be usable for running reactive programs in low-powered computing environments."(\cite{oeyen_remus_2022})
 
 
-
-\section{Remus instruction set}
-The Remus instruction set is the set of low-level operations that the virtual machine can execute. A Haai program or Reactor will after compilation exist out of a combination of instructions. Instructions form the Remus instruction set as listed here under. The Haai virtual machine is an implementation of this instruction set in Elixir. The following example program is build up out of a combination of the Remus instruction set. It is the compilation of the main reactor shown in the code snippet above. 
+\subsection*{Remus instruction set}
+The Remus instruction set in table \ref{tab:instructionset} is the set of low-level operations that the virtual machine can execute. A Haai program or Reactor will after compilation exist out of a combination of instructions. Instructions form the Remus instruction set as listed here under. The Haai virtual machine is an implementation of this instruction set in Elixir. The following example program is build up out of a combination of the Remus instruction set. It is the compilation of the main reactor shown in the code snippet above. 
 
 \begin{table}[h!]
 	\centering
@@ -188,15 +236,11 @@ The Remus instruction set is the set of low-level operations that the virtual ma
 	\label{tab:instructionset}
 \end{table}
 
-\section{Example bytecode program}
+\subsubsection*{Bytecode example}
 
-After parsing the bytecode that was compiled form the original Haai code in listing \ref{code:Haai} with the Haai compiler into an Elixir readable format of nested lists a program could look like listing \ref{code:bytecode}. In this example we see two user defined reactors named consonance and note\_length followed by the main reactor that represents the actual program that will be deployed. 
+After parsing the bytecode that was compiled form the original Haai code in listing \ref{code:Haai} with the Remus compiler into an Elixir readable format of nested lists a program looks like listing \ref{code:bytecode}. In this example we see two user defined reactors named consonance and note\_length followed by the main reactor with 2 sources and 2 sinks that represents the actual program that will be deployed in the cluster environment.
 
-\begin{verbatim}
-
-\end{verbatim}
-
-\begin{lstlisting}[language=C, caption={Parsed remus bytecode code}, label={code:bytecode}, basicstyle=\ttfamily, frame=single]
+\begin{lstlisting}[language=C, caption={Remus bytecode as Elixir nested lists},captionpos=b, label={code:bytecode}, basicstyle=\ttfamily, frame=single]
 [
  [:consonance, 1, 1,
 	[
@@ -248,41 +292,48 @@ After parsing the bytecode that was compiled form the original Haai code in list
 ]
 \end{lstlisting}
 
-\chapter{Haai virtual machine} \label{sec:Hvm}
-To make it possible for Haai code to work on multiple platforms a virtual machine for each required platform is necessary. After the example of Remus, "a virtual machine that has been carefully designed to be usable for running reactive programs in low-powered computing environments."(\cite{oeyen_remus_2022}) We implement in this thesis a virtual machine for Haai. The purpose of the Haai virtual machine (Hvm) is to enable the possibility of distributing Haai programs in a cluster of machines. There are multiple reasons to distribute a reactive program like: scalability, low latency and many others. Firstly the Hvm is a prototype to investigate distribution in general and to see if at all the language works well in a distributed setting. The Hvm is developed  in the Elixir computer language. The chapter on distribution arguments our choice for Elixir. The Haai bytecode as compiled for Remus will be the representation of Haai reactors in the Hvm. 
+\section{Haai virtual machine} \label{sec:Hvm}
+To run the Haai code or compiled bytecode we implement in this thesis a virtual machine for Haai. The purpose of the Haai virtual machine (Hvm) is to enable the distribution of first-class reactor Haai programs in a cluster environment. The Hvm is developed in Elixir, a computer language know for its powerful features in terms of distribution and concurrency. It leverages the Erlang Virtual Machine (BEAM), which is renowned for its ability to build scalable, fault-tolerant, and distributed systems (\cite{10.5555/1951582}).
 
-\section{Deploying a reactor}
-A reactor can be seen as a blue print for its deployment, similar how an object created from a class in object-oriented programming is an instantiation of the blueprint that the class represents. The deployment of the reactor will request a certain size of memory. That total block of memory exists out of four parts: Sources, deployment time memory (dtm), reaction time memory (rtm) and the sinks. When we go from a reactor to a deployment we can find the following information in the reactor or blue print for the deployment. The number of sources and sinks, the deployment time instructions (dti) and the reaction time instructions (rti). For each source and each sink a position is reserved in the memory block we are constructing. From the deployment time instructions in the reactor we can prepare the deployment time memory (dtm). The Dtm part of the memoryblock we are constructing will reserve space for the deployment of the reactors found in the dti. 
+\subsection{Deploying a reactor} \label{sec:dar}
+A reactor can be seen as a blue print for its deployment, similar to how an object created from a class in object-oriented programming is an instantiation of the blueprint that the class represents. The deployment of the reactor will request a certain size of memory. 
+That total block of memory (shown in figure \ref{fig:rde}) exists out of four parts: sources, deployment time memory (dtm), reaction time memory (rtm) and the sinks. 
 
-Sofar the space for the sources, the sinks and dtm has been reserved, the last step is to reserve space for the reaction time memory (rtm). The space required for rtm is equal to the number of instructions found in the reaction time instructions. For each instruction in rti there is one block reserved in rtm. A deployed reactor uses the four memory parts: sources, dtm, rtm and sinks to react according to the reaction time instructions found in rti. Figure \ref{fig:rde} expresses the deployment of a reactor.
+When we go from a reactor to a deployment we can find the following information in the reactor or blue print for the deployment. The number of sources and sinks, the deployment time instructions (dti) and the reaction time instructions (rti). For each source and each sink a position is reserved in the memory block we are constructing. From the deployment time instructions in the reactor we can prepare the deployment time memory (dtm). The Dtm part of the memory block we are constructing will reserve space for the deployment of the reactors found in the dti. 
+
+Sofar the space for the sources, the sinks and dtm has been reserved, the last step is to reserve space for the reaction time memory (rtm). The space required for rtm is equal to the number of instructions found in the reaction time instructions. For each instruction in rti there is one block reserved in rtm. A deployed reactor uses the four memory parts: sources, dtm, rtm and sinks to react according to the reaction time instructions found in rti.
 
 \begin{figure}[h]
-	\caption{Reactor deployment, from blueprint to memory block}
 	\includegraphics[width=\textwidth]{rd.drawio}
+	\caption{Reactor deployment, from blueprint to memory block}
 	\label{fig:rde}
 \end{figure} 
 
-\section{Running the reactor}
-Running the reactor encompasses starting a Haai virtual machine with all requested arguments for the Hvm to function. The Haai virtual machine needs the following arguments to start: 
-\begin{description}
-	\item[Reactor bytecode] Bytecode obtained from the Haai compiler (eg: listing \ref{code:bytecode}).
-	\item[Connect source] A connector function that the Hvm can use to connect some input to the sources of the reactor. At each start of the next iteration this function will be called to update the sources of the deployed reactor. For example connecting to a WebSocket server to receive the data it broadcasts.
-	\item[handle sink] A sink function, that after each iteration is called to handle the new sinks produced by the deployed reactor. This function is tailored for the specific reactor or program that has been send as bytecode.
-\end{description}
+\subsection{Starting the deployment}
+The deployment needs to be its sources and sinks to the runtime in order to communicate with the system. Sources are connected to a function that call's the next value for the sources after each iteration of the deployed reactor. Similarly the sinks are connected to a function that given the values of the sink handles them in the required way for the overall program. Section \ref{sec:evaluation} presents a musical use case where the values found in the sink serve as values for OSC messages.
 
-\section{Managing the reactors state}
-Managing the state of a reactor is done by one actor per program or reactor deployment. The actor is build around the GenServer module in Elixir which is a behavior module that provides a generic server implementation. In this implementation the name of the GenServer is Memory. Memory is a single actor that encapsulates multiple functions to respond to various messages or calls. Together these define the behaviour of the Memory GenServer.
 
-Memory will mainly accept calls from the runtime instructions found in the reactor deployment. Available calls are mapped on the Haai instruction set. In addition there are calls to initialize or to get or set sources and sinks into or from the Memory GenServer. One instance of Memory represents the memory block of a deployed reactor.
+\subsection{Managing the reactors state}
+Managing the state of a reactor is handled by a single actor per program or reactor deployment. This actor is built around the GenServer module in Elixir, a behavior module that provides a generic server implementation. In this implementation, the GenServer is named Memory. Memory serves as a single actor that encapsulates multiple functions designed to respond to various messages or calls. These functions collectively define the behavior of the Memory GenServer.
 
-The GenServer module in Elixir works with calls or casts, we use calls since they are synchronous requests to the GenServer. By calling Memory in a synchronous way we make sure that the values in Memory are only accessed by one operation at a time, assuring correct values. 
+Memory primarily accepts calls from the runtime instructions found in the reactor deployment. These calls are mapped to the Haai instruction set. Additionally, there are calls to initialize the Memory GenServer, as well as to get or set sources and sinks within it. One instance of Memory represents the memory block of a deployed reactor.
 
-\section{Native reactors}
-The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required.
+The GenServer module in Elixir operates with calls or casts. In this context, we use calls, which are synchronous requests to the GenServer. By making synchronous calls to Memory, we ensure that the values within Memory are accessed by only one operation at a time, thereby maintaining the integrity and correctness of these values.
 
-Haai is a one layer reactive programming language, contrary to two layer system where the top reactive layer can lift functions from the bottom imperative layer, Haai only uses reactors for all computation. The Hvm has a collection of frequent reactors. Thanks to the native reactors we do not need to implement the most basic reactors when composing a program. By design Haai prevents the Reactive/imperative impedance mismatch as explained in the chapter on Haai. Having the native reactors smartly covers the lack of lifting possibilities.
+\subsection{Native reactors}
+The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required. Thanks to the native reactors we do not need to implement the most basic reactors when composing a program or one could add native reactors to the system if needed. Native reactors provide us a possibility to define the capabilities of the system by providing a certain set of native reactors equipped for basic tasks in a domain.
 
 \chapter{Distribution} \label{sec:distribution}
+The cluster environment over which we distribute the first-class reactors is an environment where no communication between reactors on different nodes is possible at this time. Technically the cluster is setup on shared nothing archi
+\subsection{Shared-nothing architecture}
+To organize the distribution of the Haai virtual machine we have opted for a shared-nothing architecture. (\cite{DBLP:journals/debu/Stonebraker86}) This allows us to build the cluster with the following characteristics, suitable for our research in distributing the reactive language Haai.
+\begin{description}
+	\item[Independent Nodes] Each node can execute its own specific code and perform computations independently since no memory, storage or processing power is shared.
+	\item[No shared state] Each node manages its state independently. Cluster communication between nodes is done with messages. we use Erlang distributed mechanisms in the implementation.
+	\item[Horizontal scalability] Shared-nothing architectures are highly scalable horizontally, this makes it straightforward to add or remove nodes from the cluster. It allows us to run clusters of all sizes. Practically the cluster size will be bound to the available hardware.
+	\item[Fault isolation] Faults or failures in one node do not affect the operation of other nodes in the system. We can monitor node failure with Erlang distributed mechanisms and act accordingly. 
+	\item[Flexibility and Modularity] Changes to one node do not impact the operation of other nodes, allowing for maintenance, upgrades, and system evolution of the cluster.` 
+\end{description}  
 \section{Distributing the Hvm}
 The Elixir cluster consists of a number of Elixir nodes. An idle Elixir node is not resource-intensive, making it feasible to run tenfold of nodes on a single machine to simulate a cluster. Once multiple nodes are operational, one node will be selected as the controller or master node. The master node will be made aware of all nodes within the cluster. With all nodes connected to the master node, but not directly to each other, we can commence the deployment of reactors.
 
@@ -292,8 +343,8 @@ Once the cluster is established, with one master connected to all other nodes, t
 This setup ensures that the reactive program can respond to changes and maintain operations effectively across the distributed system. Figure \ref{fig:rdi} shows the concept of deploying the reactors from the master node into a chosen number of nodes. One reactor can be deployed to an 'unlimited' number of nodes. Each deployment will be an individual instance of the same reactor send towards the runtime on the node. 
 
 \begin{figure}[h]
-	\caption{Distributing reactor deployment on Elixir cluster}
 	\includegraphics[width=\textwidth]{distribution300.drawio}
+	\caption{Distributing reactor deployment on Elixir cluster}
 	\label{fig:rdi}
 \end{figure}  
 
@@ -355,8 +406,8 @@ The next section explains the Distributed reactive melody generator (drmg) figur
 The distributed Haai cluster, existing out of many distributed reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data, produce the values that result in a rhythmical flow of OSC messages to the sound server. 
 
 \begin{figure}[h]
-	\caption{Distriuted Reactive Melody Generator}
 	\includegraphics[width=\textwidth]{drmg200.drawio}
+	\caption{Distriuted Reactive Melody Generator}
 	\label{fig:drmg}
 \end{figure}
  
