@@ -18,17 +18,14 @@
 \contentsline {subsection}{\numberline {2.4.3}Managing the reactors state}{10}{}%
 \contentsline {subsection}{\numberline {2.4.4}Native reactors}{10}{}%
 \contentsline {chapter}{\numberline {3}Distribution}{13}{}%
-\contentsline {section}{\numberline {3.1}Distributing the Hvm}{13}{}%
-\contentsline {section}{\numberline {3.2}Distributed environment}{14}{}%
-\contentsline {subsection}{\numberline {3.2.1}Shared-nothing architecture}{14}{}%
-\contentsline {subsection}{\numberline {3.2.2}Erlang virtual machine}{15}{}%
-\contentsline {subsection}{\numberline {3.2.3}Actor model}{15}{}%
-\contentsline {subsection}{\numberline {3.2.4}Distributed Erlang mechanisms}{16}{}%
+\contentsline {section}{\numberline {3.1}Domain specific language}{13}{}%
+\contentsline {section}{\numberline {3.2}Distributed Hvm}{14}{}%
+\contentsline {section}{\numberline {3.3}Cluster environment}{15}{}%
 \contentsline {chapter}{\numberline {4}Evaluation}{17}{}%
-\contentsline {section}{\numberline {4.1}Evaluating the distribution model}{17}{}%
-\contentsline {section}{\numberline {4.2}Distributed reactive melody generator}{18}{}%
+\contentsline {section}{\numberline {4.1}Evaluating the cluster environment}{17}{}%
+\contentsline {section}{\numberline {4.2}Distributed reactive melody generator}{17}{}%
 \contentsline {subsection}{\numberline {4.2.1}Sound server}{18}{}%
 \contentsline {subsection}{\numberline {4.2.2}Sound server communication}{19}{}%
-\contentsline {subsection}{\numberline {4.2.3}Musical values}{20}{}%
+\contentsline {subsection}{\numberline {4.2.3}Musical values}{19}{}%
 \contentsline {chapter}{\numberline {5}Conclusion}{21}{}%
 \contentsline {section}{\numberline {5.1}Further work}{21}{}%

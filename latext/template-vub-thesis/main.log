@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  27 JUN 2024 16:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  28 JUN 2024 14:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1092,40 +1092,32 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 ]
 Chapter 3.
-
-Overfull \hbox (2.85876pt too wide) in paragraph at lines 331--332
-[]\OT1/cmr/m/n/10 Shared-nothing ar-chi-tec-tures are highly scal-able hor-i-zo
-n-tally, this makes
- []
-
 [13]
-<./images//distribution300.drawio.png, id=91, 1728.4575pt x 551.05875pt>
+<./images//yaml.drawio.png, id=91, 1282.7925pt x 328.22626pt>
+File: ./images//yaml.drawio.png Graphic file (type png)
+<use ./images//yaml.drawio.png>
+Package pdftex.def Info: ./images//yaml.drawio.png  used on input line 354.
+(pdftex.def)             Requested size: 334.60422pt x 85.61226pt.
+ [14 <./images//yaml.drawio.png>]
+<./images//distribution300.drawio.png, id=96, 1728.4575pt x 551.05875pt>
 File: ./images//distribution300.drawio.png Graphic file (type png)
 <use ./images//distribution300.drawio.png>
 Package pdftex.def Info: ./images//distribution300.drawio.png  used on input li
-ne 344.
+ne 370.
 (pdftex.def)             Requested size: 418.25368pt x 133.34149pt.
-
-Overfull \hbox (2.85876pt too wide) in paragraph at lines 359--360
-[]\OT1/cmr/m/n/10 Shared-nothing ar-chi-tec-tures are highly scal-able hor-i-zo
-n-tally, this makes
- []
-
-[14 <./images//distribution300.drawio.png>] [15] [16]
-Chapter 4.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [17
+ [15 <./images//distribution300.drawio.png>] [16
 
 ]
-<./images//drmg200.drawio.png, id=106, 1457.445pt x 1088.065pt>
+Chapter 4.
+<./images//drmg200.drawio.png, id=104, 1457.445pt x 1088.065pt>
 File: ./images//drmg200.drawio.png Graphic file (type png)
 <use ./images//drmg200.drawio.png>
-Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 407.
+Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 399.
 (pdftex.def)             Requested size: 418.25368pt x 312.24347pt.
 
-[18 <./images//drmg200.drawio.png>] [19] [20]
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[17] [18 <./images//drmg200.drawio.png>] [19] [20]
 Chapter 5.
 [21
 
@@ -1137,10 +1129,10 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26060 strings out of 478287
- 514077 string characters out of 5849289
- 1285364 words of memory out of 5000000
- 43843 multiletter control sequences out of 15000+600000
+ 26098 strings out of 478287
+ 514431 string characters out of 5849289
+ 1285304 words of memory out of 5000000
+ 43882 multiletter control sequences out of 15000+600000
  497435 words of font info for 51 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  115i,9n,118p,1914b,5160s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1151,16 +1143,15 @@ type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
-l10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/texmf
-/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/public/tex-
-gyre/qagr.pfb>
-Output written on main.pdf (32 pages, 878579 bytes).
+l10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share
+/texmf/fonts/type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/publi
+c/tex-gyre/qagr.pfb>
+Output written on main.pdf (32 pages, 932180 bytes).
 PDF statistics:
- 191 PDF objects out of 1000 (max. 8388607)
- 119 compressed objects within 2 object streams
+ 188 PDF objects out of 1000 (max. 8388607)
+ 116 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 38 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 43 words of extra memory for PDF output out of 10000 (max. 10000000)
 

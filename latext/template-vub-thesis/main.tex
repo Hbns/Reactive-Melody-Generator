@@ -67,7 +67,7 @@ In this example A3 is defined as a behavior that continuously contains the resul
 
 
 \section{Problem Statement}
-The distribution of reactive programming (RP) introduces a myriad of complexities and challenges. In this work we would like to focus on the following two challenges. Developing a declarative specification to deploy the distributed reactive program and simulating a virtual general clock between the individual nodes by temporizing the occurrence of events or discrete time-varying values.  
+The distribution of reactive programming (RP) introduces a myriad of complexities and challenges. In this work we would like to focus on developing a framework to further study the distribution of first-class reactors in a cluster environment. In this work we want to tackle the creation of a declarative specification to deploy the distributed reactive program and all underlying infrastructure to deploy the first-class reactors into different sized cluster environments.  
 
 \section{Overview}
 The Structure of this thesis starts with a situation of (distributed) reactive programming. After explaining the strategy of the thesis we explain purely reactive programming in section \ref{sec:prp}. More detail on the runtime is found in chapter \ref{sec:Hvm}. Chapter \ref{sec:distribution} explains the distribution of the runtime and the tools used to build it. Before ending with the conclusion we have chapter \ref{sec:evaluation} with the evaluation of the distribution and the musical use case of the distributed reactive melody generator. 
@@ -324,21 +324,47 @@ The GenServer module in Elixir operates with calls or casts. In this context, we
 The Haai virtual machine makes use of native reactors to perform simple arithmetic operations like addition, division, multiplication and subtraction. Native reactors are recognized by the Hvm and applied when required. Thanks to the native reactors we do not need to implement the most basic reactors when composing a program or one could add native reactors to the system if needed. Native reactors provide us a possibility to define the capabilities of the system by providing a certain set of native reactors equipped for basic tasks in a domain.
 
 \chapter{Distribution} \label{sec:distribution}
-The cluster environment over which we distribute the first-class reactors is an environment where no communication between reactors on different nodes in the cluster is allowed for the moment. In this thesis we focus on starting  different configurations on different cluster nodes. A configuration exists out of bytecode for a reactor, connecting functions for the source and sink and the node or group of nodes on which the should be deployed. 
+The cluster environment over which we distribute the first-class reactors is an environment where no communication between reactors (on different nodes) exists. In this thesis we focus on starting  different configurations on different cluster nodes. A configuration exists out of three things. The bytecode for a reactor, connecting functions for the source and sink and the node(s) on which that configuration should be deployed. 
 
-Technically the cluster is setup on shared nothing architecture (\cite{DBLP:journals/debu/Stonebraker86}). This allows us to build the cluster  environment with independent nodes that can execute there code independently. Since nothing is shared we can easily add and remove nodes form the cluster environment. This flexibility and modularity allows us to fastly organize different sized cluster environments. An idle Elixir node is not resource-intensive, making it feasible to run tenfold of nodes on a single machine to simulate a cluster. In order to set up the system we start a number of nodes that all have the same code base. each node is then ready to receive start command with the required configuration details. sending the start command is done from a selected master node. The master node interprets the small domain specific language describing the whole cluster environment.
+Technically the cluster is setup on a shared nothing architecture (\cite{DBLP:journals/debu/Stonebraker86}). This allows us to build the cluster environment with independent nodes. Since nothing is shared we can easily add and remove nodes form the cluster environment. This flexibility and modularity allows us to organize different sized cluster environments. Different instances of the Hvm, each running on one Elixir node, can run physically on the same system. An idle Elixir node is not resource-intensive, making it feasible to run tenfold of nodes on a single laptop machine to simulate one or more cluster environments. All the nodes in one cluster environment have the same code base. Once the cluster is up and running all instances of the Hvm are waiting to receive the start command with the required configuration details.
+
+To organize the deployment configurations for a cluster environment we developed a small domain specific language. This allows us to describing the deployed cluster environment in a declarative way.
 
 \section{Domain specific language}
-Validating tasks, extracting configuration values, talking to the Distribution module on the master node...
-...
+As input file to the DSL we use a yaml file. YAML is a human-readable data serialization language that is often used for writing configuration files. The structure of a YAML file is a map or list that follows a hierarchy based on the indentation. This allows us to define in a declarative syntax with purpose-specific abstractions, how the deployment should take place. Listing \ref{code:Yaml} shows a small example, where two deployments are defined with purpose-specific abstractions like task, reactor, node, connector ans sinks. This deployment configuration file will start the same reactor p1 with different connector functions in the cluster environment. 
+\begin{lstlisting}[language=C, caption={YAML code}, captionpos=b,label={code:Yaml}, basicstyle=\ttfamily, frame=single]
+deployments:
+  - task: start
+    reactor: p1
+    node: node2@0.0.0.0
+    connector1: f1
+    connector2: t2
+    sinks: s1
+  - task: start
+    reactor: p1
+    node: node3@0.0.0.0
+    connector1: f3
+    connector2: t1
+    sinks: s1
+\end{lstlisting}
+The YAML file is parsed and validated in the translation process form YAML to Elixir data structure (nested list). For each abstraction a list with valid items exist and the input will be validated against that list. When the deployment configuration succeeds validation the translated configuration information will be transmitted to a distribution module on the master node in the elixir cluster environment that can send start commands to Hvm nodes.
 
-\section{Distributing the Hvm}
-The Elixir cluster consists of a number of Elixir nodes. Once multiple nodes are operational, one node will be selected as the controller or master node. The master node will be made aware of all nodes within the cluster. With all nodes connected to the master node, but not directly to each other, we can commence the deployment of reactors.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{yaml.drawio}
+	\caption{The DSL in YAML is parsed with Python into Elixir's list data structure}
+	\label{fig:yaml}
+\end{figure}  
 
-Deploying a reactor on the cluster involves initiating the Hvm on the selected node with the bytecode of the requested reactor. This allows each node to run either the same reactor or different reactors, depending on the bytecode it receives. The ability to send the actual reactor to a node enables us to dynamically replace a node that has gone down or to balance the load by adjusting the number of nodes running a particular reactor. Code mobility operates from the master node to any of the nodes in the cluster.
+Figure \ref{fig:yaml} visualize the process of sending the configuration file trough the python translation and validation pass towards the distributed module in the cluster environment. 
 
-Once the cluster is established, with one master connected to all other nodes, the deployment process can be summarized as follows, chose a node in the cluster, a reactor bytecode, functions to connect the sources and handle the sinks. The reactor or our reactive program is started and will keep on reacting for as long as the node exist in this cluster. 
-This setup ensures that the reactive program can respond to changes and maintain operations effectively across the distributed system. Figure \ref{fig:rdi} shows the concept of deploying the reactors from the master node into a chosen number of nodes. One reactor can be deployed to an 'unlimited' number of nodes. Each deployment will be an individual instance of the same reactor send towards the runtime on the node. 
+
+\section{Distributed Hvm}
+The distribution module is considered the master of the cluster environment. The cluster is controlled in a centralized way. we have a master node and worker nodes. The master node controls the deployment of a worker node. The worker node in this setting of reactive programming will not stop working until the master node requires it to stop. Each worker node can be seen as a reactor.  
+
+Deploying a reactor on the cluster involves initiating the Hvm on the selected node with the bytecode of the requested reactor. This allows each node to run either the same reactor or different reactors, depending on the bytecode it receives. The ability to send the actual request to deploy a reactor allows us to dynamically alter the cluster environment. At this point no failure detection has been build into the reactors but replacing a node that has gone down or balance the load by adjusting the number of nodes running a particular reactor are thought to become part of the reactive program. For now any management of the cluster environment is not part of the reactive program and is done with the Erlang OTP functionality that comes with the cluster.
+
+Once the cluster is established, with one master connected to all worker nodes, the reactor or our reactive program is started and will keep on reacting, that is producing sink values based on the sources each iteration of the reactor receives for as long as the worker node exists. This setup ensures that the reactive program can respond to changes and maintain operations effectively across the distributed system. Figure \ref{fig:rdi} shows the concept of deploying the reactors from the distribution model into a chosen number of nodes. One reactor can be deployed to an 'unlimited' number of nodes. Each deployment counts as an individual instance of the configured reactor. 
 
 \begin{figure}[h]
 	\includegraphics[width=\textwidth]{distribution300.drawio}
@@ -346,34 +372,28 @@ This setup ensures that the reactive program can respond to changes and maintain
 	\label{fig:rdi}
 \end{figure}  
 
-Once the deployments are active each deployment will start sending messages towards the monitor of the cluster. The monitor is aware of the duration each single deployment uses to operate. Comparing the actual timing with the timings in the monitors directory we can asses about the individual deployments. For example if the actual timing is slower then the recorded timings in the monitor we might want to liberate more resources. The differences in timing are the starting poit of an investigation into what might cause this difference.
+\section{Cluster environment}
+The cluster environment exists out of actors. In our context we can see the actors as the fundamental units of the reactive programming environment. The actor model of computation (\cite{hewitt:hal-01163534}) is a mathematical model where actors are universal primitives of computation. Each actor has its own state and behavior and can communicate with each other using messages. 
 
-\section{Distributed environment}
-We explain here in more detail the details of the system on which the Hvm is running..........?
+At present, in our cluster environment the communication between actors only happens inside of each individual node. A worker node in the cluster exists out of two actors. One actor is the process of the Hvm, the second actor is the process that manages the state (called memory) of the Hvm. The Hvm and memory actor communicate when the state of the Hvm changes. To make sure that the memory of the Hvm is always consistent the communication happens synchronously making sure that each call into the memory has to finish before a next call can be accepted. The actor model of Erlang where a process is represented by an actor also allows for asynchronous communication, both can be used depending on the required situation. 
 
+The cluster environment is ready to have communication between worker nodes. But at present the Hvm has no functionalyty to exchange messages between worker nodes. 
 
-
-The example program is explained in more detail in the use case chapter. The same program or reactor can be run many times. The distributed setup we make exists out of a number of elixir nodes that all send there messages to one sound server. The bigger the distributed network is the more messages that are send to the sound server. The sound server it self has virtually no limit to receive messages. The main parts of the distribution are taken care of by the underlying Beam virtual machine. One main reason to develop the Hvm on this platform is to be able to distribute in a solid and proven way.  
 
 
 \chapter{Evaluation} \label{sec:evaluation}
 
 
-\section{Evaluating the distribution model}
+\section{Evaluating the cluster environment}
 
-The master-slave model used in our distribution works well. We have a cluster of actors, with basically two different types of actors. The master actor and the slave actors. This model allows us to handle issues with the slaves in a timely fashion by reacting as soon as inconsistencies between the recorded and live timings exist in the cluster monitor. The challenges mentioned in section \ref{sec:drp} are controllable within this model. We can guarantee glitch freedom on the individual basis of a node. Each individual node guarantees glitch freedom and in our master-slave model where we have no values exchanged between the nodes we do not expect other sources of inconsistency. 
+The single master node with an open amount of worker nodes used in our distribution is well suited. The individual nature of the nodes in the cluster gives us guarantees we do not need to worry about when running the cluster environment.
+For example, the isolation of failure makes sure that when one node fails for some reason the cluster will not be affected by it. Similarly having the same code base on all nodes helps pointing out eventual problems with worker nodes.
+Also form a performance stand point the cluster environment is not resource hungry. The number of nodes that simulate the cluster can easily be a tenfold on one machine (eg: not a physically spaced cluster). The reactors itself have a very light computational cost existing out of some basic arithmetic operations. One Elixir node consumes about 90MB of memory and virtually no processor time when idle and about 3\% when performing in the musical use case presented in the next section. This allowed to simulate a cluster on one laptop machine with up to a hundred nodes. Potentially allowing for big cluster environments with over a thousand nodes. In the scope of this work only cluster environments running on one laptop where tested. The size of the cluster was never a problem but when the hardware resources of the test machine became limited to boot up the cluster. That limit was hit slightly above 100 nodes.
 
-The individual nature of the nodes in the cluster guarantees that when one node goes down no other nodes are impacted by this. The monitor of the cluster can based on timing measurements decide on a tactic to solve the possible failure of a node. For example if a node actual time is not updating the node must have trouble. we can spin up a node to replicate or solve the actual problem the initial node is having. the organization of the applicable tactics the monitor can perform are not part of this work but provide ... for future work. 
+In the (next) section \ref{sec:drmg} we present the Distributed reactive melody generator as a use case for the cluster environment. The instrument generates sound on a continuous basis. The sounds never stop as the rectors that generate values for those sound never stop either. The values produced by the reactors are send over the network to a sound server that generates synthesized sound.   
 
-Working with the cluster monitor and the individual nodes requires only a small amount of network traffic. The cluster monitor will receive one message on a per duration time tempo for the deployed reactor. In the case of an issue the second process of the cluster monitor needs only to communicate with one single (new) node. The shared nothing architecture makes it simple to add or remove individual nodes.
-
-The number of nodes that simulate the cluster can easily be a tenfold. The reactors itself have a very light computational cost existing out of some basic arithmetic operations. One Elixir node would consumes about 90MB of memory and virtually no processor time when idle and about 3\% when performing the calculation. This allowed to simulate a cluster on one machine with up to a hundred nodes. 
-
-The next section explains the Distributed reactive melody generator (drmg) figuring here as a stand in for the cluster monitor. The drmg receives for each deployment a message on a predefined tempo per deployment. What we do here is having a synthesizer play a note equal to the duration of the deployment tempo for each node. All these single notes come together to form a melody. 
-  
-
-\section{Distributed reactive melody generator}
-The distributed Haai cluster, existing out of many distributed reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data, produce the values that result in a rhythmical flow of OSC messages to the sound server. 
+\section{Distributed reactive melody generator} \label{sec:drmg}
+The distributed firs-order reactors in the cluster environment, existing out of many reactors provides the sink values form the reactors as values inserted into OSC messages (\cite{schmeder2010best}) that are send to a sound server to trigger the synthesis of some sound. It is the reactors that, by reacting on incoming streams of data, produce the values that result in a rhythmical flow of OSC messages to the sound server. 
 
 \begin{figure}[h]
 	\includegraphics[width=\textwidth]{drmg200.drawio}
@@ -421,14 +441,11 @@ One of the two reactors in the main program used for this use case calculates ex
 
 %\backmatter
 \chapter{Conclusion}
-In conclusion, this thesis presents a comprehensive exploration of distributing reactive programming within the framework of the purely functional reactive language Haai. By addressing critical challenges such as consistency, fault tolerance, and communication overhead, we developed a system capable of efficiently scaling across distributed environments. The adoption of a shared-nothing architecture, coupled with the implementation of an Erlang cluster, facilitated the creation of a robust and resilient reactive system. The Haai virtual machine (Hvm) demonstrated effective management of distributed reactive programs, leveraging native reactors and ensuring glitch-free operation. This research contributes to the broader understanding of distributed reactive programming and provides a solid foundation for future developments in building scalable, fault-tolerant reactive systems.
+
 
 
 \section{Further work}
-The cluster monitor would be an addition to this work, different distribution models could be explored towards models that do comunicate 
-
-Further work can be organized to explore different distribution models on the same Elixir set of nodes. Where all nodes did react independently of each other, in future work communication between nodes can be explored and more different programs or reactors can be setup and linked together...
-Study glitch avoidance 
+Extending the Hvm to allow for (actor) communication between worker nodes will make it possible for first-class reactors to communicate over the network. 
 
 \printbibliography
 \end{document}
