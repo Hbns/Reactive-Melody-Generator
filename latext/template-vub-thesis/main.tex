@@ -394,12 +394,14 @@ The cluster environment over which we distribute the first-class reactors is an 
 
 Technically the cluster is setup on a shared nothing architecture (\cite{DBLP:journals/debu/Stonebraker86}). This allows us to build the cluster environment with independent nodes. Since nothing is shared we can easily add and remove nodes form the cluster environment. This flexibility and modularity allows us to organize different sized cluster environments. A cluster contains a master node and worker nodes. The master node will distribute a configuration to worker nodes. All the nodes in one cluster environment have the same code base (hvm) but do not necessarily run the same composed reactor. The master node can distribute different reactors (represented in byte code) and different connecting functions (represented in Elixir code) based on the specifications in the configuration. The master node contains two libraries. One with all (composed) reactors and a second one with all connecting functions. 
 
-To organize the deployment configurations for a cluster environment we developed a small domain specific language. This allows us to describing the deployed cluster environment in a declarative way. Describing per worker node the composed reactor and connecting functions that have to be send to a specific (group of) node(s).
+To organize the deployment configurations for a cluster environment we developed a small domain specific language. This allows us to describe the configuration of the deployed cluster environment in a declarative way. Describing per worker node the composed reactor and connecting functions that have to be send. 
 
 \section{Multi-Node Deployment Configuration}
-The declarative input file we use to distribute the configurations is a yaml file. YAML is a human-readable data serialization language that is often used for writing configuration files. The structure of a YAML file is a map or list that follows a hierarchy based on the indentation. This allows us to define with a declarative syntax and purpose-specific abstractions, how the deployment should take place. By decoupling the configuration from the logic we have a cleaner and more modular codebase. This separation allows non-developers to easily modify configuration settings without delving into the code. For example the use case is a musical instrument where the user is restricted to three things, What data to connect to the input, how to react on the data and what to do with the values leaving the reactors. Documentation is required for the user to know what reactors, connectors and sinks are available for the application domain and how they work.
+The declarative configuration of the distribution is presented as a yaml file. YAML is a human-readable data serialization language that is often used for writing configuration files. The structure of a YAML file is a map or list that follows a hierarchy based on the indentation. This allows us to define with a declarative syntax and purpose-specific abstractions, how the deployment should take place. By decoupling the configuration from the logic we have a cleaner and more modular codebase. This separation allows non-developers to easily modify configuration settings without delving into the code. For example the use case in this work is a musical instrument. The user input is restricted to three items. What data to connect to the input, how to react on the data and what to do with the values leaving the reactors. For each domain documentation is required for the user to know what reactors, connectors and sinks are available for the application, and how they work.
 
-Listing \ref{code:Yaml} shows a small example, where two deployments are defined with purpose-specific abstractions like task, reactor, node, connector and sinks. This deployment configuration file will start the same reactor p1 with different connector functions in the same cluster environment. Abstraction task and node are linked to the system and not to the application domain. Task can be start, update or stop and node holds the address of the actual node in the cluster environment. Reactor, connector and sinks are the abstractions that come with the domain and will differ according to the use case. 
+Listing \ref{code:Yaml} shows a small example, where two deployments are defined with purpose-specific abstractions like task, reactor, node, connector and sinks. This deployment configuration file will start the same reactor p1 with different connector functions in the same cluster environment. 
+
+Abstraction 'task' and 'node' are linked to the system and not to the application domain. Reactor, connector and sinks are the abstractions that come with the domain and will differ according to the use case. In this work all composed reactors have two inputs or connectors and one output or sink.
 
 
 \begin{lstlisting}[language=C, caption={YAML code}, captionpos=b,label={code:Yaml}, basicstyle=\ttfamily, frame=single]
@@ -418,7 +420,9 @@ deployments:
     sinks: s1
 \end{lstlisting}
 
-The YAML file is parsed and validated in the translation process from YAML to Elixir data structure (nested list). For each abstraction in the YAML file a list with valid elements exist and all input will be validated against that list in the translation tool. When the deployment configuration succeeds validation, the translated configuration  information will be transmitted to the distribution module on the master node in the elixir cluster environment. The logic to start all composed reactors in the cluster is written in Elixir and part of the common code base between nodes. 
+The YAML file is parsed and validated in the translation process. After validation the declarative configuration in the yaml file is stored in a Json file. Json files are commonly used for data serialization, making it a good format to exchange data between systems. The distribution module in Elixir will read and handle all configuration information found in the Json file.
+
+ For each abstraction in the YAML file a list with valid elements exist and all input will be validated against that list in the translation tool. When the deployment configuration succeeds validation, the translated configuration information will be transmitted to the distribution module on the master node in the elixir cluster environment. 
 
 \begin{figure}[h]
 	\centering
@@ -427,7 +431,7 @@ The YAML file is parsed and validated in the translation process from YAML to El
 	\label{fig:yaml}
 \end{figure}  
 
-Figure \ref{fig:yaml} visualizes the process of sending the configuration file through the Python translation and validation tool. The third step in this visualization represents the interpretation of the Elixir data structure, produced in step 2, by the distribution module on the master node in the cluster environment.
+Figure \ref{fig:yaml} visualizes the process of sending the configuration file through the Python translation and validation tool. Once validated a Json file (containing the configuration) is prepared for the distribution module on the master node in the cluster environment.
 
 
 \section{Distributed Hvm}
