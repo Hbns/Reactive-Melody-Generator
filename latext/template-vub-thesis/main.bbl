@@ -144,6 +144,38 @@
       \verb https://doi.org/10.1145/871895.871897
       \endverb
     \endentry
+    \entry{DrDobb}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=8cda345210e062e3fe85eaa4954fa44e}{%
+           family={Elliott},
+           familyi={E\bibinitperiod},
+           given={Conal},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8cda345210e062e3fe85eaa4954fa44e}
+      \strng{fullhash}{8cda345210e062e3fe85eaa4954fa44e}
+      \strng{bibnamehash}{8cda345210e062e3fe85eaa4954fa44e}
+      \strng{authorbibnamehash}{8cda345210e062e3fe85eaa4954fa44e}
+      \strng{authornamehash}{8cda345210e062e3fe85eaa4954fa44e}
+      \strng{authorfullhash}{8cda345210e062e3fe85eaa4954fa44e}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Programming for greater freedom of expression}
+      \field{year}{1998}
+      \verb{urlraw}
+      \verb https://jacobfilipp.com/DrDobbs/articles/DDJ/1998/9807/9807a/9807a.htm
+      \endverb
+      \verb{url}
+      \verb https://jacobfilipp.com/DrDobbs/articles/DDJ/1998/9807/9807a/9807a.htm
+      \endverb
+      \warn{\item Entry 'DrDobb' (references.bib): Invalid format '04/08/2024' of date field 'urldate' - ignoring}
+    \endentry
     \entry{DBLP:conf/icfp/ElliottH97}{inbook}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=8cda345210e062e3fe85eaa4954fa44e}{%
@@ -336,6 +368,38 @@
       \verb{url}
       \verb https://doi.org/10.1109/TSE.2018.2833109
       \endverb
+    \endentry
+    \entry{YampaBook}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e3c93c10d7206cd864e05fdcac61cccd}{%
+           family={Meisinger},
+           familyi={M\bibinitperiod},
+           given={Gerold},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e3c93c10d7206cd864e05fdcac61cccd}
+      \strng{fullhash}{e3c93c10d7206cd864e05fdcac61cccd}
+      \strng{bibnamehash}{e3c93c10d7206cd864e05fdcac61cccd}
+      \strng{authorbibnamehash}{e3c93c10d7206cd864e05fdcac61cccd}
+      \strng{authornamehash}{e3c93c10d7206cd864e05fdcac61cccd}
+      \strng{authorfullhash}{e3c93c10d7206cd864e05fdcac61cccd}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Book of Yampa}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://yampa-book.readthedocs.io
+      \endverb
+      \verb{url}
+      \verb https://yampa-book.readthedocs.io
+      \endverb
+      \warn{\item Entry 'YampaBook' (references.bib): Invalid format '04/08/2024' of date field 'urldate' - ignoring}
     \endentry
     \entry{DBLP:conf/ecoop/MogkBSFM18}{inbook}{}
       \name{author}{5}{}{%
@@ -699,6 +763,38 @@
       \verb{url}
       \verb http://sites.computer.org/debull/86MAR-CD.pdf
       \endverb
+    \endentry
+    \entry{Longplayer2024}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c31b115e94509493641b3df547e3498d}{%
+           family={Trust},
+           familyi={T\bibinitperiod},
+           given={The\bibnamedelima Longplayer},
+           giveni={T\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c31b115e94509493641b3df547e3498d}
+      \strng{fullhash}{c31b115e94509493641b3df547e3498d}
+      \strng{bibnamehash}{c31b115e94509493641b3df547e3498d}
+      \strng{authorbibnamehash}{c31b115e94509493641b3df547e3498d}
+      \strng{authornamehash}{c31b115e94509493641b3df547e3498d}
+      \strng{authorfullhash}{c31b115e94509493641b3df547e3498d}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{A one-thousand year long composition}
+      \field{year}{1999}
+      \verb{urlraw}
+      \verb https://longplayer.org/
+      \endverb
+      \verb{url}
+      \verb https://longplayer.org/
+      \endverb
+      \warn{\item Entry 'Longplayer2024' (references.bib): Invalid format '20/10/2024' of date field 'urldate' - ignoring}
     \endentry
     \entry{vonder_tackling_2020}{inbook}{}
       \name{author}{5}{}{%

@@ -1,4 +1,4 @@
-import yaml
+import yaml, json
 
 # List of valid values for each field
 VALID_TASKS = ["start", "stop", "restart", "deploy"]
@@ -30,12 +30,14 @@ def validate_deployment(deployment):
         raise ValueError(f"Invalid connector2: {deployment['connector2']}")
     if deployment['sinks'] not in VALID_SINKS:
         raise ValueError(f"Invalid sinks: {deployment['sinks']}")
-    print("Configuration has been validated")
+    # print("Configuration has been validated")
 
 def process_deployments(deployments):
     """
     Process a list of deployment configurations.
     """
+    valid_deployments = []
+
     for deployment in deployments:
         try:
             validate_deployment(deployment)
@@ -43,4 +45,9 @@ def process_deployments(deployments):
             print(f"Error: {e}")
             print("Errors encountered, deployment aborted")
             return
-        print("Deployment for processed successfully")
+        valid_deployments.append(deployment)  
+        print(f"Deployment for {deployment['node']} validated successfully")
+
+# Serialize to JSON and write to a file
+        with open('deployment_info.json', 'w') as f:
+            json.dump(valid_deployments, f)

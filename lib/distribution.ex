@@ -1,4 +1,7 @@
 defmodule Distribution do
+  require Logger
+  alias Jason
+
   def show_nodes() do
     this_node = Node.self()
     nodes = Node.list()
@@ -19,8 +22,9 @@ defmodule Distribution do
       {:deploy_to, :"node2@0.0.0.0", :p1, :f1, :t1, :s1},
       {:deploy_to, :"node3@0.0.0.0", :p1, :f2, :t2, :s1},
       {:deploy_to, :"node4@0.0.0.0", :p1, :f3, :t1, :s1},
-      {:deploy_to, :"node5@0.0.0.0", :p1, :f4, :t2, :s1},
+      {:deploy_to, :"node5@0.0.0.0", :p1, :f4, :t2, :s1}
     ]
+
     read_dsl(dsl)
   end
 
@@ -46,13 +50,47 @@ defmodule Distribution do
       t2: &Distribution.pick_tempo2/0,
       s1: &Distribution.play_sc/2
     }
-    #source_connector
+
+    # source_connector
     sc1 = connecting[source_connector1]
     sc2 = connecting[source_connector2]
-    #handle_sinks
+    # handle_sinks
     hs = connecting[handle_sinks]
     # Start the VM on the specified node with its arguments
     startVM(node_name, rb, sc1, sc2, hs)
+  end
+
+  # Function to handle the JSON data and call execute_action
+  def handle_deployment_info(json_data) do
+    case Jason.decode(json_data) do
+      {:ok, deployments} ->
+        Enum.each(deployments, fn deployment ->
+          %{
+            "node" => node_name,
+            "reactor" => byte_code,
+            "connector1" => connector1,
+            "connector2" => connector2,
+            "sinks" => sinks
+          } = deployment
+
+          execute_action(
+            String.to_atom(node_name),
+            String.to_atom(byte_code),
+            String.to_atom(connector1),
+            String.to_atom(connector2),
+            String.to_atom(sinks)
+          )
+        end)
+
+      {:error, reason} ->
+        Logger.error("Failed to decode JSON: #{reason}")
+    end
+  end
+
+  # Read the JSON data from a file and handle it
+  def read_and_handle_deployment_info do
+    json_data = File.read!("pyDsl/deployment_info.json")
+    handle_deployment_info(json_data)
   end
 
   ## Distributed reactive melody generator ##
@@ -188,8 +226,6 @@ defmodule Distribution do
   def play_sc(sinks, node) do
     Test_collider.play(Enum.at(sinks, 0), Enum.at(sinks, 1), node)
   end
-
-
 
   ## example program ##
   # function to be called from iex to receive bytcode of p1
