@@ -116,7 +116,7 @@ Reactor a3 is an example of a small reactive program. Multiple reactors can be c
 
 
 \section{Problem Statement}
-To our best knowledge we did not find a framework to experiment with the distribution of first-class reactors. We developed a framework to study the distribution of first-class reactors in a cluster environment and create a declarative specification to deploy a distributed reactive program into different cluster environments. To show the working state of the framework we deployed a sound generating instrument that reacts on input and delivers values to be send to a sound generating server.  
+To our best knowledge we did not find a framework to experiment with the distribution of first-class reactors. We developed a framework to study the distribution of first-class reactors in a cluster environment and create a declarative specification to deploy a distributed reactive program into different cluster environments. To show the working state of the framework we deployed a sound generating instrument that reacts on input and delivers values to be send to a sound generating server. We will measure the relation between the length of a musical note, or the time a reactor takes to iterate once, and memory usage and cpu time. We hypothesize that there will be a strong relation between the iteration time and resource utilization for the reactors.  
 
 \section{Structure of the Thesis}
 We first look at non-reactive programming and distributed reactive programming in section \ref{sec:rp}. Chapter \ref{sec:distribution} explains the distribution of the runtime and the tools used to build it. After the evaluation of the distribution framework and the musical use case of the distributed reactive melody generator in section \ref{sec:evaluation} we conclude. 
@@ -397,11 +397,11 @@ Technically the cluster is setup on a shared nothing architecture (\cite{DBLP:jo
 To organize the deployment configurations for a cluster environment we developed a small domain specific language. This allows us to describe the configuration of the deployed cluster environment in a declarative way. Describing per worker node the composed reactor and connecting functions that have to be send. 
 
 \section{Multi-Node Deployment Configuration}
-The declarative configuration of the distribution is presented as a yaml file. YAML is a human-readable data serialization language that is often used for writing configuration files. The structure of a YAML file is a map or list that follows a hierarchy based on the indentation. This allows us to define with a declarative syntax and purpose-specific abstractions, how the deployment should take place. By decoupling the configuration from the logic we have a cleaner and more modular codebase. This separation allows non-developers to easily modify configuration settings without delving into the code. For example the use case in this work is a musical instrument. The user input is restricted to three items. What data to connect to the input, how to react on the data and what to do with the values leaving the reactors. For each domain documentation is required for the user to know what reactors, connectors and sinks are available for the application, and how they work.
+The declarative configuration of the distribution is presented as a yaml file. YAML is a human-readable data serialization language that is often used for writing configuration files. The structure of a YAML file is a map or list that follows a hierarchy based on the indentation. This allows us to define with a declarative syntax and purpose-specific abstractions, how the deployment should take place. By decoupling the configuration from the logic we have a cleaner and more modular codebase. This separation allows non-developers to easily modify configuration settings without delving into the code. For example the use case in this work is a musical instrument. The user input is restricted to three items. What data to connect to the input, which reactor to use and what to do with the output values. 
 
 Listing \ref{code:Yaml} shows a small example, where two deployments are defined with purpose-specific abstractions like task, reactor, node, connector and sinks. This deployment configuration file will start the same reactor p1 with different connector functions in the same cluster environment. 
 
-Abstraction 'task' and 'node' are linked to the system and not to the application domain. Reactor, connector and sinks are the abstractions that come with the domain and will differ according to the use case. In this work all composed reactors have two inputs or connectors and one output or sink.
+Abstraction 'task' and 'node' are linked to the system and not to the application domain. Reactor, connector and sinks are the abstractions that come with the domain and will differ according to the use case. 
 
 
 \begin{lstlisting}[language=C, caption={YAML code}, captionpos=b,label={code:Yaml}, basicstyle=\ttfamily, frame=single]
@@ -427,7 +427,7 @@ The YAML file is parsed and validated in the translation process. After validati
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{yaml.drawio}
-	\caption{The DSL in YAML is parsed with Python into Elixir's list data structure}
+	\caption{YAML is parsed and validated with Python, stored as Json file}
 	\label{fig:yaml}
 \end{figure}  
 
@@ -435,9 +435,11 @@ Figure \ref{fig:yaml} visualizes the process of sending the configuration file t
 
 
 \section{Distributed Hvm}
-The distribution module is considered the master of the cluster environment. The cluster is controlled in a centralized way with a master node and worker nodes. The master node controls the deployment of a worker node. The worker node in this setting of reactive programming will not stop working until the master node requires it to stop. Each worker node can be seen as a (composed) reactor.  
+The distribution module is considered the master of the cluster environment. It contains the libraries with (composed) reactors, connector and sink functions that are send to worker nodes based on the cluster configuration file. 
 
-Deploying a reactor on the cluster involves sending the bytecode for the requested reactor and the Elixir code for the connecting functions to the Hvm module on the selected node. The ability to send the actual code to deploy a reactor allows us to dynamically alter the cluster environment. At this point no failure detection has been build into the reactors. For now any management of the cluster environment is not part of the reactive program.  
+The cluster is controlled in a centralized way. The master node controls the deployment of a worker node. The worker node in this setting of reactive programming will not stop working until the master node requires it to stop. Each worker node can be seen as a (composed) reactor.  
+
+Deploying a reactor on the cluster involves sending the bytecode for the requested reactor and a reference to the Elixir code for the connecting functions to the Hvm module on the selected node. The ability to send the actual code to deploy a reactor allows us to dynamically alter the cluster environment. At this point no failure detection has been build into the reactors. For now any management of the cluster environment is not part of the reactive program. The 'latest' configuration of the cluster is stored in the Json file that is generated from Yaml.  
 
 Once the cluster is established, with one master connected to all worker nodes, the reactor or our reactive program is started and will keep on reacting, that is producing sink values based on the sources each iteration of the reactor receives. This setup ensures that the reactive program can respond to changes and maintain operations effectively across the distributed system. Figure \ref{fig:rdi} shows the concept of deploying the reactors from the distribution module into a chosen number of nodes. One reactor can be deployed to an 'unlimited' number of nodes. Each deployment counts as an individual deployment of the configured reactor. 
 
@@ -452,7 +454,7 @@ The cluster environment of our system is built upon the actor model of computati
 
 In our cluster environment, actors are the primary entities that facilitate communication and computation. Currently, the communication between actors is confined to individual nodes within the cluster. This design choice simplifies the initial implementation and ensures that each node operates independently, reducing the complexity of inter-node communication.
 
-A worker node in the cluster consists of two primary actors. The first actor is responsible for the process of the hvm, which handles the runtime for deployed reactors. The second actor manages the state, or memory, of the hvm. To ensure the consistency of the hvm's memory, communication between these actors is synchronous. This synchronous communication guarantees that each call to the memory finishes before the next call is accepted, thereby maintaining data integrity and preventing race conditions.
+A worker node in the cluster consists of two primary actors. The first actor is responsible for the process of the hvm, which handles the runtime for deployed reactors. The second actor manages the state, or memory, of the hvm. To ensure the consistency of the hvm's memory, communication between these actors is synchronous. This synchronous communication guarantees that each call to the memory finishes before the next call is accepted, thereby maintaining data integrity.
 
 The actor model of Erlang, which our system is inspired by, represents each process as an actor with a mailbox. This model allows for both synchronous and asynchronous communication. Asynchronous communication is particularly advantageous in distributed systems as it enables actors to continue their operations without waiting for responses, thereby improving overall system performance and responsiveness. Future enhancements, such as inter-node communication and leveraging asynchronous messaging, could further improve the system's capabilities.
 
@@ -461,11 +463,32 @@ The actor model of Erlang, which our system is inspired by, represents each proc
 
 \section{Evaluating the Cluster Environment}
 
-The single master node with a virtually unlimited amount of worker nodes that are all individual from each other gives us a flexible setup to work with. For example, the isolation of failure makes sure that when one node fails for some reason the cluster will not be affected by it. Similarly having the same code base on all nodes helps pointing out eventual problems with worker nodes. From a performance viewpoint the cluster environment is not resource hungry. The number of nodes that simulate the cluster can easily be a tenfold on one machine . The reactors itself have a very light computational cost in the musical use case. The reactors only use some basic arithmetic operations. One Elixir node consumes about 90MB of memory and virtually no processor time when idle and about 3\% when running the use case. This allows to simulate a cluster on one laptop machine with over a hundred nodes. Potentially allowing for big cluster environments on physically spaced machines. In the scope of this work only cluster environments running on one laptop where tested. The size of the cluster was never a problem until the hardware resources of the test machine became the limiting factor around 100 nodes.
+The single master node with a virtually unlimited amount of worker nodes that are all individual from each other gives us a flexible setup to work with. For example, the isolation of failure makes sure that when one node fails for some reason the cluster will not be affected by it. Similarly having the same code base on all nodes helps pointing out eventual problems with worker nodes. From a performance viewpoint the cluster environment is not resource hungry. The number of nodes that simulate the cluster can easily be a tenfold on one machine . The reactors itself have a very light computational cost in the musical use case. The reactors only use some basic arithmetic operations. One Elixir node consumes about 78MB of memory measured from the os perspective and virtually no processor time when idle and about 3\% when running the use case. This allows to simulate a cluster on one laptop machine with over a hundred nodes. Potentially allowing for big cluster environments on physically spaced machines. In the scope of this work only cluster environments running on one laptop where tested. The size of the cluster was never a problem until the hardware resources of the test machine became the limiting factor around 100 nodes.
 
-In the (next) section \ref{sec:drmg} we present the Distributed reactive melody generator as a use case for the cluster environment. The idea that an unlimited amount of devices (internet of things) generate information that can be reacted on in a way that the information is transformed into synthesized sound. The 'instrument' generates sound on a continuous basis. The sound never stops for as long as the system exists. The artistic idea is somewhat similar to Longplayer, a one-thousand year long composition located at Trinity Buoy Wharf in London (\cite{Longplayer2024}). 
+\section{Measurements}
+We have analyzed random nodes for memory and cpu occupation. Memory is measured from within the erlang virtual machine and summed up for a total amount of memory used per iteration for one node. To measure processing time we have recorded the 'reductions since the last call'. Reductions are an Erlang concept and represent a unit of work represented by the Erlang virtual machine (BEAM). Figure \ref{fig:dura_mt} shows the iteration time for the composed reactor in blue and the amount of memory used as a green dot. In general the memory usage is stable at 33Mb per iteration. In more detail it seems so that the amount of memory used drops for longer iteration times and raises for short iteration times but this is not always the case.
+
+\begin{figure}[htb!]
+	\includegraphics[width=\textwidth]{dura_mt}
+	\caption{Duration and Memory usage}
+	\label{fig:dura_mt}
+\end{figure}
+
+The measured reductions shown as green dots in figure \ref{fig:dura_rslc} vary between 14000 and 17000 but do not really follow the rhythmical changes in iteration time of the reactor. In general we observe that a longer iteration time reduces the amount of reductions and shorter iteration times tend to have more reductions. But the few cases (iteration 2, 5, 9, 15, 27) where the reduction overlaps with the iteration time occur for short iteration times.
+
+\begin{figure}[htb!]
+	\includegraphics[width=\textwidth]{dura_rslc}
+	\caption{Duration and Reductions since last call}
+	\label{fig:dura_rslc}
+\end{figure}
+
+The analysis of the data suggests that the correlation between reactor iteration time and the amount of memory utilized, as well as the CPU power consumed, is not as strong as initially hypothesized. This indicates that other factors may be influencing these metrics, and further investigation is warranted to fully understand the underlying relationships.
+
+\newpage
 
 \section{Distributed reactive melody generator} \label{sec:drmg}
+Here we present the Distributed reactive melody generator as a use case for the cluster environment. The idea that an unlimited amount of devices (internet of things) generate information that can be reacted on in a way that the information is transformed into synthesized sound. The 'instrument' generates sound on a continuous basis. The sound never stops for as long as the system exists. The artistic idea is somewhat similar to Longplayer, a one-thousand year long composition located at Trinity Buoy Wharf in London (\cite{Longplayer2024}). 
+	
 For a melody to be generated we need at least one source of information. This source can be manipulated and transferred to the sound server. The maximum number of sources will be defined by the actual system and will depend mainly on the systems hardware constraints (that are expandable). The distributed first-order reactors in the cluster environment provide the sink values to be send to the sound server with the OSC protocol (\cite{schmeder2010best}). The OSC messages are send to a sound server to trigger generation of sound. It is the reactors that, by reacting on incoming streams of data, produce the values that result in a rhythmical flow of OSC messages to the sound server. We have a virtually unlimited amount of information that is reactively transformed in a never ending audible piece of sound.
 
 \begin{figure}[h]
@@ -516,6 +539,8 @@ The Haai virtual machine, implemented in Elixir and leveraging the Erlang Virtua
 A practical use case, the distributed reactive melody generator, showcases the framework's application in transforming streams of data into synthesized sound. This use case involves sending network messages to a Supercollider sound server, highlighting the potential of reactive programming in creating innovative and dynamic systems that respond to real-time events. The ability to transform data streams into audible outputs underscores the versatility and creativity that reactive programming can bring to various domains, including music and multimedia.
 
 The canonical reactive program model, exemplified by spreadsheets, demonstrates the power of time-varying values and the propagation of change. The Haai language, with its clear and concise syntax, allows for the creation of complex behaviors from simple building blocks, promoting readability and maintainability. The use of behaviors and events as fundamental abstractions in RP ensures that systems can handle both continuous and discrete changes efficiently.
+
+However, the analysis of the data suggests that the correlation between reactor iteration time and the amount of memory utilized, as well as the CPU power consumed, is not as strong as initially hypothesized. This indicates that other factors may be influencing these metrics, and additional research is required to fully understand the underlying relationships.
 
 Overall, this work contributes to the advancement of reactive programming by providing a robust framework for distributed reactive programming and demonstrating its practical applications in a musical context. The Haai language and its virtual machine offer a promising avenue for further research and development in the field of reactive systems. Future work could explore additional use cases, optimize the performance of the Haai virtual machine, inter-connectivity between cluster nodes and investigate the integration of reactive programming with other emerging technologies.
 

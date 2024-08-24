@@ -78,6 +78,8 @@ defmodule Hvm do
   end
 
   def loop_deployment(main_pid, itteration_number, new_source1, new_source2, handle_sink) when itteration_number > 0 do
+    # Enable runtime statistics
+    :erlang.statistics(:runtime)
     # 'receive' stream of input data
     new_src = [0, new_source1.(), new_source2.()]
 
@@ -88,6 +90,20 @@ defmodule Hvm do
     # 'receive' the sink from last iteration
     {:ok, sinks} = Memory.get_sink(main_pid)
 
+    # File path for the CSV file
+    file_path = "performance_#{Node.self}_log.csv"
+    # Get memory usage
+    memory_stats = :erlang.memory()
+    #IO.inspect(memory_stats, label: "#{Node.self()} memstat: ")
+    total_memory = List.keyfind(memory_stats, :total, 0) |> elem(1)
+    total_memory_mb = total_memory / (1024 * 1024)
+
+    # Get runtime statistics
+    reductions_stats = :erlang.statistics(:reductions)
+    {total_Reductions, reductions_Since_Last_Call} = reductions_stats
+    IO.inspect(reductions_stats, label: "#{Node.self()} reductions_stat: ")
+    #cpu_usage = List.keyfind(runtime_stats, :reductions, 0) |> elem(1)
+
     # main reactor has two sinks:
     frequency = Enum.at(sinks, 0)
     duration = Enum.at(sinks, 1)
@@ -96,6 +112,14 @@ defmodule Hvm do
     IO.inspect(new_src, label: "#{Node.self()} - srce: ")
     IO.inspect(frequency, label: "#{Node.self()} - freq: ")
     IO.inspect(duration, label: "#{Node.self()} - dura: ")
+    IO.inspect(total_memory_mb, label: "#{Node.self()} - memory (MB): ")
+    #IO.inspect(cpu_usage, label: "#{Node.self()} - cpu (reductions): ")
+
+    # Prepare the data to be logged
+    data = [itteration_number, Float.round(duration, 2), reductions_Since_Last_Call, total_Reductions, total_memory_mb]
+
+    # Log the data to the CSV file
+    log_to_csv(file_path, itteration_number == 50, data)
 
     node = :rand.uniform(1000) + 1 # node number for supecollider
     # send message to Sc to play sound
@@ -105,6 +129,22 @@ defmodule Hvm do
     Process.sleep(trunc(duration) + 50) # added 50 sometimes next note to fast
     # Keep on looping..
     loop_deployment(main_pid, itteration_number - 1, new_source1, new_source2, handle_sink)
+  end
+
+  defp log_to_csv(file_path, is_first_iteration, data) do
+    # Open the file in append mode
+    file = File.open!(file_path, [:append, :utf8])
+
+    # Write the header if it's the first iteration
+    if is_first_iteration do
+      IO.binwrite(file, "itt,dur,rslc,rt,mt\n")
+    end
+
+    # Write the data to the file
+    IO.binwrite(file, "#{data |> Enum.join(",")}\n")
+
+    # Close the file
+    File.close(file)
   end
 
   # make a list with 3 random numbers

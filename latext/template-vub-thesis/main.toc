@@ -17,12 +17,13 @@
 \contentsline {subsection}{\numberline {2.3.3}Managing the Reactors State}{12}{}%
 \contentsline {chapter}{\numberline {3}Distribution}{13}{}%
 \contentsline {section}{\numberline {3.1}Multi-Node Deployment Configuration}{13}{}%
-\contentsline {section}{\numberline {3.2}Distributed Hvm}{15}{}%
+\contentsline {section}{\numberline {3.2}Distributed Hvm}{14}{}%
 \contentsline {section}{\numberline {3.3}Cluster Environment}{15}{}%
 \contentsline {chapter}{\numberline {4}Evaluation}{17}{}%
 \contentsline {section}{\numberline {4.1}Evaluating the Cluster Environment}{17}{}%
-\contentsline {section}{\numberline {4.2}Distributed reactive melody generator}{17}{}%
-\contentsline {subsection}{\numberline {4.2.1}Sound Server}{18}{}%
-\contentsline {subsection}{\numberline {4.2.2}Sound Server Communication}{19}{}%
-\contentsline {subsection}{\numberline {4.2.3}Musical Values}{19}{}%
-\contentsline {chapter}{\numberline {5}Conclusion}{21}{}%
+\contentsline {section}{\numberline {4.2}Measurements}{17}{}%
+\contentsline {section}{\numberline {4.3}Distributed reactive melody generator}{19}{}%
+\contentsline {subsection}{\numberline {4.3.1}Sound Server}{20}{}%
+\contentsline {subsection}{\numberline {4.3.2}Sound Server Communication}{20}{}%
+\contentsline {subsection}{\numberline {4.3.3}Musical Values}{21}{}%
+\contentsline {chapter}{\numberline {5}Conclusion}{23}{}%

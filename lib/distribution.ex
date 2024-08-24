@@ -93,6 +93,12 @@ defmodule Distribution do
     handle_deployment_info(json_data)
   end
 
+  # Read the JSON data from a file and handle it
+  def read_and_handle_100 do
+    json_data = File.read!("pyDsl/config100.json")
+    handle_deployment_info(json_data)
+  end
+
   ## Distributed reactive melody generator ##
 
   # function used as data stream
