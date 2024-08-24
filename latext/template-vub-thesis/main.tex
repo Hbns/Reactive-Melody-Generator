@@ -27,7 +27,7 @@
 \pretitle{\flushleft{Graduation thesis submitted in partial fulfilment of the requirements for the degree of de Ingenieurswetenschappen: Applied informatics}}
 %\subtitle{Haai Virtual machine}
 \author{Hans Van der Ougstraete}
-\date{June~2024}
+\date{August~2024}
 \promotors{Promotors: prof.\ dr.\ Wolfgang De Meuter,\and prof.\ dr.\ Joeri De Koster \and Supervisor: Bjarno Oeyen}
 
 \faculty{sciences and bioengineering sciences} % Note: without the word "Faculty"!
@@ -40,7 +40,7 @@
 \title{Distributing first-class reactors in a cluster environment}
 \pretitle{\flushleft{Proefschrift ingediend met het oog op het behalen van de graad van Master of Science in de Ingenieurswetenschappen: Toegepaste informatica}}%
 %\subtitle{mijn ondertitel}
-\date{Juni~2024}%
+\date{Augustus~2024}%
 \promotors{Promotors: prof.\ dr.\ Wolfgang De Meuter, \and prof.\ dr.\ Joeri De Koster \and Supervisor: Bjarno Oeyen}
 \faculty{wetenschappen en bio-ingenieurswetenschappen}%
 \maketitle%
@@ -404,7 +404,7 @@ Listing \ref{code:Yaml} shows a small example, where two deployments are defined
 Abstraction 'task' and 'node' are linked to the system and not to the application domain. Reactor, connector and sinks are the abstractions that come with the domain and will differ according to the use case. 
 
 
-\begin{lstlisting}[language=C, caption={YAML code}, captionpos=b,label={code:Yaml}, basicstyle=\ttfamily, frame=single]
+\begin{lstlisting}[language=C, caption={YAML code}, captionpos=b,label={code:Yaml}, basicstyle=\ttfamily\footnotesize, frame=single]
 deployments:
   - task: start
     reactor: p1
@@ -433,6 +433,7 @@ The YAML file is parsed and validated in the translation process. After validati
 
 Figure \ref{fig:yaml} visualizes the process of sending the configuration file through the Python translation and validation tool. Once validated a Json file (containing the configuration) is prepared for the distribution module on the master node in the cluster environment.
 
+\newpage
 
 \section{Distributed Hvm}
 The distribution module is considered the master of the cluster environment. It contains the libraries with (composed) reactors, connector and sink functions that are send to worker nodes based on the cluster configuration file. 
@@ -465,6 +466,8 @@ The actor model of Erlang, which our system is inspired by, represents each proc
 
 The single master node with a virtually unlimited amount of worker nodes that are all individual from each other gives us a flexible setup to work with. For example, the isolation of failure makes sure that when one node fails for some reason the cluster will not be affected by it. Similarly having the same code base on all nodes helps pointing out eventual problems with worker nodes. From a performance viewpoint the cluster environment is not resource hungry. The number of nodes that simulate the cluster can easily be a tenfold on one machine . The reactors itself have a very light computational cost in the musical use case. The reactors only use some basic arithmetic operations. One Elixir node consumes about 78MB of memory measured from the os perspective and virtually no processor time when idle and about 3\% when running the use case. This allows to simulate a cluster on one laptop machine with over a hundred nodes. Potentially allowing for big cluster environments on physically spaced machines. In the scope of this work only cluster environments running on one laptop where tested. The size of the cluster was never a problem until the hardware resources of the test machine became the limiting factor around 100 nodes.
 
+\newpage
+
 \section{Measurements}
 We have analyzed random nodes for memory and cpu occupation. Memory is measured from within the erlang virtual machine and summed up for a total amount of memory used per iteration for one node. To measure processing time we have recorded the 'reductions since the last call'. Reductions are an Erlang concept and represent a unit of work represented by the Erlang virtual machine (BEAM). Figure \ref{fig:dura_mt} shows the iteration time for the composed reactor in blue and the amount of memory used as a green dot. In general the memory usage is stable at 33Mb per iteration. In more detail it seems so that the amount of memory used drops for longer iteration times and raises for short iteration times but this is not always the case.
 
@@ -482,7 +485,7 @@ The measured reductions shown as green dots in figure \ref{fig:dura_rslc} vary b
 	\label{fig:dura_rslc}
 \end{figure}
 
-The analysis of the data suggests that the correlation between reactor iteration time and the amount of memory utilized, as well as the CPU power consumed, is not as strong as initially hypothesized. This indicates that other factors may be influencing these metrics, and further investigation is warranted to fully understand the underlying relationships.
+The analysis of the data suggests that the correlation between reactor iteration time and the amount of memory utilized, as well as the CPU power consumed, is not as strong as initially hypothesized. This indicates that other factors may be influencing these metrics, and further investigation is needed to fully understand the underlying relationships.
 
 \newpage
 
@@ -542,7 +545,7 @@ The canonical reactive program model, exemplified by spreadsheets, demonstrates 
 
 However, the analysis of the data suggests that the correlation between reactor iteration time and the amount of memory utilized, as well as the CPU power consumed, is not as strong as initially hypothesized. This indicates that other factors may be influencing these metrics, and additional research is required to fully understand the underlying relationships.
 
-Overall, this work contributes to the advancement of reactive programming by providing a robust framework for distributed reactive programming and demonstrating its practical applications in a musical context. The Haai language and its virtual machine offer a promising avenue for further research and development in the field of reactive systems. Future work could explore additional use cases, optimize the performance of the Haai virtual machine, inter-connectivity between cluster nodes and investigate the integration of reactive programming with other emerging technologies.
+Overall, this work contributes to the advancement of reactive programming by providing a robust framework for distributed reactive programming and demonstrating its practical applications in a musical context. The Haai language and its virtual machine offer a promising avenue for further research and development in the field of reactive systems. Future work could explore additional use cases, optimize the performance of the Haai virtual machine, inter-connectivity between cluster nodes and investigate the integration of RP with other emerging technologies.
 
 \printbibliography
 \end{document}

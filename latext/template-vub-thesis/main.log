@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  24 AUG 2024 13:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.25)  24 AUG 2024 17:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1138,27 +1138,28 @@ Package pdftex.def Info: ./images//yaml.drawio.png  used on input line 429.
 File: ./images//distribution300.drawio.png Graphic file (type png)
 <use ./images//distribution300.drawio.png>
 Package pdftex.def Info: ./images//distribution300.drawio.png  used on input li
-ne 447.
+ne 448.
 (pdftex.def)             Requested size: 418.25368pt x 133.34149pt.
  [15 <./images//distribution300.drawio.png>] [16]
 Chapter 4.
-<./images//dura_mt.png, id=106, 867.24pt x 578.16pt>
-File: ./images//dura_mt.png Graphic file (type png)
-<use ./images//dura_mt.png>
-Package pdftex.def Info: ./images//dura_mt.png  used on input line 472.
-(pdftex.def)             Requested size: 418.25368pt x 278.83694pt.
-<./images//dura_rslc.png, id=107, 867.24pt x 578.16pt>
-File: ./images//dura_rslc.png Graphic file (type png)
-<use ./images//dura_rslc.png>
-Package pdftex.def Info: ./images//dura_rslc.png  used on input line 480.
-(pdftex.def)             Requested size: 418.25368pt x 278.83694pt.
 [17
 
-] [18 <./images//dura_mt.png>]
+]
+<./images//dura_mt.png, id=110, 867.24pt x 578.16pt>
+File: ./images//dura_mt.png Graphic file (type png)
+<use ./images//dura_mt.png>
+Package pdftex.def Info: ./images//dura_mt.png  used on input line 475.
+(pdftex.def)             Requested size: 418.25368pt x 278.83694pt.
+<./images//dura_rslc.png, id=111, 867.24pt x 578.16pt>
+File: ./images//dura_rslc.png Graphic file (type png)
+<use ./images//dura_rslc.png>
+Package pdftex.def Info: ./images//dura_rslc.png  used on input line 483.
+(pdftex.def)             Requested size: 418.25368pt x 278.83694pt.
+ [18 <./images//dura_mt.png>]
 <./images//drmg200.drawio.png, id=116, 1457.445pt x 1088.065pt>
 File: ./images//drmg200.drawio.png Graphic file (type png)
 <use ./images//drmg200.drawio.png>
-Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 495.
+Package pdftex.def Info: ./images//drmg200.drawio.png  used on input line 498.
 (pdftex.def)             Requested size: 418.25368pt x 312.24347pt.
 
 
@@ -1169,9 +1170,9 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 ]
 Chapter 5.
-[23] [24] [25
+[23] [24
 
-] [26] (./main.aux)
+] [25] [26] (./main.aux)
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
@@ -1179,7 +1180,7 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 Here is how much of TeX's memory you used:
  26612 strings out of 478287
  527137 string characters out of 5849289
- 1315723 words of memory out of 5000000
+ 1315725 words of memory out of 5000000
  44384 multiletter control sequences out of 15000+600000
  497771 words of font info for 53 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1198,7 +1199,7 @@ re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/texmf/fonts
 /type1/public/tex-gyre/qagb.pfb></usr/share/texmf/fonts/type1/public/tex-gyre/q
 agr.pfb>
-Output written on main.pdf (34 pages, 1651814 bytes).
+Output written on main.pdf (34 pages, 1651966 bytes).
 PDF statistics:
  208 PDF objects out of 1000 (max. 8388607)
  126 compressed objects within 2 object streams
