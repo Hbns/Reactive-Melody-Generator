@@ -1,4 +1,4 @@
-# S2e
+# Reactive Melody Generator
 
 Reactive Melody Generator, Reacts on input and send osc messages to SuperColider.
 
