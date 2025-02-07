@@ -1,6 +1,7 @@
 # Reactive Melody Generator
 
 Reactive Melody Generator, Reacts on input and send osc messages to SuperColider.
+![alt text](https://github.com/hbns/Reactive-Melody-Generator/blob/main/image.jpg?raw=true)
 
 ## Make cluster environment
 
